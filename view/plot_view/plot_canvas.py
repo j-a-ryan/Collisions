@@ -29,7 +29,7 @@ class PlotVectorCanvas(FigureCanvas):
         # lab_vec = vectors.get_lab_vector() # needs box, not circle.
         # rest_vec = vectors.get_rest_vector() # By definition/stipulation at origin [0,0,0]
         index_of_origin_vector = collision.get_id_of_origin_vector()
-        vectors = collision.get_vectors()
+        vectors = collision.get_spacial_vectors_xyz()
         origin = [0, 0, 0]  # same as rest_vec, actually
 
         arr1 = []
@@ -58,9 +58,9 @@ class PlotVectorCanvas(FigureCanvas):
         self.ax.set_ylabel('Y')
         self.ax.set_zlabel('Z')
 
-        self.ax.set_xlim([-1, 6])
-        self.ax.set_ylim([-1, 6])
-        self.ax.set_zlim([-1, 6])
+        # self.ax.set_xlim([-1, 6]) TODO: do this programmatically
+        # self.ax.set_ylim([-1, 6]) Low and high for each axis. Add 10% either side.
+        # self.ax.set_zlim([-1, 6])
         self.fig.canvas.mpl_connect('pick_event', self.onpick)
         # cursor = mplcursors.cursor(self.ax, hover=mplcursors.HoverMode.Transient)
         # cursor.connect("add", lambda sel: sel.annotation.set_text("Click to apply rest frame"))

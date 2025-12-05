@@ -13,7 +13,6 @@ class ExperimentControls(QFrame):
         self.inner_layout.addWidget(heading, alignment=Qt.AlignmentFlag.AlignLeft)
 
         if new_slider:
-            print("new slider add...")
             self.slider1 = Slider(self)  # Add slider
             self.slider1.setRange(-50, 100)  # Set min and max
             self.slider1.setValue(25)  # Set value
@@ -95,7 +94,8 @@ class ExperimentControls(QFrame):
             self.inner_layout.addWidget(self.value_label2)
             
     def slider_value_changed(self, value):
-        print(value)
+        # print(value)
+        pass
 
     def update_label1(self, value):
         """Updates the label with the current slider value."""

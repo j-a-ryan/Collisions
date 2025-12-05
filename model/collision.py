@@ -1,3 +1,4 @@
+import numpy as np
 from model.particle import Particle
 
 
@@ -37,6 +38,11 @@ class Collision():
 
     def get_vectors(self):
         return self.vectors
+    
+    def get_spacial_vectors_xyz(self):
+        np_arr = np.array(self.vectors)
+        spacial_vectors = np_arr[:, -3:].tolist()
+        return spacial_vectors
     
 def create_collision(vectors, id_of_origin_vector):
     collision = Collision()

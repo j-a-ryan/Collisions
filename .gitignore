@@ -1,5 +1,8 @@
 # Standard contents as recommended by Google AI for .gitignore
 
+# Scratch files
+scratch.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

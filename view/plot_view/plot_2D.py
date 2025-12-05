@@ -12,8 +12,9 @@ from main.custom_title_bar import CustomTitleBar
 class PlotVectorCanvas2D(FigureCanvas):
 
     plot_2d_types_vector_indices = {'x-y': [0, 1], 'x-z': [0, 2], 'y-z': [1, 2]}
+    axis_labels = ['x', 'y', 'z']
 
-    def __init__(self, experiment_controller, parent=None, width=5, height=5, dpi=100): #
+    def __init__(self, experiment_controller=None, parent=None, width=5, height=5, dpi=100): #
         fig = Figure(figsize=(width, height), dpi=dpi)
         self.ax = fig.add_subplot(111)
         fig.set_facecolor("#FCFEE7")
@@ -28,7 +29,7 @@ class PlotVectorCanvas2D(FigureCanvas):
 
     def plot(self, collision, plot_2d_type):
 
-        vectors = collision.get_vectors()
+        vectors = collision.get_spacial_vectors_xyz()
         index_of_origin_vector = collision.get_id_of_origin_vector()
         origin = [0, 0]
 
@@ -48,15 +49,12 @@ class PlotVectorCanvas2D(FigureCanvas):
                     scale_units='xy', scale=1, color='black', width=0.003, linewidths=0.5)
             self.scatter = self.ax.scatter(xs[i], ys[i], marker=f'${point_characters[i]}$', s=90, color='black') 
         self.ax.scatter(xs, ys, facecolors='none', edgecolors=colors, marker='o', s=160)
-        
-        self.ax.set_xlim([-1, 4])
-        self.ax.set_ylim([-1, 3])
 
-        self.ax.set_xlabel('X', fontsize=10)
-        self.ax.set_ylabel('Y', fontsize=10)
+        self.ax.set_xlabel(self.axis_labels[indices_to_plot[0]], fontsize=10)
+        self.ax.set_ylabel(self.axis_labels[indices_to_plot[1]], fontsize=10)
 
-        self.ax.set_xlim([-1, 6])
-        self.ax.set_ylim([-1, 6])
+        # self.ax.set_xlim([-1, 6]) TODO: Do programmatically
+        # self.ax.set_ylim([-1, 6])
 
 class Plot2DPopup(QDialog):
     
@@ -71,7 +69,8 @@ class Plot2DPopup(QDialog):
         self.button = button
         self.setWindowTitle(f"{plot_2d_type} {plot_status}")
         canvas = PlotVectorCanvas2D(self.experiment_controller, self, 3, 3)
-        canvas.plot(vectors, plot_2d_type)
+        if vectors is not None:
+            canvas.plot(vectors, plot_2d_type)
         layout = QVBoxLayout()
         layout.addWidget(canvas)
         # layout.addWidget(cancel_button, alignment=Qt.AlignmentFlag.AlignRight)

@@ -55,10 +55,8 @@ class CustomMenuBar(QMenuBar):
         dlg = VectorEntryForm(self)
         if dlg.exec() == 1:
             self.experiment_controller.plot_current_experiment()
-            print('hi')
 
     def close_experiment(self):
-        print("Menu bar close_experiment")
         self.experiment_controller.close_current_experiment()
 
     def quit_app(self):

@@ -5,6 +5,7 @@ from controller.experiment_controller import ExperimentController
 from view.controls import ControlsLayout
 from view.controls_view.custom_menu_bar import CustomMenuBar
 from view.plot import PlotQFrame
+from view.plot_view.plot_tabs_widget import PlotTabsWidget
 from view.transformations import TransformationsLayout
 
 '''
@@ -45,10 +46,11 @@ class View(QWidget):
         self.app = app
         self.set_up_view()
 
-    def set_up_view(self, plot_qframe=None):
+    def set_up_view(self):
         self.plot_qframe = None
         self.plot_qframe_transformed = None
         self.splitter = None
+        self.plot_tabs = None
         self.layout = QHBoxLayout()
         self.layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
         
@@ -61,86 +63,82 @@ class View(QWidget):
         control_panel.addWidget(controls_layout)
 
         self.layout.addLayout(control_panel)
-        if plot_qframe is not None:
-            print("vectors")
-            self.plot_qframe = plot_qframe
-        else:
-            print("plot blank")
-            self.plot_qframe = PlotQFrame(self.app, self.experiment_controller)
-        self.layout.addWidget(self.plot_qframe)
+        self.plot_qframe = PlotQFrame(self.app, self.experiment_controller)
+        # self.layout.addWidget(self.plot_qframe) # Set up with a blank plot
+        self.set_plot_tab_widget(self.plot_qframe)
 
         self.setLayout(self.layout)
 
     def plot_experiment_vectors(self, vectors):
-        print("Plot...")
 
-        self.clear_experiment_plot()
+        self.clear_experiment_plot(False)
 
         if self.plot_qframe is not None:
-            print("deleting")
             frame_to_delete = self.plot_qframe
             self.layout.removeWidget(self.plot_qframe)
             frame_to_delete.deleteLater()
         self.plot_qframe = PlotQFrame(self.app, self.experiment_controller, plot_status=PlotQFrame.experiment)
         self.plot_qframe.plot(vectors=vectors)
-        self.layout.addWidget(self.plot_qframe)        
-
-    def plot_transformed_experiment_vectors(self, vectors):
-        print("Plot transformed...")
-
-        self.clear_experiment_plot()
-
-        if self.plot_qframe is not None:
-            print("deleting2 to replot")
-            frame_to_delete = self.plot_qframe
-            self.layout.removeWidget(self.plot_qframe)
-            frame_to_delete.deleteLater()
-        self.plot_qframe = PlotQFrame(self.app, self.experiment_controller, plot_status=PlotQFrame.experiment)
-        self.plot_qframe.plot(vectors=vectors)
-
-        self.plot_qframe_transformed = PlotQFrame(self.app, self.experiment_controller, plot_status=PlotQFrame.transformed)
-        self.plot_qframe_transformed.plot(vectors=vectors)
-
         # self.layout.addWidget(self.plot_qframe)
-        # self.layout.addWidget(self.plot_qframe_transformed)
+        self.set_plot_tab_widget(self.plot_qframe, experiment_vectors=vectors)    
 
-        self.add_transformation_splitter(self.plot_qframe, self.plot_qframe_transformed)
+    def plot_transformed_experiment_vectors(self, vectors_transformed, experiment_vectors):
 
-    def clear_experiment_plot(self):
-        print("clear")
-        # self.set_up_view()
-        # self.layout.removeWidget(self.plot_qframe)
-        print("deleting3")
+        self.clear_experiment_plot(False)
+
+        if self.plot_qframe is not None:
+            frame_to_delete = self.plot_qframe
+            self.layout.removeWidget(self.plot_qframe)
+            frame_to_delete.deleteLater()
+
+        self.plot_qframe = PlotQFrame(self.app, self.experiment_controller, plot_status=PlotQFrame.experiment)
+        self.plot_qframe.plot(vectors=experiment_vectors)
+        self.plot_qframe_transformed = PlotQFrame(self.app, self.experiment_controller, plot_status=PlotQFrame.transformed)
+        self.plot_qframe_transformed.plot(vectors=vectors_transformed)
+
+        self.add_transformation_splitter(experiment_vectors=experiment_vectors, transformed_vectors=vectors_transformed)
+
+    def clear_experiment_plot(self, set_up_blank_afterwards):
 
         if self.plot_qframe_transformed is not None:
-            print("delete transformed frame")
             frame_to_delete_transformed = self.plot_qframe_transformed
             self.layout.removeWidget(frame_to_delete_transformed)
             frame_to_delete_transformed.deleteLater()
             self.plot_qframe_transformed = None
-        else:
-            print("no transformed frame to delete")
-
+        
         frame_to_delete = self.plot_qframe # Just being sure no mistaken identity. Probably being superstitious.
         self.layout.removeWidget(frame_to_delete)
         frame_to_delete.deleteLater()
         self.plot_qframe = None
+
+        if self.plot_tabs is not None:
+            self.plot_tabs.remove()
+            self.layout.removeWidget(self.plot_tabs)
+            plot_tabs_to_delete = self.plot_tabs
+            plot_tabs_to_delete.deleteLater()
+            self.plot_tabs = None
 
         if self.splitter is not None:
             splitter_to_delete = self.splitter
             self.layout.removeWidget(splitter_to_delete)
             splitter_to_delete.deleteLater()
             self.splitter = None
-        
 
-        self.plot_qframe = PlotQFrame(self.app, self.experiment_controller)
-        self.layout.addWidget(self.plot_qframe)
+        if set_up_blank_afterwards:
+            # Put the blank plot in
+            self.plot_qframe = PlotQFrame(self.app, self.experiment_controller)
+            # self.layout.addWidget(self.plot_qframe)
+            self.set_plot_tab_widget(self.plot_qframe)
 
-    def add_transformation_splitter(self, plot_qframe, plot_qframe_transformed):
+    def add_transformation_splitter(self, experiment_vectors=None, transformed_vectors=None):
 
-        # self.hbox_layout = QHBoxLayout() #or (self)?
         self.splitter = QSplitter(Qt.Horizontal)
-        self.splitter.addWidget(plot_qframe)
-        self.splitter.addWidget(plot_qframe_transformed)
-        # self.hbox.addWidget(splitter)
-        self.layout.addWidget(self.splitter)
+        self.splitter.addWidget(self.plot_qframe)
+        self.splitter.addWidget(self.plot_qframe_transformed)
+        # self.layout.addWidget(self.splitter)
+        self.set_plot_tab_widget(self.splitter, experiment_vectors=experiment_vectors, transformed_vectors=transformed_vectors)
+
+    def set_plot_tab_widget(self, plot_qframe_to_be_set_in_tab, experiment_vectors=None, transformed_vectors=None): # Need a name to distinquish it from plot_qframe
+        self.plot_tabs = PlotTabsWidget(self, plot_qframe_to_be_set_in_tab,
+                                        experiment_vectors=experiment_vectors, transformed_vectors=transformed_vectors)
+        self.layout.addWidget(self.plot_tabs)
