@@ -4,11 +4,105 @@ from abc import ABC, abstractmethod
 import math
 import numpy as np
 
+class MatrixConfigurationData():
+    """
+    Convenience class that wraps a dictionary of data to be
+    used in configuring transformation matrices. Data includes
+    scalars, vectors, etc. All values are strictly optional, 
+    as different matrix types require different data. Some values
+    will probably always be present, however, such as rest_frame_vector.
+    The class offers getters and setters as convenient reminder to 
+    developers of which variables are likely to be needed. Subclasses
+    more likely will use a we-are-all-adults-here dot strategy for
+    their peculiar variables.
+
+    User can set idiosyncratic values, using set_value() or directly by dot, 
+    most likely in a subclass. If a new value is likely to be used again, a
+    setter and getter for it might be added, instead.
+    """
+    def __init__(self, **kwargs):
+        self.data_dict = {}
+        for key, val in kwargs.items():
+            self.set_value(key, val)
+
+    def calculate_calculated_values(self):
+        """
+        To be overridden and implemented by any class requiring
+        calculated values to be calculated only after ensuring
+        that multiple values required for the calculation have been
+        set. Fire this method after setting the appropriate values.
+        
+        """
+        pass
+
+    def set_value(self, key, value):
+        """
+        For setting custom/user-defined values that aren't 
+        already presented by any of the class's setter
+        methods. User may instead create getter/setter for any
+        such value if it is likely to be commonly used. Subclassing
+        this class is a similar option.
+        
+        :param key: Custom value's name/key.
+        :param value: The custom value
+        """
+        self.data_dict[key] = value
+
+    def set_rest_frame_vector(self, rest_frame_vector):
+        """
+        Set the vector of the particle to whose rest frame
+        transformation is to be done.
+        
+        :param rest_frame_vector: The vector of the particle to whose rest frame
+        transformation is to be done
+        """
+        self.data_dict["rest_frame_vector"] = rest_frame_vector
+    
+    def get_rest_frame_vector(self):
+        return self.data_dict["rest_frame_vector"]
+    
+    def set_velocity_of_rest_frame(self, velocity_of_rest_frame):
+        """
+        The rest frame to which we are transforming other vectors 
+        has this velocity relative to the frame in which the vectors 
+        to be transformed have their values.
+        
+        :param velocity_of_rest_frame: velocity of the rest frame to which
+        transformations will be made
+        """
+        self.velocity_of_rest_frame = velocity_of_rest_frame
+    
+    def get_velocity_of_rest_frame(self):
+        return self.velocity_of_rest_frame
+    
+    def set_vector_to_be_transformed(self, vector_to_be_transformed):
+        """
+        Set the vector that will be transformed.
+        
+        :param rest_frame_vector: The vector of the particle to whose rest frame
+        transformation is to be done
+        """
+        self.data_dict["vector_to_be_transformed"] = vector_to_be_transformed
+    
+    def get_vector_to_be_transformed(self):
+        return self.data_dict["vector_to_be_transformed"]
+
 
 class FourVectorTransformationMatrix(ABC):
-    def __init__(self):
+    
+    def __init__(self, matrix_configuration_data: MatrixConfigurationData):
+        self.initialize_parameters_to_default()
+        self.set_up_matrix(matrix_configuration_data=matrix_configuration_data)
+
+    def initialize_parameters_to_default(self):
+        """
+        Initializes matrix member parameters to those of an identity matrix. Sets
+        gamma and beta to 1, 0.
+        
+        """
         self.gamma = 1
         self.beta = 0
+        self.beta_squared = 0
         self.beta_x = 0
         self.beta_y = 0
         self.beta_z = 0
@@ -29,22 +123,32 @@ class FourVectorTransformationMatrix(ABC):
         self.m32 = 0
         self.m33 = 1
 
-    def transform(self, four_vector, velocity_of_four_vector_frame, function, additional_data=None):
-        self.set_member_values(four_vector, velocity_of_four_vector_frame, function, additional_data=None)
-        self.configure_matrix()
-        return self._transform_four_vector(four_vector=four_vector)
+    # def transform(self, matrix_configuration_data: MatrixConfigurationData, vector_to_be_transformed):
+    #     """
+    #     Sets up matrix and applies it to the vector_to_be_transformed. For use
+    #     in cases in which matrix is to be set up especially for the matrix to be
+    #     transformed and then discarded, rather than reused on other vectors to be 
+    #     transformed. For the latter situation, users should call  
+        
+    #     :param matrix_configuration_data: Description
+    #     :type matrix_configuration_data: MatrixConfigurationData
+    #     :param vector_to_be_transformed: Description
+    #     """ DELETE ME
+    #     self.set_up_matrix(matrix_configuration_data)
+    #     return self.transform_vector(four_vector=vector_to_be_transformed)
+    
+    def set_up_matrix(self, matrix_configuration_data: MatrixConfigurationData):
+        self._set_member_values(matrix_configuration_data)
+        self._compile_matrix()
 
-    # Is this flexible enough for both velocity and momentum? Will a lambda arg help?
-    # May need to dedicate this class to momentum. (dict params -> func lambda might work, 
-    # where dict and func were appropriate for the particular case) See Google idea below
-    # and especially stackoverflow idea.
+    # To be implemented by child classes. Child classes simply calling pass will
+    # have an identity matrix by default. See Google idea and stackoverflow idea below
     @abstractmethod  
-    def set_member_values(self, four_vector, velocity_of_four_vector_frame, function, additional_data=None):
+    def _set_member_values(self, matrix_configuration_data: MatrixConfigurationData):
         pass
-
-    # Call this after setting all the mxx members of the matrix to their
-    # correct values.
-    def configure_matrix(self):
+    
+    # Sets the matrix up with its member values.
+    def _compile_matrix(self):
         self.matrix = np.array([[self.m00, self.m01, self.m02, self.m03],
                                 [self.m10, self.m11, self.m12, self.m13],
                                 [self.m20, self.m21, self.m22, self.m23],
@@ -52,62 +156,28 @@ class FourVectorTransformationMatrix(ABC):
     
     # To be called by other methods in this class, in particular transform(),
     # which is the public method.
-    def _transform_four_vector(self, four_vector):
+    def transform(self, four_vector):
         return self.matrix @ four_vector
     
 
 class IdentityMatrix(FourVectorTransformationMatrix):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, matrix_configuration_data: MatrixConfigurationData):
+        super().__init__(matrix_configuration_data)
 
-    def set_member_values(self, four_vector, velocity_of_four_vector_frame, function, additional_data=None):
+    def _set_member_values(self, matrix_configuration_data: MatrixConfigurationData):
         pass # Do no calculations, leave the default values, which are identity matrix.
 
 class GalileanTransformationMatrix(FourVectorTransformationMatrix):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, matrix_configuration_data: MatrixConfigurationData):
+        super().__init__(matrix_configuration_data)
 
-    def set_member_values(self, four_vector, velocity_of_four_vector_frame, function, additional_data=None):
-        pass # TODO: galilean sets here
-
-# Three matrices: 1. General (Jackson 11.98) 2. Four velocity transformation
-# 3. Four momentum transformation
-class GeneralTransformationMatrix(FourVectorTransformationMatrix):
-    def __init__(self):
-        super().__init__()
-
-    def set_member_values(self, four_vector, velocity_of_four_vector_frame, function, additional_data=None):
-        # Calculate gamma
-
-        # Calculate the three components of beta: beta_x, beta_y, beta_z
-
-        # Calculate the members of the matrix, using gamma, beta
-        self.m00 = self.gamma
-        self.m01 = -self.gamma * self.beta_x
-        self.m02 = -self.gamma * self.beta_y
-        self.m03 = -self.gamma * self.beta_z
-        self.m10 = -self.gamma * self.beta_x
-        self.m11 = 1 + (self.gamma - 1) * math.pow(self.beta_x, 2)/math.pow(self.beta, 2)
-        self.m12 = 1 + (self.gamma - 1) * self.beta_x * self.beta_y/math.pow(self.beta, 2)
-        self.m13 = 1 + (self.gamma - 1) * self.beta_x * self.beta_z/math.pow(self.beta, 2)
-        self.m20 = -self.gamma * self.beta_y
-        self.m21 = 1 + (self.gamma - 1) * self.beta_x * self.beta_y/math.pow(self.beta, 2)
-        self.m22 = 1 + (self.gamma - 1) * math.pow(self.beta_y, 2)/math.pow(self.beta, 2)
-        self.m23 = 1 + (self.gamma - 1) * self.beta_y * self.beta_z/math.pow(self.beta, 2)
-        self.m30 = -self.gamma * self.beta_z
-        self.m31 = 1 + (self.gamma - 1) * self.beta_x * self.beta_z/math.pow(self.beta, 2)
-        self.m32 = 1 + (self.gamma - 1) * self.beta_y * self.beta_z/math.pow(self.beta, 2)
-        self.m33 = 1 + (self.gamma - 1) * math.pow(self.beta_z, 2)/math.pow(self.beta, 2)
-    
-# Four velocity Lorentz transformation matrix
-class FourVelocityMatrix(FourVectorTransformationMatrix):
-    def __init__(self):
-        super().__init__()
+    def _set_member_values(self, matrix_configuration_data: MatrixConfigurationData):
+        rest_frame_vector = matrix_configuration_data.get_rest_frame_vector()
+        self.m10 = -rest_frame_vector[1] / rest_frame_vector[0]
+        self.m20 = -rest_frame_vector[2] / rest_frame_vector[0]
+        self.m30 = -rest_frame_vector[3] / rest_frame_vector[0]
 
 
-class FourMomentumMatrix(FourVectorTransformationMatrix):
-    def __init__(self):
-        super().__init__()
 
 ###################################################
 # # Google AI's lambda idea:

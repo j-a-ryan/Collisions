@@ -15,9 +15,13 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.initial_pos = None
         self.resize(1200, 700)
-
+# FCFFE5 FAFCD4 FCFFD9
+        # qdarktheme.setup_theme(custom_colors={
+        #     "[light]": {
+        #         "background": "#FAFCD4",
+        #     }
+        # })
         qdarktheme.setup_theme()
-
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.title_bar = CustomTitleBar(self, "Collisions", 14, appstyle=app.style())
         self.app = app # TODO: needed?

@@ -1,7 +1,8 @@
 import numpy as np
 from model.collision import create_collision
 from model.experiment import Experiment
-from model.four_vector_matrix import GalileanTransformationMatrix, GeneralTransformationMatrix, IdentityMatrix
+from model.four_vector_matrix import GalileanTransformationMatrix, IdentityMatrix
+from model.general_matrix import GeneralTransformationMatrix
 from model.transformation import galilean_coordinate_transformation_3, galilean_coordinate_transformation_3_vector
 
 
@@ -23,7 +24,7 @@ class ExperimentController():
         experiment_collision = self.get_experiment_vectors()
         matrix = None
         if self.identity_transformation:
-            matrix = IdentityMatrix()
+            matrix = IdentityMatrix(None)
             particle_id = experiment_collision.get_id_of_origin_vector()
         else:
             matrix = GalileanTransformationMatrix()
@@ -34,7 +35,7 @@ class ExperimentController():
         for vec in exp_vectors:
             vec_copy = np.array(vec).copy().tolist()
             # transf_vector = galilean_coordinate_transformation_3_vector()
-            transformed_vec = matrix.transform(vec_copy, None, None)
+            transformed_vec = matrix.transform(vec_copy)
             transformed_vectors.append(transformed_vec)
         
         collision_transformed = create_collision(transformed_vectors, particle_id)        
