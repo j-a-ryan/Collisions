@@ -1,7 +1,7 @@
 import sys
 from PySide6.QtWidgets import QMainWindow, QApplication, QPushButton
 
-from view.vectors.vector_entry import VectorEntryForm
+from view.vectors.experiment_configuration import ExperimentConfigurationForm
 
 
 
@@ -9,15 +9,15 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("My App")
+        self.setWindowTitle("DEVELOPER TESTING")
 
-        button = QPushButton("Press me for a vector entry form")
+        button = QPushButton("Show experiment configuration form")
         button.clicked.connect(self.button_clicked)
         self.setCentralWidget(button)
 
     def button_clicked(self, s):
         print("click", s)
-        dlg = VectorEntryForm(self)
+        dlg = ExperimentConfigurationForm(self)
         print(dlg.exec())
 
 

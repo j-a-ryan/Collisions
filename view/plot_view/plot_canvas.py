@@ -28,7 +28,7 @@ class PlotVectorCanvas(FigureCanvas):
         # Get the lab point/vector and the rest/origin vector.
         # lab_vec = vectors.get_lab_vector() # needs box, not circle.
         # rest_vec = vectors.get_rest_vector() # By definition/stipulation at origin [0,0,0]
-        index_of_origin_vector = collision.get_id_of_origin_vector()
+        index_of_origin_vector = 0#collision.get_id_of_origin_vector()
         vectors = collision.get_spacial_vectors_xyz()
         origin = [0, 0, 0]  # same as rest_vec, actually
 

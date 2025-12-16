@@ -1,5 +1,3 @@
-
-
 from abc import ABC, abstractmethod
 import math
 import numpy as np
@@ -20,79 +18,38 @@ class MatrixConfigurationData():
     most likely in a subclass. If a new value is likely to be used again, a
     setter and getter for it might be added, instead.
     """
-    def __init__(self, **kwargs):
-        self.data_dict = {}
-        for key, val in kwargs.items():
-            self.set_value(key, val)
+    def __init__(self):
+        self.rest_frame_vector = None
+        self.velocity_of_rest_frame = None
+        self.vector_to_be_transformed = None
+        self.vector_pretreatment_function = lambda vector: vector
+        self.vector_posttreatment_function = lambda vector: vector
 
+    @abstractmethod
     def calculate_calculated_values(self):
         """
         To be overridden and implemented by any class requiring
         calculated values to be calculated only after ensuring
         that multiple values required for the calculation have been
         set. Fire this method after setting the appropriate values.
-        
+        TODO: There may be some calculations that can occur here, such that
+        the @abstractmethod flag may be removed.
         """
         pass
-
-    def set_value(self, key, value):
-        """
-        For setting custom/user-defined values that aren't 
-        already presented by any of the class's setter
-        methods. User may instead create getter/setter for any
-        such value if it is likely to be commonly used. Subclassing
-        this class is a similar option.
-        
-        :param key: Custom value's name/key.
-        :param value: The custom value
-        """
-        self.data_dict[key] = value
-
-    def set_rest_frame_vector(self, rest_frame_vector):
-        """
-        Set the vector of the particle to whose rest frame
-        transformation is to be done.
-        
-        :param rest_frame_vector: The vector of the particle to whose rest frame
-        transformation is to be done
-        """
-        self.data_dict["rest_frame_vector"] = rest_frame_vector
-    
-    def get_rest_frame_vector(self):
-        return self.data_dict["rest_frame_vector"]
-    
-    def set_velocity_of_rest_frame(self, velocity_of_rest_frame):
-        """
-        The rest frame to which we are transforming other vectors 
-        has this velocity relative to the frame in which the vectors 
-        to be transformed have their values.
-        
-        :param velocity_of_rest_frame: velocity of the rest frame to which
-        transformations will be made
-        """
-        self.velocity_of_rest_frame = velocity_of_rest_frame
-    
-    def get_velocity_of_rest_frame(self):
-        return self.velocity_of_rest_frame
-    
-    def set_vector_to_be_transformed(self, vector_to_be_transformed):
-        """
-        Set the vector that will be transformed.
-        
-        :param rest_frame_vector: The vector of the particle to whose rest frame
-        transformation is to be done
-        """
-        self.data_dict["vector_to_be_transformed"] = vector_to_be_transformed
-    
-    def get_vector_to_be_transformed(self):
-        return self.data_dict["vector_to_be_transformed"]
-
 
 class FourVectorTransformationMatrix(ABC):
     
     def __init__(self, matrix_configuration_data: MatrixConfigurationData):
         self.initialize_parameters_to_default()
+
+        # It is here that we run the data object's calculations because we have 
+        # ensured a that all the non-calculated values have been set by this point
+        matrix_configuration_data.calculate_calculated_values()
+        self.vector_pretreatment_function = matrix_configuration_data.vector_pretreatment_function
+        self.vector_posttreatment_function = matrix_configuration_data.vector_posttreatment_function
         self.set_up_matrix(matrix_configuration_data=matrix_configuration_data)
+
+        
 
     def initialize_parameters_to_default(self):
         """
@@ -126,7 +83,7 @@ class FourVectorTransformationMatrix(ABC):
     # def transform(self, matrix_configuration_data: MatrixConfigurationData, vector_to_be_transformed):
     #     """
     #     Sets up matrix and applies it to the vector_to_be_transformed. For use
-    #     in cases in which matrix is to be set up especially for the matrix to be
+    #     in cases in which matrix is to be set up especially for the vector to be
     #     transformed and then discarded, rather than reused on other vectors to be 
     #     transformed. For the latter situation, users should call  
         
@@ -157,12 +114,19 @@ class FourVectorTransformationMatrix(ABC):
     # To be called by other methods in this class, in particular transform(),
     # which is the public method.
     def transform(self, four_vector):
-        return self.matrix @ four_vector
+        four_vector_for_matrix_to_operate_on = self.vector_pretreatment_function(four_vector) # Pre-treatment
+        # print("mink: " + str(four_vector))
+        # print("lcc: " + str(four_vector_for_matrix_to_operate_on))
+        transformed_vector = self.matrix @ four_vector_for_matrix_to_operate_on # Transformation
+        transformed_vector_after_posttreatment = self.vector_posttreatment_function(transformed_vector) # Post-treatment
+        # print("transformed " + str(transformed_vector))
+        # print("transformed posttreatment " + str(transformed_vector_after_posttreatment))
+        return transformed_vector_after_posttreatment
     
 
 class IdentityMatrix(FourVectorTransformationMatrix):
     def __init__(self, matrix_configuration_data: MatrixConfigurationData):
-        super().__init__(matrix_configuration_data)
+        super().__init__(matrix_configuration_data=MatrixConfigurationData()) # Pass in dummy/skeletal config data.
 
     def _set_member_values(self, matrix_configuration_data: MatrixConfigurationData):
         pass # Do no calculations, leave the default values, which are identity matrix.

@@ -47,8 +47,6 @@ class PlotQFrame(QFrame):
         self.canvas.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         inner_layout.addWidget(self.canvas)
 
-        # self.plot([[3, 4, 5], [5, 3, 3]])
-
     def plot(self, vectors):
         self.vectors = vectors
         self.canvas.plot(vectors)
