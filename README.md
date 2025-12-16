@@ -13,3 +13,6 @@ Uses <a href="https://github.com/anntzer/mplcursors">Mplcursors</a>
 Uses <a href="https://github.com/niklashenning/pyqt-advanced-slider">PyQt Advanced Slider</a>
 
 Uses <a href="https://github.com/5yutan5/PyQtDarkTheme">PyQtDarkTheme</a>
+
+## Current Design Status
+Very rough prototype, offering only a use case or two, currently being built for physicist to evaluate. This prototype should be finished in early January, 2026. If the project goes forward from there, it will need lots of refactoring into good MVC object-oriented design.
