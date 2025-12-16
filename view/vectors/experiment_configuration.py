@@ -27,7 +27,6 @@ class ExperimentConfigurationForm(QDialog):
         z_label = QLabel("Z")
         # z_label.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         pt_label = QLabel("Particle Type")
-        # pt_label.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.grid_layout.addWidget(t_label, 0, 1, alignment=(Qt.AlignCenter | Qt.AlignTop))
         self.grid_layout.addWidget(x_label, 0, 2, alignment=(Qt.AlignCenter | Qt.AlignTop))
         self.grid_layout.addWidget(y_label, 0, 3, alignment=(Qt.AlignCenter | Qt.AlignTop))
@@ -37,6 +36,7 @@ class ExperimentConfigurationForm(QDialog):
         self.vectors_qvbox_layout.addLayout(self.grid_layout)
 
         self.add_row_button = QPushButton("Add Row (max 4)")
+        # self.add_row_button.setCheckable(False) TODO: why is button dark until pressed and then always bright? Fix
         self.add_row_button.clicked.connect(self.add_new_row)
         self.vectors_qvbox_layout.addWidget(self.add_row_button)
 
@@ -114,8 +114,6 @@ class ExperimentConfigurationForm(QDialog):
         self.cancel_button = QPushButton("Cancel")
         self.cancel_button.clicked.connect(self.close)
 
-        # self.bottom_qvbox_layout = QVBoxLayout()
-        # self.bottom_qvbox_layout.setAlignment(Qt.AlignmentFlag.AlignBottom)
         self.submit_buttons_layout = QHBoxLayout()
         self.submit_buttons_layout.setAlignment(Qt.AlignmentFlag.AlignRight)
         self.submit_buttons_layout.addWidget(self.check_button)
@@ -131,22 +129,16 @@ class ExperimentConfigurationForm(QDialog):
     def add_new_row(self):
         self.row_count += 1
         label = QLabel(f"{self.row_count - 1}:")
-        # label.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         time_field = QLineEdit()
-        # time_field.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         x_field = QLineEdit()
-        # x_field.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         y_field = QLineEdit()
-        # y_field.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         z_field = QLineEdit()
-        # z_field.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.grid_layout.addWidget(label, self.row_count, 0, alignment=Qt.AlignTop)
         self.grid_layout.addWidget(time_field, self.row_count, 1, alignment=Qt.AlignTop)
         self.grid_layout.addWidget(x_field, self.row_count, 2, alignment=Qt.AlignTop)
         self.grid_layout.addWidget(y_field, self.row_count, 3, alignment=Qt.AlignTop)
         self.grid_layout.addWidget(z_field, self.row_count, 4, alignment=Qt.AlignTop)
         particle_combo_box = QComboBox()
-        # particle_combo_box.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         particle_combo_box.setEditable(True)
         particle_combo_box.addItem("e+")
         particle_combo_box.addItem("π")
@@ -170,75 +162,6 @@ class ExperimentConfigurationForm(QDialog):
         msg.setIcon(QMessageBox.Icon.Information)
         msg.setStandardButtons(QMessageBox.StandardButton.Ok)
         msg.exec()
+        
     def submit(self):
         self.done(1) # self.close() instead? See the plot2d form, same question
-
-# class ExperimentConfigurationForm(QDialog):
-
-#     def __init__(self, parent):
-#         super().__init__(parent)
-#         self.setWindowTitle("Experiment Configuration")
-#         # self.setGeometry(100, 100, 1100, 700)
-#         self.setFixedSize(1100, 700)
-
-#         self.main_layout = QVBoxLayout()
-#         self.form_layout = QFormLayout()
-        
-#         header_layout = QHBoxLayout()
-#         time_name = QLabel('t')
-#         x_name = QLabel('X')
-#         y_name = QLabel('Y')
-#         z_name = QLabel('Z')
-#         particle_name = QLabel('Particle Type')
-#         # time_name.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-#         # x_name.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-#         # y_name.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-#         # z_name.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-#         dud = QLabel("     ")
-#         header_layout.addWidget(time_name, stretch=1)
-#         header_layout.addWidget(x_name, stretch=1)
-#         header_layout.addWidget(y_name, stretch=1)
-#         header_layout.addWidget(z_name, stretch=1)
-#         header_layout.addWidget(particle_name, stretch=1)
-#         self.form_layout.addRow(QLabel("Enter 4-momentum vector"))
-#         self.form_layout.addRow(dud, header_layout)
-
-#         self.main_layout.addLayout(self.form_layout)
-
-#         self.row_count = 0
-#         self.add_new_row()
-
-#         self.add_row_button = QPushButton("Add Row")
-#         self.add_row_button.clicked.connect(self.add_new_row)
-#         self.test_button = QPushButton("Test")
-#         self.test_button.clicked.connect(self.test)
-
-#         self.main_layout.addWidget(self.add_row_button)
-#         self.main_layout.addWidget(self.test_button)
-
-#         self.setLayout(self.main_layout)
-
-#     def add_new_row(self):
-#         self.row_count += 1
-#         label = QLabel(f"{self.row_count}:")
-#         time_field = QLineEdit()
-#         x_field = QLineEdit()
-#         y_field = QLineEdit()
-#         z_field = QLineEdit()
-#         row_layout = QHBoxLayout()
-#         row_layout.addWidget(time_field)
-#         row_layout.addWidget(x_field)
-#         row_layout.addWidget(y_field)
-#         row_layout.addWidget(z_field)
-#         particle_combo_box = QComboBox()
-#         particle_combo_box.setEditable(True)
-#         particle_combo_box.addItem("e+")
-#         particle_combo_box.addItem("π")
-#         particle_combo_box.addItem("p")
-#         particle_combo_box.setMinimumContentsLength(6)
-#         particle_combo_box.setCurrentIndex(-1)
-#         row_layout.addWidget(particle_combo_box)
-#         self.form_layout.addRow(label, row_layout)
-
-#     def test(self):
-#         self.done(1) # self.close() instead? See the plot2d form, same question
