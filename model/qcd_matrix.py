@@ -48,7 +48,7 @@ class LightConeRapidityMatrix(FourVectorTransformationMatrix):
         self.m12 = -math.exp(-delta) * rest_frame_vector_x / (math.sqrt(2) * rest_frame_vector_xyz)
         self.m13 = -math.exp(-delta) * rest_frame_vector_y / (math.sqrt(2) * rest_frame_vector_xyz)
         self.m20 = -((rest_frame_vector_x / (math.sqrt(2) * rest_frame_vector_xz)) * f) - (f_hat * rest_frame_vector_y * rest_frame_vector_z / (math.sqrt(2) * rest_frame_vector_xyz * rest_frame_vector_xz))
-        self.m21 = (rest_frame_vector_x / (math.sqrt(2) * rest_frame_vector_xz) * f) + (f_hat * rest_frame_vector_y * rest_frame_vector_z / (math.sqrt(2) * rest_frame_vector_xyz * rest_frame_vector_xz))
+        self.m21 = -self.m20 # (rest_frame_vector_x / (math.sqrt(2) * rest_frame_vector_xz) * f) + (f_hat * rest_frame_vector_y * rest_frame_vector_z / (math.sqrt(2) * rest_frame_vector_xyz * rest_frame_vector_xz))
         self.m22 = ((rest_frame_vector_z / rest_frame_vector_xz) * f) - (f_hat * rest_frame_vector_y * rest_frame_vector_z / (rest_frame_vector_xyz * rest_frame_vector_xz))
         self.m23 = f_hat * rest_frame_vector_xz / rest_frame_vector_xyz
         self.m30 = ((rest_frame_vector_x / (math.sqrt(2) * rest_frame_vector_xz)) * f_hat) - (f * rest_frame_vector_y * rest_frame_vector_z / (math.sqrt(2) * rest_frame_vector_xyz * rest_frame_vector_xz))
@@ -94,17 +94,18 @@ class LightConeRapidityMatrixConfigurationData(MatrixConfigurationData):
         self.R_plus = 1 + (self.rest_frame_vector[3] / self.rest_frame_vector_xyz_magnitude)
         self.R_minus = 1 - (self.rest_frame_vector[3] / self.rest_frame_vector_xyz_magnitude)
         self.YLx = (self.rest_frame_vector[3] * self.vector_to_be_transformed[1] - self.rest_frame_vector[1]
-                    * self.vector_to_be_transformed[2]) / self.rest_frame_vector_xz_magnitude
+                    * self.vector_to_be_transformed[3]) / self.rest_frame_vector_xz_magnitude
 
         self.YLy = (math.pow(self.rest_frame_vector[1], 2) * self.vector_to_be_transformed[2] - self.rest_frame_vector[1] * self.rest_frame_vector[2] * self.vector_to_be_transformed[1] +
                     self.rest_frame_vector[3] * (self.rest_frame_vector[3] * self.vector_to_be_transformed[2] - self.rest_frame_vector[2] * self.vector_to_be_transformed[3])) / (self.rest_frame_vector_xz_magnitude * self.rest_frame_vector_xyz_magnitude)
 
-        self.f = (self.YLx / self.YLy) / math.sqrt(1 + math.pow((self.YLx / self.YLy), 2))
+        self.f = (self.YLx / self.YLy) / math.sqrt(1 + math.pow(self.YLx / self.YLy, 2))
         self.f_hat = math.sqrt(1 - math.pow(self.f, 2))
         self.delta = (math.log(self.exp_2yT) / 2) - (math.log(self.exp_2yr) / 2)
 
         # In the unlikely event user has turned off the normal conversions, for instance
-        # for unit testing, we eliminate them here:
+        # for unit testing, we eliminate them here (or put them back in if the user has turned 
+        # them back on.):
         if self.convert_incoming_vector_to_lcc is False:
             self.vector_pretreatment_function = lambda vector: vector
         else:
