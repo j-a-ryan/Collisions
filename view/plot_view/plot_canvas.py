@@ -108,7 +108,7 @@ class PlotVectorCanvas(FigureCanvas):
         if event.artist == self.scatter:  # Ensure the event is from our scatter plot
             ind = event.ind  # Indices of the clicked points
             index = ind[0]
-            print(f"Clicked on point(s) with index(es): {index}, type " + str(type(index)))
+            # print(f"Clicked on point(s) with index(es): {index}, type " + str(type(index)))
             self.experiment_controller.plot_transformation(index)
         
 

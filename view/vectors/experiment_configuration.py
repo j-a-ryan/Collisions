@@ -166,14 +166,18 @@ class ExperimentConfigurationForm(QDialog):
         msg_box = QMessageBox(self)
         msg_box.setWindowTitle("Selected Matrix")
 
-        selected = self.matrix_type_combo_box.currentText()
-        file = self.matrix_view_lookup[selected]
-
-        pixmap = QPixmap(file)
-        pixmap = pixmap.scaled(400, 400, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
-        msg_box.setIconPixmap(pixmap)
-        msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
-        msg_box.exec()
+        selected_matrix_name = self.matrix_type_combo_box.currentText()
+        if selected_matrix_name is not None and selected_matrix_name != "":
+            if selected_matrix_name in self.matrix_view_lookup:
+                file = self.matrix_view_lookup[selected_matrix_name]
+                pixmap = QPixmap(file)
+                pixmap = pixmap.scaled(400, 400, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+                msg_box.setIconPixmap(pixmap)
+            else:
+                msg_box.setText("Image of " + selected_matrix_name)
+            msg_box.setText("Image of " + selected_matrix_name)
+            msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msg_box.exec()
 
 
     def check_parameters(self):
