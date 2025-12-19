@@ -11,7 +11,7 @@ class GeneralTransformationMatrix(FourVectorTransformationMatrix):
         self.set_up_matrix(matrix_configuration_data=matrix_configuration_data)
 
     def _set_member_values(self, matrix_configuration_data: MatrixConfigurationData):
-        rest_frame_vector = matrix_configuration_data.get_rest_frame_vector()
+        rest_frame_vector = matrix_configuration_data.rest_frame_vector
         # Calculate the three components of beta: beta_x, beta_y, beta_z
         self.beta_x = rest_frame_vector[1] / rest_frame_vector[0]
         self.beta_y = rest_frame_vector[2] / rest_frame_vector[0]

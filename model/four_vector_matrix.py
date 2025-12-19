@@ -115,8 +115,8 @@ class FourVectorTransformationMatrix(ABC):
     # which is the public method.
     def transform(self, four_vector):
         four_vector_for_matrix_to_operate_on = self.vector_pretreatment_function(four_vector) # Pre-treatment
-        # print("mink: " + str(four_vector))
-        # print("lcc: " + str(four_vector_for_matrix_to_operate_on))
+        # print("pretreat: " + str(four_vector))
+        # print("...result: " + str(four_vector_for_matrix_to_operate_on))
         transformed_vector = self.matrix @ four_vector_for_matrix_to_operate_on # Transformation
         transformed_vector_after_posttreatment = self.vector_posttreatment_function(transformed_vector) # Post-treatment
         # print("transformed " + str(transformed_vector))
@@ -136,7 +136,7 @@ class GalileanTransformationMatrix(FourVectorTransformationMatrix):
         super().__init__(matrix_configuration_data)
 
     def _set_member_values(self, matrix_configuration_data: MatrixConfigurationData):
-        rest_frame_vector = matrix_configuration_data.get_rest_frame_vector()
+        rest_frame_vector = matrix_configuration_data.rest_frame_vector
         self.m10 = -rest_frame_vector[1] / rest_frame_vector[0]
         self.m20 = -rest_frame_vector[2] / rest_frame_vector[0]
         self.m30 = -rest_frame_vector[3] / rest_frame_vector[0]

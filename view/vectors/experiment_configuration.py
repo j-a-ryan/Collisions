@@ -1,31 +1,18 @@
 from PySide6.QtWidgets import QComboBox, QGridLayout, QRadioButton, QSizePolicy, QMessageBox, QVBoxLayout, QHBoxLayout, QFrame, QLineEdit, QPushButton, QDialog, QLabel
-from PySide6.QtGui import Qt
+from PySide6.QtGui import Qt, QPixmap
 class ExperimentConfigurationForm(QDialog):
 
     def __init__(self, parent):
         super().__init__(parent)
         self.setWindowTitle("Experiment Configuration")
-        # self.setGeometry(100, 100, 1100, 700)
-        # self.resize(300, 700)
         self.vectors_qvbox_layout = QVBoxLayout()
         self.vectors_qvbox_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.grid_layout = QGridLayout()
-        # self.grid_layout.setRowStretch(0, 1)
-        # self.grid_layout.setRowStretch(1, 1)
-        # self.grid_layout.setRowStretch(2, 1)
-        # self.grid_layout.setRowStretch(3, 1)
-        # self.grid_layout.setRowStretch(4, 1)
-        header_label = QLabel("Enter 4-momentum vector")
-        # header_label.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        # self.grid_layout.addWidget(header_label, 0, 1)
+        header_label = QLabel("Enter four-vector:")
         t_label = QLabel("t")
-        # t_label.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         x_label = QLabel("X")
-        # x_label.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         y_label = QLabel("Y")
-        # y_label.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         z_label = QLabel("Z")
-        # z_label.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         pt_label = QLabel("Particle Type")
         self.grid_layout.addWidget(t_label, 0, 1, alignment=(Qt.AlignCenter | Qt.AlignTop))
         self.grid_layout.addWidget(x_label, 0, 2, alignment=(Qt.AlignCenter | Qt.AlignTop))
@@ -72,11 +59,24 @@ class ExperimentConfigurationForm(QDialog):
         self.experiment_type_combo_box.addItem("e-p/e-A")
         self.experiment_type_combo_box.setMinimumContentsLength(5)
         self.experiment_type_combo_box.setCurrentIndex(-1)
-        self.experiment_type_combo_box_qvbox_layout = QVBoxLayout()
-        self.experiment_type_combo_box_qvbox_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.experiment_type_combo_box_qvbox_layout.addWidget(self.experiment_type_combo_box_label)
-        self.experiment_type_combo_box_qvbox_layout.addWidget(self.experiment_type_combo_box)
-
+        self.combo_box_qvbox_layout_exp_type_units = QVBoxLayout()
+        self.combo_box_qvbox_layout_exp_type_units.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.combo_box_qvbox_layout_exp_type_units.addWidget(self.experiment_type_combo_box_label)
+        self.combo_box_qvbox_layout_exp_type_units.addWidget(self.experiment_type_combo_box)
+        self.combo_box_qvbox_layout_exp_type_units.addStretch()
+        self.combo_box_qvbox_layout_exp_type_units2 = QVBoxLayout()
+        self.combo_box_qvbox_layout_exp_type_units2.setAlignment(Qt.AlignmentFlag.AlignBottom)
+        self.vector_units_combo_box_label = QLabel("Units:")
+        self.vector_units_combo_box = QComboBox()
+        self.vector_units_combo_box.setEditable(False)
+        self.vector_units_combo_box.addItem("m")
+        self.vector_units_combo_box.addItem("ss")
+        self.combo_box_qvbox_layout_exp_type_units2.addWidget(self.vector_units_combo_box_label)
+        self.combo_box_qvbox_layout_exp_type_units2.addWidget(self.vector_units_combo_box)
+        self.combo_box_qvbox_layout_exp_type_units_both = QVBoxLayout()
+        self.combo_box_qvbox_layout_exp_type_units_both.addLayout(self.combo_box_qvbox_layout_exp_type_units)
+        self.combo_box_qvbox_layout_exp_type_units_both.addLayout(self.combo_box_qvbox_layout_exp_type_units2)
+        
         self.matrix_type_combo_box_label = QLabel("Transformation Matrix:")
         self.matrix_type_combo_box = QComboBox()
         self.matrix_type_combo_box.setEditable(False)
@@ -93,8 +93,18 @@ class ExperimentConfigurationForm(QDialog):
         self.matrix_view_button = QPushButton("View Matrix")
         self.matrix_view_button.clicked.connect(self.view_matrix)
         self.matrix_type_combo_box_qvbox_layout.addWidget(self.matrix_view_button)
+        
+        self.vector_type_combo_box_label = QLabel("Four-Vector Type:")
+        self.vector_type_combo_box = QComboBox()
+        self.vector_type_combo_box.setEditable(False)
+        self.vector_type_combo_box.addItem("Location")
+        self.vector_type_combo_box.addItem("Velocity")
+        self.vector_type_combo_box.addItem("Momentum")
+        self.vector_type_combo_box.addItem("Energy-Momentum")
+        self.matrix_type_combo_box_qvbox_layout.addWidget(self.vector_type_combo_box_label)
+        self.matrix_type_combo_box_qvbox_layout.addWidget(self.vector_type_combo_box)
 
-        self.exp_type_qhbox.addLayout(self.experiment_type_combo_box_qvbox_layout)
+        self.exp_type_qhbox.addLayout(self.combo_box_qvbox_layout_exp_type_units_both)
         self.exp_type_qhbox.addLayout(self.matrix_type_combo_box_qvbox_layout)
 
         self.experiment_type_qhbox_layout.addWidget(self.experiment_type_frame)
@@ -111,6 +121,8 @@ class ExperimentConfigurationForm(QDialog):
         self.check_button.clicked.connect(self.check_parameters)
         self.submit_button = QPushButton("Submit")
         self.submit_button.clicked.connect(self.submit)
+        self.save_button = QPushButton("Save")
+        # self.save_button.clicked.connect(self.save)
         self.cancel_button = QPushButton("Cancel")
         self.cancel_button.clicked.connect(self.close)
 
@@ -118,6 +130,7 @@ class ExperimentConfigurationForm(QDialog):
         self.submit_buttons_layout.setAlignment(Qt.AlignmentFlag.AlignRight)
         self.submit_buttons_layout.addWidget(self.check_button)
         self.submit_buttons_layout.addWidget(self.submit_button)
+        self.submit_buttons_layout.addWidget(self.save_button)
         self.submit_buttons_layout.addWidget(self.cancel_button)
 
         self.main_layout = QVBoxLayout()
@@ -128,7 +141,7 @@ class ExperimentConfigurationForm(QDialog):
 
     def add_new_row(self):
         self.row_count += 1
-        label = QLabel(f"{self.row_count - 1}:")
+        label = QLabel(f"{self.row_count}:")
         time_field = QLineEdit()
         x_field = QLineEdit()
         y_field = QLineEdit()
@@ -146,13 +159,21 @@ class ExperimentConfigurationForm(QDialog):
         particle_combo_box.setMinimumContentsLength(6)
         particle_combo_box.setCurrentIndex(-1)
         self.grid_layout.addWidget(particle_combo_box, self.row_count, 5)
+
+    matrix_view_lookup = {"General Boost": "resources/GeneralBoost.png", "Momentum-Realignment Boost": "resources/LCC-RapidityBoost.png"}
         
     def view_matrix(self):
-        msg = QMessageBox(self)
-        msg.setWindowTitle("Selected Matrix")
-        msg.setText("<image of matrix>")
-        msg.setStandardButtons(QMessageBox.StandardButton.Ok)
-        msg.exec()
+        msg_box = QMessageBox(self)
+        msg_box.setWindowTitle("Selected Matrix")
+
+        selected = self.matrix_type_combo_box.currentText()
+        file = self.matrix_view_lookup[selected]
+
+        pixmap = QPixmap(file)
+        pixmap = pixmap.scaled(400, 400, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+        msg_box.setIconPixmap(pixmap)
+        msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msg_box.exec()
 
 
     def check_parameters(self):

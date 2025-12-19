@@ -47,7 +47,7 @@ class PlotVectorCanvas(FigureCanvas):
             if i != index_of_origin_vector:
                 self.ax.quiver(origin[0], origin[1], origin[2], # Starting point
                             vectors[i][0], vectors[i][1], vectors[i][2], # Vector components
-                            color='black', arrow_length_ratio=0.06, linewidths=0.5)  # Customize color and arrow size
+                            color='black', arrow_length_ratio=0.0, linewidths=0.7)  # Customize color and arrow size
             self.ax.scatter(vectors[i][0], vectors[i][1], vectors[i][2], marker=f'${point_characters[i]}$', s=90, color='black')
         self.scatter = self.ax.scatter(arr1, arr2, arr3, facecolors='none', edgecolors=colors, marker='o', s=160, picker=True, pickradius=5) 
         # Plot lab point

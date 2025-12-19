@@ -15,8 +15,9 @@ class ExperimentController():
 
     def plot_current_experiment(self):
         self.experiment = Experiment()
-        # collision = create_collision([[1, 0, 0, 0], [1, 3, 4, 5], [1, 5, 3, 3]], 0)
-        collision = create_collision([[1, 0, 0, 0], [10, 1, 4, 1], [7, 1, 0, 5]], 0)
+        collision = create_collision([[1, 0, 0, 0], [1, 3, 4, 5], [1, 5, 3, 3]], 0)
+        # collision = create_collision([[1, 0, 0, 0], [10, 1, 4, 1], [7, 1, 0, 5]], 0)
+        # collision = create_collision([[10, 1, 4, 1], [7, 1, 0, 5]], 0)
         self.experiment.set_lab_collision(collision)
         # self.experiment.set_lab_collision([[0, 0, 0], [3, 4, 5], [5, 3, 3]])
         self.view.plot_experiment_vectors(self.get_experiment_vectors())
