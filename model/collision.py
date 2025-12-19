@@ -39,10 +39,25 @@ class Collision():
     def get_vectors(self):
         return self.vectors
     
-    def get_spacial_vectors_xyz(self):
+    def get_spatial_vectors_xyz(self, round_near_zeros_to_zero=True):
+        """
+        Copy the x, y, z values into fresh array. Presumed to be for
+        plotting, the near-zeros (e.g. 1e-16) should be rounded to zero
+        so that the 1e-16 doesn't show up at top of Matplotlib plot
+        """
         np_arr = np.array(self.vectors)
-        spacial_vectors = np_arr[:, -3:].tolist()
-        return spacial_vectors
+        spatial_vectors_to_return = spatial_vectors = np_arr[:, -3:].tolist()
+        if round_near_zeros_to_zero:
+            tolerance = 1e-5 # Could be made a parameter of the method
+            
+            np_arr = np.array(spatial_vectors)
+            np_arr[np.abs(np_arr) < tolerance] = 0
+            spatial_vectors_to_return = np_arr
+            # This needs debugging, or just keep using the np way:
+            # for i in range(len(spatial_vectors)):
+            # rounded_spatial_vectors = [0 if abs(x) < tolerance else x for x in spatial_vectors]
+            # spatial_vectors_to_return = rounded_spatial_vectors
+        return spatial_vectors_to_return
     
 def create_collision(vectors, id_of_origin_vector):
     collision = Collision()

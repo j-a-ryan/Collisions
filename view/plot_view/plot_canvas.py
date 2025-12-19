@@ -29,7 +29,7 @@ class PlotVectorCanvas(FigureCanvas):
         # lab_vec = vectors.get_lab_vector() # needs box, not circle.
         # rest_vec = vectors.get_rest_vector() # By definition/stipulation at origin [0,0,0]
         index_of_origin_vector = 0#collision.get_id_of_origin_vector()
-        vectors = collision.get_spacial_vectors_xyz()
+        vectors = collision.get_spatial_vectors_xyz()
         origin = [0, 0, 0]  # same as rest_vec, actually
 
         arr1 = []
@@ -41,7 +41,8 @@ class PlotVectorCanvas(FigureCanvas):
             arr3.append(vectors[i][2])
         
         point_characters = ['L', 'h1', 'h2']
-        colors = ['black', 'black', 'black']
+        edgecolors = ['black', 'black', 'black']
+        facecolorscolors = ['lightcyan', 'tomato', 'aquamarine']
         
         for i in range(len(vectors)):
             if i != index_of_origin_vector:
@@ -49,7 +50,7 @@ class PlotVectorCanvas(FigureCanvas):
                             vectors[i][0], vectors[i][1], vectors[i][2], # Vector components
                             color='black', arrow_length_ratio=0.0, linewidths=0.7)  # Customize color and arrow size
             self.ax.scatter(vectors[i][0], vectors[i][1], vectors[i][2], marker=f'${point_characters[i]}$', s=90, color='black')
-        self.scatter = self.ax.scatter(arr1, arr2, arr3, facecolors='none', edgecolors=colors, marker='o', s=160, picker=True, pickradius=5) 
+        self.scatter = self.ax.scatter(arr1, arr2, arr3, facecolors='none', edgecolors=edgecolors, marker='o', s=160, picker=True, pickradius=5)
         # Plot lab point
         # self.ax.scatter(0, 0, 0, marker='s', s=150, edgecolors='black', facecolors='white')
         # self.ax.scatter(0, 0, 0, marker='$L$', s=50, color='black')

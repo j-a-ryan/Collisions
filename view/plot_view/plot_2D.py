@@ -2,7 +2,7 @@ import sys
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qtagg import FigureCanvas
-from PySide6.QtWidgets import QDialog, QDialogButtonBox, QVBoxLayout, QPushButton
+from PySide6.QtWidgets import QDialog, QSizePolicy, QVBoxLayout, QPushButton
 from PySide6.QtGui import Qt
 import numpy as np
 
@@ -29,7 +29,7 @@ class PlotVectorCanvas2D(FigureCanvas):
 
     def plot(self, collision, plot_2d_type):
 
-        vectors = collision.get_spacial_vectors_xyz()
+        vectors = collision.get_spatial_vectors_xyz()
         index_of_origin_vector = collision.get_id_of_origin_vector()
         origin = [0, 0]
 
@@ -44,17 +44,15 @@ class PlotVectorCanvas2D(FigureCanvas):
 
         # Plot the vector using quiver
         for i in range(len(vectors)):
-            if i != index_of_origin_vector:
-                self.ax.quiver(origin[0], origin[1], xs[i], ys[i], angles='xy',
-                    scale_units='xy', scale=1, color='black', width=0.003, linewidths=0.5)
+            # if i != index_of_origin_vector:
+            self.ax.quiver(origin[0], origin[1], xs[i], ys[i], angles='xy',
+                scale_units='xy', scale=1, color='black', width=0.003, linewidths=0.5)
             self.scatter = self.ax.scatter(xs[i], ys[i], marker=f'${point_characters[i]}$', s=90, color='black') 
         self.ax.scatter(xs, ys, facecolors='none', edgecolors=colors, marker='o', s=160)
 
+        # These are not literally x an y label but refer to horizontal and vertical axes, respectively.
         self.ax.set_xlabel(self.axis_labels[indices_to_plot[0]], fontsize=10)
-        self.ax.set_ylabel(self.axis_labels[indices_to_plot[1]], fontsize=10)
-
-        # self.ax.set_xlim([-1, 6]) TODO: Do programmatically
-        # self.ax.set_ylim([-1, 6])
+        self.ax.set_ylabel(self.axis_labels[indices_to_plot[1]], fontsize=10, rotation=0)
 
 class Plot2DPopup(QDialog):
     
@@ -64,7 +62,7 @@ class Plot2DPopup(QDialog):
         super().__init__(parent)
         self.experiment_controller = experiment_controller
         self.plot_status = plot_status
-        self.resize(200, 200)
+        self.resize(400, 400)
         plot_2d_type = button.text()
         self.button = button
         self.setWindowTitle(f"{plot_2d_type} {plot_status}")
@@ -72,6 +70,7 @@ class Plot2DPopup(QDialog):
         if vectors is not None:
             canvas.plot(vectors, plot_2d_type)
         layout = QVBoxLayout()
+        # canvas.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         layout.addWidget(canvas)
         # layout.addWidget(cancel_button, alignment=Qt.AlignmentFlag.AlignRight)
         # cancel_button.clicked.connect(self.closeEvent)

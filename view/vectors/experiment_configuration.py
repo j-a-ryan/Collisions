@@ -14,11 +14,13 @@ class ExperimentConfigurationForm(QDialog):
         y_label = QLabel("Y")
         z_label = QLabel("Z")
         pt_label = QLabel("Particle Type")
+        speed_label = QLabel("Speed")
         self.grid_layout.addWidget(t_label, 0, 1, alignment=(Qt.AlignCenter | Qt.AlignTop))
         self.grid_layout.addWidget(x_label, 0, 2, alignment=(Qt.AlignCenter | Qt.AlignTop))
         self.grid_layout.addWidget(y_label, 0, 3, alignment=(Qt.AlignCenter | Qt.AlignTop))
         self.grid_layout.addWidget(z_label, 0, 4, alignment=(Qt.AlignCenter | Qt.AlignTop))
         self.grid_layout.addWidget(pt_label, 0, 5, alignment=(Qt.AlignCenter | Qt.AlignTop))
+        self.grid_layout.addWidget(speed_label, 0, 6, alignment=(Qt.AlignCenter | Qt.AlignTop))
         self.vectors_qvbox_layout.addWidget(header_label)
         self.vectors_qvbox_layout.addLayout(self.grid_layout)
 
@@ -159,23 +161,24 @@ class ExperimentConfigurationForm(QDialog):
         particle_combo_box.setMinimumContentsLength(6)
         particle_combo_box.setCurrentIndex(-1)
         self.grid_layout.addWidget(particle_combo_box, self.row_count, 5)
+        speed_field = QLineEdit()
+        self.grid_layout.addWidget(speed_field, self.row_count, 6, alignment=Qt.AlignTop)
 
     matrix_view_lookup = {"General Boost": "resources/GeneralBoost.png", "Momentum-Realignment Boost": "resources/LCC-RapidityBoost.png"}
         
     def view_matrix(self):
         msg_box = QMessageBox(self)
-        msg_box.setWindowTitle("Selected Matrix")
 
         selected_matrix_name = self.matrix_type_combo_box.currentText()
         if selected_matrix_name is not None and selected_matrix_name != "":
+            msg_box.setWindowTitle(selected_matrix_name + " matrix")
             if selected_matrix_name in self.matrix_view_lookup:
                 file = self.matrix_view_lookup[selected_matrix_name]
                 pixmap = QPixmap(file)
-                pixmap = pixmap.scaled(400, 400, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+                pixmap = pixmap.scaled(600, 600, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
                 msg_box.setIconPixmap(pixmap)
             else:
                 msg_box.setText("Image of " + selected_matrix_name)
-            msg_box.setText("Image of " + selected_matrix_name)
             msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
             msg_box.exec()
 

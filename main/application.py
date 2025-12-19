@@ -14,7 +14,10 @@ class MainWindow(QMainWindow):
     def __init__(self, app):
         super().__init__()
         self.initial_pos = None
-        self.resize(1200, 700)
+        
+        # Moderately large size, otherwise maximize (at end of __init__())
+        # self.resize(1200, 700)
+
 # FCFFE5 FAFCD4 FCFFD9
         # qdarktheme.setup_theme(custom_colors={
         #     "[light]": {
@@ -41,6 +44,9 @@ class MainWindow(QMainWindow):
         central_widget.setObjectName("Container")
         central_widget.setLayout(centra_widget_layout)
         self.setCentralWidget(central_widget)
+
+        # This call to maximize at launch has to happen after set up, else crash.
+        self.showMaximized()
     
     def changeEvent(self, event):
         if event.type() == QEvent.Type.WindowStateChange:
