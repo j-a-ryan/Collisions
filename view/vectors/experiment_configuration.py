@@ -1,5 +1,8 @@
 from PySide6.QtWidgets import QComboBox, QGridLayout, QRadioButton, QSizePolicy, QMessageBox, QVBoxLayout, QHBoxLayout, QFrame, QLineEdit, QPushButton, QDialog, QLabel
 from PySide6.QtGui import Qt, QPixmap
+
+from view.vectors.validation import VectorValidation
+from view.vectors.vector_components import VectorMemberField
 class ExperimentConfigurationForm(QDialog):
 
     def __init__(self, parent):
@@ -24,8 +27,7 @@ class ExperimentConfigurationForm(QDialog):
         self.vectors_qvbox_layout.addWidget(header_label)
         self.vectors_qvbox_layout.addLayout(self.grid_layout)
 
-        self.add_row_button = QPushButton("Add Row (max 4)")
-        # self.add_row_button.setCheckable(False) TODO: why is button dark until pressed and then always bright? Fix
+        self.add_row_button = QPushButton("Add New Row (max 4)")
         self.add_row_button.clicked.connect(self.add_new_row)
         self.vectors_qvbox_layout.addWidget(self.add_row_button)
 
@@ -116,9 +118,6 @@ class ExperimentConfigurationForm(QDialog):
         self.qhbox_layout_1.addLayout(self.experiment_type_qhbox_layout)
         self.qhbox_layout_1.addLayout(self.vectors_qvbox_layout)
 
-        self.row_count = 0
-        self.add_new_row()
-        
         self.check_button = QPushButton("Check Parameters")
         self.check_button.clicked.connect(self.check_parameters)
         self.submit_button = QPushButton("Submit")
@@ -127,6 +126,12 @@ class ExperimentConfigurationForm(QDialog):
         # self.save_button.clicked.connect(self.save)
         self.cancel_button = QPushButton("Cancel")
         self.cancel_button.clicked.connect(self.close)
+
+        self.disable_buttons()
+        self.vector_validation = VectorValidation(self.add_row_button, self.save_button, self.submit_button, self.check_button)
+        
+        self.row_count = 0
+        self.add_new_row()
 
         self.submit_buttons_layout = QHBoxLayout()
         self.submit_buttons_layout.setAlignment(Qt.AlignmentFlag.AlignRight)
@@ -141,13 +146,20 @@ class ExperimentConfigurationForm(QDialog):
         self.main_layout.addLayout(self.submit_buttons_layout)
         self.setLayout(self.main_layout)
 
+    def disable_buttons(self):
+        self.add_row_button.setEnabled(False)
+        self.submit_button.setEnabled(False)
+        self.check_button.setEnabled(False)
+        self.save_button.setEnabled(False)
+
     def add_new_row(self):
         self.row_count += 1
         label = QLabel(f"{self.row_count}:")
-        time_field = QLineEdit()
-        x_field = QLineEdit()
-        y_field = QLineEdit()
-        z_field = QLineEdit()
+        time_field = VectorMemberField(self.vector_validation)
+        x_field = VectorMemberField(self.vector_validation)
+        y_field = VectorMemberField(self.vector_validation)
+        z_field = VectorMemberField(self.vector_validation)
+        
         self.grid_layout.addWidget(label, self.row_count, 0, alignment=Qt.AlignTop)
         self.grid_layout.addWidget(time_field, self.row_count, 1, alignment=Qt.AlignTop)
         self.grid_layout.addWidget(x_field, self.row_count, 2, alignment=Qt.AlignTop)
@@ -161,8 +173,11 @@ class ExperimentConfigurationForm(QDialog):
         particle_combo_box.setMinimumContentsLength(6)
         particle_combo_box.setCurrentIndex(-1)
         self.grid_layout.addWidget(particle_combo_box, self.row_count, 5)
-        speed_field = QLineEdit()
+        speed_field = VectorMemberField(self.vector_validation)
         self.grid_layout.addWidget(speed_field, self.row_count, 6, alignment=Qt.AlignTop)
+
+        self.vector_validation.add_field(time_field, x_field, y_field, z_field, speed_field)
+        self.disable_buttons()
 
     matrix_view_lookup = {"General Boost": "resources/GeneralBoost.png", "Momentum-Realignment Boost": "resources/LCC-RapidityBoost.png"}
         
