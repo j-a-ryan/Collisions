@@ -2,7 +2,8 @@ from PySide6.QtWidgets import QMainWindow, QMenu, QMenuBar, QVBoxLayout, QWidget
 from PySide6.QtGui import QAction
 import qdarktheme
 
-from view.vectors.experiment_configuration import ExperimentConfigurationForm
+import config
+from view.experiment.experiment_configuration import ExperimentConfigurationForm
 
 
 class CustomMenuBar(QMenuBar):
@@ -52,7 +53,7 @@ class CustomMenuBar(QMenuBar):
         print("Show file browser")
     
     def show_experiment_creation_form(self):
-        dlg = ExperimentConfigurationForm(self)
+        dlg = ExperimentConfigurationForm(self, int(config.max_num_vectors)) # TODO: Hardcoded vector num max
         if dlg.exec() == 1:
             self.experiment_controller.plot_current_experiment()
 

@@ -1,6 +1,22 @@
 import numpy as np
 from model.particle import Particle
 
+class CollisionModel():
+
+    # def create_collision(self, experiment_data):
+    #     collision = Collision()
+    #     return collision
+    
+    def create_collision(self, vectors, id_of_origin_vector):
+        collision = Collision()
+        collision.set_id_of_origin_vector(id_of_origin_vector)
+        for i in range(len(vectors)):
+            is_origin = i == id_of_origin_vector
+            if i == 0:
+                collision.add_id_type_vector(i, 'L', vectors[i], is_origin)
+            else:
+                collision.add_id_type_vector(i, f"h{i}", vectors[i], is_origin)
+        return collision
 
 class Collision():
 
@@ -59,16 +75,7 @@ class Collision():
             # spatial_vectors_to_return = rounded_spatial_vectors
         return spatial_vectors_to_return
     
-def create_collision(vectors, id_of_origin_vector):
-    collision = Collision()
-    collision.set_id_of_origin_vector(id_of_origin_vector)
-    for i in range(len(vectors)):
-        is_origin = i == id_of_origin_vector
-        if i == 0:
-            collision.add_id_type_vector(i, 'L', vectors[i], is_origin)
-        else:
-            collision.add_id_type_vector(i, f"h{i}", vectors[i], is_origin)
-    return collision
+
 
 # def get_vectors(collision):
 #     particles = collision.get_particles()

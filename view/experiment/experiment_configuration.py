@@ -1,34 +1,33 @@
-from PySide6.QtWidgets import QComboBox, QGridLayout, QRadioButton, QSizePolicy, QMessageBox, QVBoxLayout, QHBoxLayout, QFrame, QLineEdit, QPushButton, QDialog, QLabel
+from PySide6.QtWidgets import QComboBox, QGridLayout, QRadioButton, QSizePolicy, QMessageBox, QStyle, QVBoxLayout, QHBoxLayout, QFrame, QLineEdit, QPushButton, QDialog, QLabel
 from PySide6.QtGui import Qt, QPixmap
+import config
+from controller.experiment_controller import ExperimentController
+from view.experiment.validation import VectorValidation
+from view.experiment.vector_components import VectorMemberField
+from view.experiment.vectors import VectorsGrid
 
-from view.vectors.validation import VectorValidation
-from view.vectors.vector_components import VectorMemberField
 class ExperimentConfigurationForm(QDialog):
 
-    def __init__(self, parent):
+    def __init__(self, parent, max_vector_count):
         super().__init__(parent)
         self.setWindowTitle("Experiment Configuration")
+
+        self.controller = ExperimentController(parent) # Passing parent as view arg
+
         self.vectors_qvbox_layout = QVBoxLayout()
         self.vectors_qvbox_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.grid_layout = QGridLayout()
-        header_label = QLabel("Enter four-vector:")
-        t_label = QLabel("t")
-        x_label = QLabel("X")
-        y_label = QLabel("Y")
-        z_label = QLabel("Z")
-        pt_label = QLabel("Particle Type")
-        speed_label = QLabel("Speed")
-        self.grid_layout.addWidget(t_label, 0, 1, alignment=(Qt.AlignCenter | Qt.AlignTop))
-        self.grid_layout.addWidget(x_label, 0, 2, alignment=(Qt.AlignCenter | Qt.AlignTop))
-        self.grid_layout.addWidget(y_label, 0, 3, alignment=(Qt.AlignCenter | Qt.AlignTop))
-        self.grid_layout.addWidget(z_label, 0, 4, alignment=(Qt.AlignCenter | Qt.AlignTop))
-        self.grid_layout.addWidget(pt_label, 0, 5, alignment=(Qt.AlignCenter | Qt.AlignTop))
-        self.grid_layout.addWidget(speed_label, 0, 6, alignment=(Qt.AlignCenter | Qt.AlignTop))
-        self.vectors_qvbox_layout.addWidget(header_label)
-        self.vectors_qvbox_layout.addLayout(self.grid_layout)
 
-        self.add_row_button = QPushButton("Add New Row (max 4)")
-        self.add_row_button.clicked.connect(self.add_new_row)
+        # Set up vectors grid, its header, its layout, and its parent layout.
+        vectors_grid_layout = QGridLayout() # needed as instance var?
+        self.vectors_grid = VectorsGrid(vectors_grid_layout, self)
+        values_requirements = f"values {config.xyz_min} to {config.xyz_max}, {config.xyz_decimal_precision}-decimal precision:"
+        header_label = QLabel("Enter four-vector: " + values_requirements) # Insert header and grid for vectors layout
+        self.vectors_qvbox_layout.addWidget(header_label)
+        self.insert_vectors_grid_layout(vectors_grid_layout) # Insert the grid layout into its parent.
+
+        self.max_vector_count = max_vector_count
+        self.add_row_button = QPushButton(f"Add New Row (max {config.max_num_vectors}:)")
+        self.add_row_button.clicked.connect(lambda: self.add_new_row(True))
         self.vectors_qvbox_layout.addWidget(self.add_row_button)
 
         self.experiment_type_qhbox_layout = QVBoxLayout()
@@ -127,8 +126,10 @@ class ExperimentConfigurationForm(QDialog):
         self.cancel_button = QPushButton("Cancel")
         self.cancel_button.clicked.connect(self.close)
 
-        self.disable_buttons()
-        self.vector_validation = VectorValidation(self.add_row_button, self.save_button, self.submit_button, self.check_button)
+        self.set_buttons_enabled_state(False)
+        widgets_to_enable_disable = {"ADD_ROW": self.add_row_button, "SAVE": self.save_button, 
+                                     "SUBMIT": self.submit_button, "CHECK": self.check_button}
+        self.vectors_grid.set_widgets_to_enable_disable(widgets_to_enable_disable)
         
         self.row_count = 0
         self.add_new_row()
@@ -146,38 +147,45 @@ class ExperimentConfigurationForm(QDialog):
         self.main_layout.addLayout(self.submit_buttons_layout)
         self.setLayout(self.main_layout)
 
-    def disable_buttons(self):
-        self.add_row_button.setEnabled(False)
-        self.submit_button.setEnabled(False)
-        self.check_button.setEnabled(False)
-        self.save_button.setEnabled(False)
-
-    def add_new_row(self):
-        self.row_count += 1
-        label = QLabel(f"{self.row_count}:")
-        time_field = VectorMemberField(self.vector_validation)
-        x_field = VectorMemberField(self.vector_validation)
-        y_field = VectorMemberField(self.vector_validation)
-        z_field = VectorMemberField(self.vector_validation)
+    def delete_grid_for_refresh(self):
+        while self.vectors_grid_layout.count():
+            item = self.vectors_grid_layout.takeAt(0)
+            widget = item.widget()
+            if widget:
+                widget.deleteLater()
+        self.vectors_qvbox_layout.removeWidget(self.add_row_button)
+        self.vectors_qvbox_layout.removeItem(self.vectors_grid_layout)
         
-        self.grid_layout.addWidget(label, self.row_count, 0, alignment=Qt.AlignTop)
-        self.grid_layout.addWidget(time_field, self.row_count, 1, alignment=Qt.AlignTop)
-        self.grid_layout.addWidget(x_field, self.row_count, 2, alignment=Qt.AlignTop)
-        self.grid_layout.addWidget(y_field, self.row_count, 3, alignment=Qt.AlignTop)
-        self.grid_layout.addWidget(z_field, self.row_count, 4, alignment=Qt.AlignTop)
-        particle_combo_box = QComboBox()
-        particle_combo_box.setEditable(True)
-        particle_combo_box.addItem("e+")
-        particle_combo_box.addItem("π")
-        particle_combo_box.addItem("p")
-        particle_combo_box.setMinimumContentsLength(6)
-        particle_combo_box.setCurrentIndex(-1)
-        self.grid_layout.addWidget(particle_combo_box, self.row_count, 5)
-        speed_field = VectorMemberField(self.vector_validation)
-        self.grid_layout.addWidget(speed_field, self.row_count, 6, alignment=Qt.AlignTop)
+        self.vectors_grid_layout.deleteLater()
+        del self.vectors_grid_layout
 
-        self.vector_validation.add_field(time_field, x_field, y_field, z_field, speed_field)
-        self.disable_buttons()
+    def insert_vectors_grid_layout(self, vectors_grid_layout, remove_current=False):
+        self.vectors_grid_layout = vectors_grid_layout
+        self.vectors_qvbox_layout.addLayout(vectors_grid_layout)
+        if remove_current:
+            self.vectors_qvbox_layout.addWidget(self.add_row_button)
+        self.update() # or more immediate repaint()
+
+    def updated_vector_validation(self, vector_valid):
+        self.set_buttons_enabled_state(vector_valid)
+
+    def set_buttons_enabled_state(self, enabled):
+        if enabled:
+            if self.vectors_grid.grid_row_count < self.max_vector_count:
+                self.add_row_button.setEnabled(True)
+            else: # Just to be sure
+                self.add_row_button.setEnabled(False)
+            self.submit_button.setEnabled(True)
+            self.check_button.setEnabled(True)
+            self.save_button.setEnabled(True)
+        else:
+            self.add_row_button.setEnabled(False)
+            self.submit_button.setEnabled(False)
+            self.check_button.setEnabled(False)
+            self.save_button.setEnabled(False)
+
+    def add_new_row(self, set_focus=False):
+        self.vectors_grid.add_vector_row(set_focus)
 
     matrix_view_lookup = {"General Boost": "resources/GeneralBoost.png", "Momentum-Realignment Boost": "resources/LCC-RapidityBoost.png"}
         
@@ -207,4 +215,5 @@ class ExperimentConfigurationForm(QDialog):
         msg.exec()
         
     def submit(self):
+        # Send experiment configuration data to the controller
         self.done(1) # self.close() instead? See the plot2d form, same question

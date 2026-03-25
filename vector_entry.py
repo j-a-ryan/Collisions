@@ -1,7 +1,7 @@
 import sys
 from PySide6.QtWidgets import QMainWindow, QApplication, QPushButton
 
-from view.vectors.experiment_configuration import ExperimentConfigurationForm
+from view.experiment.experiment_configuration import ExperimentConfigurationForm
 
 
 
@@ -17,7 +17,7 @@ class MainWindow(QMainWindow):
 
     def button_clicked(self, s):
         print("click", s)
-        dlg = ExperimentConfigurationForm(self)
+        dlg = ExperimentConfigurationForm(self, 3)
         print(dlg.exec())
 
 

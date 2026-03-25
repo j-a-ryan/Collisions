@@ -1,5 +1,5 @@
 import numpy as np
-from model.collision import create_collision
+from model.collision import CollisionModel
 from model.experiment import Experiment
 from model.four_vector_matrix import GalileanTransformationMatrix, IdentityMatrix
 from model.general_matrix import GeneralTransformationMatrix
@@ -12,10 +12,17 @@ class ExperimentController():
     def __init__(self, view):
         self.view = view
         self.experiment = Experiment()
+        self.collision_model = CollisionModel()
+
+    def create_experiment(self, experiment_data):
+        self.experiment = Experiment()
+        self.collision_model = CollisionModel()
+        collision = self.collision_model.create_collision(experiment_data)
 
     def plot_current_experiment(self):
         self.experiment = Experiment()
-        collision = create_collision([[1, 0, 0, 0], [1, 3, 4, 5], [1, 5, 3, 3]], 0)
+        self.collision_model = CollisionModel()
+        collision = self.collision_model.create_collision([[1, 0, 0, 0], [1, 3, 4, 5], [1, 5, 3, 3]], 0)
         # collision = create_collision([[1, 0, 0, 0], [10, 1, 4, 1], [7, 1, 0, 5]], 0)
         # collision = create_collision([[10, 1, 4, 1], [7, 1, 0, 5]], 0)
         self.experiment.set_lab_collision(collision)
@@ -61,7 +68,7 @@ class ExperimentController():
                 transformed_vectors.append(vec_copy) # append the origin vec (0,0,0) untransformed
             
         
-        collision_transformed = create_collision(transformed_vectors, particle_id)        
+        collision_transformed = self.collision_model.create_collision(transformed_vectors, particle_id)        
 
         self.view.plot_transformed_experiment_vectors(collision_transformed, experiment_collision)
     
@@ -74,7 +81,3 @@ class ExperimentController():
     def get_experiment_vectors_xyz(self):
         vectors = self.get_experiment_vectors().get_vectors()
         return vectors[-3:]
-
-
-    
-        
