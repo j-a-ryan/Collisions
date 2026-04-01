@@ -19,9 +19,9 @@ class MatrixConfigurationData():
     setter and getter for it might be added, instead.
     """
     def __init__(self):
-        self.rest_frame_vector = None
+        self.rest_frame_vector = None # TODO: Nomenclature issue. This name works in at most the basic 2-vector system case
         self.velocity_of_rest_frame = None
-        self.vector_to_be_transformed = None
+        self.vector_to_be_transformed = None # TODO: Nomenclature issue. This name works in at most the basic 2-vector system case
         self.vector_pretreatment_function = lambda vector: vector
         self.vector_posttreatment_function = lambda vector: vector
 

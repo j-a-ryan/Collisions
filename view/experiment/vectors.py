@@ -20,7 +20,7 @@ class VectorsGrid:
     def __init__(self, grid_layout, form): # We may need the whole parent, but for now just the style.
         self._grid_layout = grid_layout
         self.parent_form = form
-        self.backing_vectors = [] # 2D array, array of vectors
+        self._backing_vectors = None # 2D array, array of vectors
         self.set_up_grid(self._grid_layout)
 
     def set_widgets_to_enable_disable(self, widgets_to_enable_disable):
@@ -33,6 +33,10 @@ class VectorsGrid:
     @property
     def grid_row_count(self):
         return self._grid_layout.rowCount() # Should be same as len(self.backing_vectors) + 1
+    
+    @property
+    def backing_vectors(self):
+        return self._backing_vectors
     
     @property
     def grid_layout(self):
@@ -63,11 +67,11 @@ class VectorsGrid:
     def update_backing_grid(self):
         num_rows = self.grid_layout.rowCount()
         num_columns = self.grid_layout.columnCount()
-        del self.backing_vectors # Good idea? Set to None instead?
-        self.backing_vectors = []
+        del self._backing_vectors # Good idea? Set to None instead?
+        self._backing_vectors = []
         for i in range(1, num_rows): # Skip over the header row
             row = []
-            for j in range(1, num_columns - 1): # Skip the index column (0) and the delete button in it (7)
+            for j in range(1, 6): # Skip the index column (0) and get the 4-vector and its name
                 item = self.grid_layout.itemAtPosition(i, j) # Skip over the header row and index label column
                 if item: # Needed?
                     widget = item.widget()
@@ -76,7 +80,7 @@ class VectorsGrid:
                             row.append(widget.text())
                         else: # assuming QComboBox for now
                             row.append(widget.currentText())
-            self.backing_vectors.append(row)
+            self._backing_vectors.append(row)
             
     
     """
@@ -101,9 +105,9 @@ class VectorsGrid:
         y_field = VectorMemberField(self.vector_validation, set_field_values)
         z_field = VectorMemberField(self.vector_validation, set_field_values)
         particle_combo_box = QComboBox()
-        particle_combo_box.addItem("e+")
-        particle_combo_box.addItem("π")
-        particle_combo_box.addItem("p")
+        particle_combo_box.addItem("k1")
+        particle_combo_box.addItem("k2")
+        particle_combo_box.addItem("k3")
         particle_combo_box.setEditable(True)
         particle_combo_box.lineEdit().setReadOnly(True)
         particle_combo_box.setMinimumContentsLength(6)
@@ -119,7 +123,7 @@ class VectorsGrid:
             # If the text is found (index is not -1), set the current index
             if index >= 0: # Should not be necessary
                 particle_combo_box.setCurrentIndex(index)
-            speed_field.setText(field_values[5])
+            speed_field.setText("1")
 
         self.grid_layout.addWidget(row_index_label, new_row_index, 0, alignment=Qt.AlignTop)
         self.grid_layout.addWidget(time_field, new_row_index, 1, alignment=Qt.AlignTop)
@@ -176,13 +180,13 @@ class VectorsGrid:
         
         # Ensure the row to be deleted isn't just an new GUI row that does not yet
         # have a backing vectors counterpart yet.
-        if len(self.backing_vectors) > backing_vectors_row_index:
-            del self.backing_vectors[backing_vectors_row_index]
+        if len(self._backing_vectors) > backing_vectors_row_index:
+            del self._backing_vectors[backing_vectors_row_index]
 
-        if len(self.backing_vectors) == 0: # We deleted the only row that had a backing vector.
+        if len(self._backing_vectors) == 0: # We deleted the only row that had a backing vector.
             self.add_vector_row(set_focus=True)
         else:
-            for row in self.backing_vectors:
+            for row in self._backing_vectors:
                 self.add_vector_row(set_focus=False, field_values=row)
         # We may need to add more rows to recreate the grid which may have had several GUI-only rows in
         # certain edge cases.
@@ -203,5 +207,5 @@ class VectorsGrid:
         for name, widget in self.widgets_to_enable_disable.items():
             if name != "ADD_ROW" or (self.grid_row_count - 1) < self.max_num_vectors:
                 widget.setEnabled(enabled)
-            elif name == "ADD_ROW":
-                print("Not enabled add row button because row count " + str(self.grid_row_count))
+            # elif name == "ADD_ROW":
+            #     print("Not enabled add row button because row count " + str(self.grid_row_count))

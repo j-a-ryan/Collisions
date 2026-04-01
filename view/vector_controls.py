@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QVBoxLayout, QFrame, QSlider, QLabel, QSizePolicy
 from PySide6.QtGui import Qt, QColor, QFont
+import config
 from view.common.details import Heading
 from pyqt_advanced_slider import Slider
 
@@ -14,14 +15,18 @@ class ExperimentControls(QFrame):
 
         if new_slider:
             self.slider1 = Slider(self)  # Add slider
-            self.slider1.setRange(-50, 100)  # Set min and max
-            self.slider1.setValue(25)  # Set value
+            self.slider1.setRange(-10, 10)  # Set min and max
+            self.slider1.setValue(0)  # Set value
             self.slider1.valueChanged.connect(self.slider_value_changed)
             self.slider1.setFixedWidth(120)
             self.slider1.setFixedHeight(18)
+            self.slider1.setFloat(True)
+            self.slider1.setDecimals(2)
+            self.slider1.setSingleStep(0.01)
+            # self.slider1.setPageStep(25)
             # self.slider1.setTextColor(QColor('#0F0F0F'))                # Default: #000000
-            # self.slider1.setBackgroundColor(QColor('#9B9D06'))          # Default: #D6D6D6
-            # self.slider1.setAccentColor(QColor('#F4F835'))  # Default: #0078D7
+            self.slider1.setBackgroundColor(QColor(config.slider_background_color))          # Default: #D6D6D6
+            self.slider1.setAccentColor(QColor(config.slider_accent_color))  # Default: #0078D7
             # self.slider.setBorderColor(QColor.fromRgb(0, 0, 0))        # Default: #D1CFD3
             self.slider1.setBorderRadius(3)  # Default: 0
             # font = QFont()
@@ -33,14 +38,17 @@ class ExperimentControls(QFrame):
             self.inner_layout.addWidget(self.slider1)
 
             self.slider2 = Slider(self)  # Add slider
-            self.slider2.setRange(-50, 100)  # Set min and max
-            self.slider2.setValue(25)  # Set value
+            self.slider2.setRange(-10, 10)  # Set min and max
+            self.slider2.setValue(0)  # Set value
             self.slider2.valueChanged.connect(self.slider_value_changed)
             self.slider2.setFixedWidth(120)
             self.slider2.setFixedHeight(18)
+            self.slider1.setFloat(True)
+            self.slider1.setDecimals(2)
+            self.slider1.setSingleStep(0.01)
             # self.slider2.setTextColor(QColor('#0F0F0F'))                # Default: #000000
-            # self.slider2.setBackgroundColor(QColor('#9B9D06'))          # Default: #D6D6D6
-            # self.slider2.setAccentColor(QColor('#F4F835'))  # Default: #0078D7
+            self.slider2.setBackgroundColor(QColor(config.slider_background_color))          # Default: #D6D6D6
+            self.slider2.setAccentColor(QColor(config.slider_accent_color))  # Default: #0078D7
             # self.slider.setBorderColor(QColor.fromRgb(0, 0, 0))        # Default: #D1CFD3
             self.slider2.setBorderRadius(3)  # Default: 0
             # font = QFont()

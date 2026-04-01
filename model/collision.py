@@ -1,59 +1,50 @@
+import config
+
 import numpy as np
 from model.particle import Particle
 
-class CollisionModel():
-
-    # def create_collision(self, experiment_data):
-    #     collision = Collision()
-    #     return collision
-    
-    def create_collision(self, vectors, id_of_origin_vector):
-        collision = Collision()
-        collision.set_id_of_origin_vector(id_of_origin_vector)
-        for i in range(len(vectors)):
-            is_origin = i == id_of_origin_vector
-            if i == 0:
-                collision.add_id_type_vector(i, 'L', vectors[i], is_origin)
-            else:
-                collision.add_id_type_vector(i, f"h{i}", vectors[i], is_origin)
-        return collision
-
 class Collision():
 
-    def __init__(self):
-        self.particles = {}
-        self.vectors = []
+    tolerance = config.zero_rounding_tolerance
 
-    def add_id_particle(self, id, particle):
-        self.particles.update({id: particle})
+    def __init__(self, vectors, names): # Vector includes name element [t, x, y, z, name]
+        self.particles = {} # We keep the particles but...
+        self.vectors = np.array(vectors)
+        self.names = names
+        for i in range(len(vectors)):
+            self.create_particle(i, self.names[i], self.vectors[i])
 
-    def add_id_type_vector(self, id, type, vector, is_rest):
-        self.add_id_particle(id, Particle(id, type, vector, is_rest))
-        self.vectors.append(vector) # or init the Collision with num vecs and use self.vectors[id] = vector
-
-    def add_particle(self, particle):
-        self.add(particle.id, particle)
+    def create_particle(self, index, name, vector):
+        self.particles.update({name: Particle(index, name, vector)})
 
     def clear(self):
         self.particles.clear()
-
-    def get_particles(self):
-        return self.particles
-
-    def get(self, id):
-        return self.particles[id]
-
-    def num_particles(self):
-        return len(self.particles)
-    
-    def set_id_of_origin_vector(self, id_of_origin_vector):
-        self.id_of_origin_vector = id_of_origin_vector
-    
-    def get_id_of_origin_vector(self):
-        return self.id_of_origin_vector
+        self.vectors = None
 
     def get_vectors(self):
         return self.vectors
+
+    def get_four_vectors(self):
+        return self.vectors
+    
+    def get_four_vector(self, name):
+        return self.particles[name].four_vector
+    
+    def get_vectors_column(self, col_num, round_near_zeros_to_zero=True): # Matplotlib needs the xs, the ys and the zs separately
+        arr = np.array(self.vectors[:,col_num]) # copy array
+        if round_near_zeros_to_zero:
+            arr[np.abs(arr) < self.tolerance] = 0
+        return arr
+    
+    def get_vectors_spatial_columns(self):
+        xyz = {}
+        xyz["x"] = self.get_vectors_column(1)
+        xyz["y"] = self.get_vectors_column(2)
+        xyz["z"] = self.get_vectors_column(3)
+        return xyz
+
+    def get_vectors_name_column(self):
+        return self.names
     
     def get_spatial_vectors_xyz(self, round_near_zeros_to_zero=True):
         """
@@ -61,8 +52,8 @@ class Collision():
         plotting, the near-zeros (e.g. 1e-16) should be rounded to zero
         so that the 1e-16 doesn't show up at top of Matplotlib plot
         """
-        np_arr = np.array(self.vectors)
-        spatial_vectors_to_return = spatial_vectors = np_arr[:, -3:].tolist()
+        np_arr = self.vectors
+        spatial_vectors_to_return = spatial_vectors = np_arr[:, 1:].tolist()
         if round_near_zeros_to_zero:
             tolerance = 1e-5 # Could be made a parameter of the method
             
@@ -75,11 +66,11 @@ class Collision():
             # spatial_vectors_to_return = rounded_spatial_vectors
         return spatial_vectors_to_return
     
+    def get_particles(self):
+        return self.particles
 
+    def get(self, name):
+        return self.particles[name]
 
-# def get_vectors(collision):
-#     particles = collision.get_particles()
-#     vectors = []
-#     for particle in particles.values():
-#         vectors.append(particle.get_vectorI())
-#     return vectors
+    def num_particles(self):
+        return len(self.particles)

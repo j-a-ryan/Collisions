@@ -12,8 +12,7 @@ class ExperimentConfigurationForm(QDialog):
         super().__init__(parent)
         self.setWindowTitle("Experiment Configuration")
 
-        self.controller = ExperimentController(parent) # Passing parent as view arg
-
+        self.controller = parent.experiment_controller
         self.vectors_qvbox_layout = QVBoxLayout()
         self.vectors_qvbox_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
@@ -216,4 +215,9 @@ class ExperimentConfigurationForm(QDialog):
         
     def submit(self):
         # Send experiment configuration data to the controller
+        # Get list of vectors, etc. and create payload dict.
+        payload = {"vectors": self.vectors_grid.backing_vectors,
+                   "metadata": {"vectors_header": VectorsGrid.header_row, 
+                                "hi": "ho", "experiment_directory": ""}}
+        self.controller.create_experiment(payload)
         self.done(1) # self.close() instead? See the plot2d form, same question

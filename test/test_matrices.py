@@ -6,7 +6,6 @@ import numpy.testing as npt
 from model.four_vector_matrix import GalileanTransformationMatrix, IdentityMatrix, MatrixConfigurationData
 from model.general_matrix import GeneralTransformationMatrix
 from model.qcd_matrix import LightConeRapidityMatrix, LightConeRapidityMatrixConfigurationData
-from model.util import convert_minkowski_to_light_cone_coordinates
 from test.util import check_vectors_equal
 # python -m unittest discover tests
 # or just
@@ -33,10 +32,11 @@ class TestGalileanTransformationMatrix(unittest.TestCase):
         matrix_configuration_data = MatrixConfigurationData()
         matrix_configuration_data.rest_frame_vector = [7, 4, 1, 11]
         matrix = GalileanTransformationMatrix(matrix_configuration_data)
-        vector = [7, 3, 6, 6]
-        correctly_transformed_vector = [7, -1, 5, -5]
+        vector = np.array([7, 3, 6, 6])
+        correctly_transformed_vector = np.array([7, -1, 5, -5])
         transformed_vector = matrix.transform(vector)
-        self.assertTrue(np.array_equal(np.array(correctly_transformed_vector), np.array(transformed_vector)))
+        self.assertTrue(np.array_equal(correctly_transformed_vector, transformed_vector))
+        # self.assertTrue(np.array_equal(np.array(correctly_transformed_vector), np.array(transformed_vector)))
         
 # class TestGeneralTransformationMatrix(unittest.TestCase):
 #     def test_same_location(self):
@@ -80,6 +80,7 @@ class TestLightConeRapidityMatrix(unittest.TestCase):
         correctly_transformed_vector_V_lcc = [math.sqrt(82), math.sqrt(20.5), 0, 0]
         matrix = LightConeRapidityMatrix(matrix_configuration_data)
         transformed_vector_V_lcc = matrix.transform(vector_V)
+        print("It's" + str(type(transformed_vector_V_lcc)))
         npt.assert_allclose(np.array(transformed_vector_V_lcc), np.array(correctly_transformed_vector_V_lcc), atol=1e-07)
 
         # Test the reuse of the config data object here, with its being reset to

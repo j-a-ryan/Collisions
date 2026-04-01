@@ -1,33 +1,45 @@
 import numpy as np
-from model.collision import CollisionModel
+
+# from model.experiment import Experiment
 from model.experiment import Experiment
 from model.four_vector_matrix import GalileanTransformationMatrix, IdentityMatrix
 from model.general_matrix import GeneralTransformationMatrix
 from model.qcd_matrix import LightConeRapidityMatrix, LightConeRapidityMatrixConfigurationData
 from model.transformation import galilean_coordinate_transformation_3, galilean_coordinate_transformation_3_vector
-
+from model import util
 
 class ExperimentController():
 
     def __init__(self, view):
         self.view = view
-        self.experiment = Experiment()
-        self.collision_model = CollisionModel()
+    
+    def _extract_vectors(self, experiment_configuration_data):
 
-    def create_experiment(self, experiment_data):
-        self.experiment = Experiment()
-        self.collision_model = CollisionModel()
-        collision = self.collision_model.create_collision(experiment_data)
+        # Basic treatment of the data from GUI data to data in form digestibly by model.
+        # Numerical vector members: from string to float. Embellishment of particle-type 
+        # strings.
+
+        raw_vectors = experiment_configuration_data["vectors"]
+        pre_treated_vectors = []
+        names = []
+        for vec in raw_vectors:
+            four_vec = [float(j) for j in vec[:4]]
+            names.append(vec[4])
+            pre_treated_vectors.append(four_vec)
+
+        return pre_treated_vectors, names
+    
+    def _extract_metadata(self, experiment_configuration_data):
+        return experiment_configuration_data["metadata"] # Perhaps more logic needed in future.
+        
+    def create_experiment(self, experiment_configuration_data):
+        
+        experiment_vectors, names = self._extract_vectors(experiment_configuration_data)
+        experiment_metadata = self._extract_metadata(experiment_configuration_data)   
+        self.experiment = Experiment(experiment_vectors, names, experiment_metadata)
 
     def plot_current_experiment(self):
-        self.experiment = Experiment()
-        self.collision_model = CollisionModel()
-        collision = self.collision_model.create_collision([[1, 0, 0, 0], [1, 3, 4, 5], [1, 5, 3, 3]], 0)
-        # collision = create_collision([[1, 0, 0, 0], [10, 1, 4, 1], [7, 1, 0, 5]], 0)
-        # collision = create_collision([[10, 1, 4, 1], [7, 1, 0, 5]], 0)
-        self.experiment.set_lab_collision(collision)
-        self.view.plot_experiment_vectors(self.get_experiment_vectors())
-
+        self.view.plot_experiment_vectors(self.experiment.get_collision())
 
     def set_up_config_data(self, vector_V, vector_Y, exp_2yT, return_vector_in_minkowski_form, convert_incoming_vector_to_lcc=True):
         matrix_configuration_data = LightConeRapidityMatrixConfigurationData()
@@ -39,38 +51,36 @@ class ExperimentController():
         return matrix_configuration_data
     
     identity_transformation = False
-    def plot_transformation(self, particle_id):
-        experiment_collision = self.get_experiment_vectors()
-        exp_vectors = experiment_collision.get_vectors()
-        if particle_id == 1:
-            vector_V = np.array(exp_vectors[1]).copy().tolist()
-            vector_Y = np.array(exp_vectors[2]).copy().tolist()
-        else: # It's 2 that we want for V
-            vector_V = np.array(exp_vectors[2]).copy().tolist()
-            vector_Y = np.array(exp_vectors[1]).copy().tolist()
+    def plot_transformation(self, particle_names):
+        V_particle_name = particle_names[0]
+        Y_particle_name = particle_names[1]
+        particle_names.clear() # TODO: This is also done at the calling method.
+        original_vectors = self.experiment.get_original_four_vectors()
 
-        # matrix = None
-        if self.identity_transformation:
-            matrix = IdentityMatrix(None)
-            particle_id = experiment_collision.get_id_of_origin_vector()
-        else:
-            matrix_configuration_data = self.set_up_config_data(vector_V, vector_Y, 2, False)
-            matrix = LightConeRapidityMatrix(matrix_configuration_data)
+        vector_V = self.experiment.get_original_four_vector(V_particle_name).copy() # These are numpy
+        vector_Y = self.experiment.get_original_four_vector(Y_particle_name).copy()
 
-        transformed_vectors = []
+        # matrix = None PUT THIS BACK IN SOMETIME
+        # if self.identity_transformation:
+        #     matrix = IdentityMatrix(None)
+        #     particle_id = experiment_collision.get_id_of_origin_vector()
+        # else:
+        matrix_configuration_data = self.set_up_config_data(vector_V, vector_Y, 2, False)
+        matrix = LightConeRapidityMatrix(matrix_configuration_data)
+
+        transformed_vectors_temp = []
         
-        for i in range(len(exp_vectors)):
-            vec_copy = np.array(exp_vectors[i]).copy().tolist()
-            if i > 0:
-                transformed_vec = matrix.transform(vec_copy)
-                transformed_vectors.append(transformed_vec)
-            else:
-                transformed_vectors.append(vec_copy) # append the origin vec (0,0,0) untransformed
-            
-        
-        collision_transformed = self.collision_model.create_collision(transformed_vectors, particle_id)        
+        for i in range(len(original_vectors)):
+            vec_copy = original_vectors[i].copy() # Just to be sure no changes are made to original.
+            transformed_vec = matrix.transform(vec_copy)
+            transformed_vectors_temp.append(transformed_vec.tolist())
 
-        self.view.plot_transformed_experiment_vectors(collision_transformed, experiment_collision)
+        transformed_vectors = np.array(transformed_vectors_temp)
+
+        names = self.experiment.get_particle_names()
+        self.experiment.set_transformed_four_vectors(transformed_vectors, names) # Not numpy for this because uing the pathway that comes from the GUI to the model.        
+
+        self.view.plot_transformed_experiment_vectors(self.experiment.get_transformed_collision(), self.experiment.get_collision())
     
     def close_current_experiment(self):
         self.view.clear_experiment_plot(True)

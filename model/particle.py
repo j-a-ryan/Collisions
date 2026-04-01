@@ -4,16 +4,30 @@
 # and Mplcursors which take arrays of x, y, and z coords as zero-based. User clicks
 # on point in plot, Mplcursors provides the point ID. That ID is used by the model
 # to identify the particle to set as the rest-frame particle.
-class Particle():
-    def __init__(self, id, type, vector, rest):
-        self.id = id
-        self.type = type
-        self.vector = vector
-        self.rest = rest
+from logging import config
 
-    def vector_len(self):
-        return len(self.vector)
+
+class Particle():
+    def __init__(self, index, name, vector):
+        self._index = index
+        self._name = name
+        self._four_vector = vector
+
+    @property
+    def id(self):
+        return self._id
     
-    def get_vector(self):
-        return self.vector
+    @property
+    def type(self):
+        return self._type
+    
+    @property
+    def four_vector(self):
+        return self._four_vector
+    
+    @property
+    def spacial_vectors_xyz(self):
+        return self._four_vector[1:4]
+    
+
     

@@ -25,3 +25,10 @@ class TestMinkowskiLCC(unittest.TestCase):
         direct_from_func = convert_minkowski_to_light_cone_coordinates(mink_vec)
         lcc_vec = [7.7781745930520225, 6.363961030678928, 1, 4]
         npt.assert_allclose(np.array(direct_from_func), np.array(lcc_vec))
+    
+    def test_minkowski_to_lcc_np_array(self):
+        mink_vec = np.array([10, 1, 4, 1])
+        direct_from_func = convert_minkowski_to_light_cone_coordinates(mink_vec)
+        print(type(direct_from_func))
+        lcc_vec = [7.7781745930520225, 6.363961030678928, 1, 4]
+        npt.assert_allclose(np.array(direct_from_func), np.array(lcc_vec))
