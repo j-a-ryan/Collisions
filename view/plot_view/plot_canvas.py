@@ -6,6 +6,7 @@ from PySide6.QtWidgets import QApplication, QDialog, QDialogButtonBox, QLabel, Q
 import os
 import mplcursors
 import numpy as np
+# from pyqttoast import Toast, ToastPosition, ToastPreset
 
 import config
 
@@ -31,8 +32,12 @@ class PlotVectorCanvas(FigureCanvas):
         super().__init__(fig)
         self.experiment_controller = experiment_controller
         self.particles_picked = []
+    
+    @property
+    def particle_indices_picked(self):
+        return self.experiment_controller.particle_indices_picked_for_transformation
 
-    def plot(self, collision):
+    def plot(self, collision, extra_circles=None):
 
         vectors = collision.get_spatial_vectors_xyz()
         vectors_columns = collision.get_vectors_spatial_columns()      
@@ -47,12 +52,19 @@ class PlotVectorCanvas(FigureCanvas):
                         color='black', arrow_length_ratio=0, linewidths=0.7)  # Customize color and arrow size
             self.ax.scatter(vectors[i][0], vectors[i][1], vectors[i][2], marker=f'${self.particle_names[i]}$', s=90, color='black')
         
-        # Plot the particle points as circles at the tips of the vectors around the names
+        # Plot the particle points as circles at the tips of the vectors around the names. Catch
+        # the scatter return for event handling (event source identification) later.
         self.scatter = self.ax.scatter(vectors_columns['x'], vectors_columns['y'], vectors_columns['z'], facecolors='none',
                                        edgecolors=edgecolors, marker='o', s=180, picker=True, pickradius=5)
-        # Plot lab point
-        # self.ax.scatter(0, 0, 0, marker='s', s=150, edgecolors='black', facecolors='white')
-        # self.ax.scatter(0, 0, 0, marker='$L$', s=50, color='black')
+        
+        # Plot the extra circles, if any.
+        if extra_circles:
+            extra_circles_edgecolors = [config.slider_accent_color] * len(extra_circles) #config.slider_accent_colorconfig.slider_accent_color
+            xs = [vectors_columns['x'][i] for i in extra_circles]
+            ys = [vectors_columns['y'][i] for i in extra_circles]
+            zs = [vectors_columns['z'][i] for i in extra_circles]
+            # for index in extra_circles: # extra_circles is a list of the indices of the points that need extra circles drawn around them.
+            self.ax.scatter(xs, ys, zs, facecolors='none', depthshade=False, edgecolors=extra_circles_edgecolors, marker='o', linewidths=4, s=600)
 
         self.ax.set_xlabel('X')
         self.ax.set_ylabel('Y')
@@ -61,11 +73,38 @@ class PlotVectorCanvas(FigureCanvas):
         # self.ax.set_xlim([-1, 6]) TODO: do this programmatically
         # self.ax.set_ylim([-1, 6]) Low and high for each axis. Add 10% either side.
         # self.ax.set_zlim([-1, 6])
-        self.fig.canvas.mpl_connect('pick_event', self.onpick)
+        self.fig.canvas.mpl_connect('pick_event', self.onpick_circles)
         # cursor = mplcursors.cursor(self.ax, hover=mplcursors.HoverMode.Transient)
         # cursor.connect("add", lambda sel: sel.annotation.set_text("Click to apply rest frame"))
+
+    def onpick_circles(self, event):
+        if event.artist == self.scatter:  # Ensure the event is from our scatter plot
+            ind = event.ind  # Indices of the clicked points
+            index = ind[0]
+
+            if len(self.particle_indices_picked) == 0:
+                self.particle_indices_picked.append(index)
+                self.experiment_controller.plot_current_experiment(extra_circles=self.particle_indices_picked.copy()) # Zero or one picked now.
+            else: # len(self.particles_indices_picked) == 1 or 2                
+                if index in self.particle_indices_picked:
+                    self.particle_indices_picked.remove(index)
+                    self.experiment_controller.plot_current_experiment(extra_circles=self.particle_indices_picked.copy()) # Zero or one picked now.
+                else:
+                    self.particle_indices_picked.append(index) # two picked now
+                    indices = self.particle_indices_picked.copy()
+                    self.experiment_controller.plot_current_experiment(extra_circles=indices)
+                    popup = FinalizeTransformationChoicePopup(indices, self.particle_names)
+                    if popup.exec() == QDialog.Accepted:
+                        self.experiment_controller.plot_current_experiment() # Get rid of circles
+                        self.particles_picked = [self.particle_names[i] for i in self.particle_indices_picked]
+                        self.particle_indices_picked.clear() # Get rid of circles
+                        self.experiment_controller.plot_transformation(self.particles_picked.copy())
+                        self.particles_picked.clear()                  
+                    else:
+                        self.particle_indices_picked.clear()
+                        self.experiment_controller.plot_current_experiment()
     
-    def onpick(self, event):
+    def onpick_popup(self, event):
         if event.artist == self.scatter:  # Ensure the event is from our scatter plot
             ind = event.ind  # Indices of the clicked points
             index = ind[0]
@@ -85,7 +124,20 @@ class PlotVectorCanvas(FigureCanvas):
                     self.particles_picked.clear()                  
                 else:
                     self.particles_picked.clear()
-                    print("User cancelled.")              
+
+    # def show_toast(self, initial_plot):
+    #     toast = Toast(self) 
+    #     toast.setDuration(5000)  # Hide after 5 seconds
+    #     toast.setTitle("Pick Vectors for Transformation")
+    #     if initial_plot:
+    #         toast.setText("To transform, pick two particles.")
+    #     else:
+    #         toast.setText("Pick a second particle.")
+    #     toast.setPosition(ToastPosition.CENTER)
+    #     # Toast.setOffset(30, 55)
+    #     toast.setAlwaysOnMainScreen(True) 
+    #     toast.applyPreset(ToastPreset.INFORMATION)  # Apply a style preset
+    #     toast.show()         
 
 class PickTwoParticlesPopup(QDialog):
     def __init__(self, particle_names, newly_picked_particle=None, parent=None):
@@ -111,6 +163,23 @@ class PickTwoParticlesPopup(QDialog):
 
         self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
 
+        self.button_box.accepted.connect(self.accept)
+        self.button_box.rejected.connect(self.reject)
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.name_label)
+        layout.addWidget(self.instructions_label)
+        layout.addWidget(self.button_box)
+        self.setLayout(layout)
+
+class FinalizeTransformationChoicePopup(QDialog):
+    def __init__(self, indices, particle_names, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Configure Transformation Matrix")
+        names = particle_names[indices[0]] + " and " + particle_names[indices[1]]        
+        self.name_label = QLabel("Transformation pair: " + names)
+        self.instructions_label = QLabel("Configure transformation (or cancel)")
+        self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         self.button_box.accepted.connect(self.accept)
         self.button_box.rejected.connect(self.reject)
 

@@ -12,6 +12,15 @@ class ExperimentController():
 
     def __init__(self, view):
         self.view = view
+        self._particle_indices_picked_for_transformation = []
+
+    @property
+    def particle_indices_picked_for_transformation(self):
+        return self._particle_indices_picked_for_transformation
+    
+    @particle_indices_picked_for_transformation.setter
+    def particle_indices_picked_for_transformation(self, indices):
+        self._particle_indices_picked_for_transformation = indices
     
     def _extract_vectors(self, experiment_configuration_data):
 
@@ -38,8 +47,8 @@ class ExperimentController():
         experiment_metadata = self._extract_metadata(experiment_configuration_data)   
         self.experiment = Experiment(experiment_vectors, names, experiment_metadata)
 
-    def plot_current_experiment(self):
-        self.view.plot_experiment_vectors(self.experiment.get_collision())
+    def plot_current_experiment(self, extra_circles=None):
+        self.view.plot_experiment_vectors(self.experiment.get_collision(), extra_circles)
 
     def set_up_config_data(self, vector_V, vector_Y, exp_2yT, return_vector_in_minkowski_form, convert_incoming_vector_to_lcc=True):
         matrix_configuration_data = LightConeRapidityMatrixConfigurationData()

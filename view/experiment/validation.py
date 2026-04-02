@@ -10,12 +10,15 @@ class VectorValidation():
     def add_fields(self, *fields):
         self.fields.extend(fields)
 
+    def remove_fields(self):
+        self.fields.clear()
+
     def remove_field(self, field):
         if field in self.fields: # Shouldn't be necessary, but error if not in list
             self.fields.remove(field)
 
     def update_fields_list(self, updated_list):
-        self.fields.clear()
+        self.remove_fields()
         self.add_fields(updated_list)
 
     def field_updated(self, validly):

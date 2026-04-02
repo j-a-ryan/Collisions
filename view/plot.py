@@ -47,9 +47,9 @@ class PlotQFrame(QFrame):
         self.canvas.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         inner_layout.addWidget(self.canvas)
 
-    def plot(self, vectors):
-        self.vectors = vectors
-        self.canvas.plot(vectors)
+    def plot(self, collision, extra_circles=None):
+        self.vectors = collision
+        self.canvas.plot(collision, extra_circles)
 
     def pop_up_plot(self):
         

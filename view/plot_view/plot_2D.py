@@ -45,7 +45,8 @@ class PlotVectorCanvas2D(FigureCanvas):
         for i in range(len(vectors)):
             self.ax.quiver(0, 0, xs[i], ys[i], angles='xy',
                 scale_units='xy', scale=1, color='black', width=0.003, linewidths=0.5)
-            self.scatter = self.ax.scatter(xs[i], ys[i], marker=f'${particle_names[i]}$', s=90, color='black') 
+            self.scatter = self.ax.scatter(xs[i], ys[i], marker=f'${particle_names[i]}$', s=90, color='black')
+
         self.ax.scatter(xs, ys, facecolors='none', edgecolors=edgecolors, marker='o', s=160)
 
         # These are not literally x an y label but refer to horizontal and vertical axes, respectively.

@@ -69,18 +69,17 @@ class View(QWidget):
 
         self.setLayout(self.layout)
 
-    def plot_experiment_vectors(self, vectors):
+    def plot_experiment_vectors(self, collision, extra_circles=None):
 
         self.clear_experiment_plot(False)
 
-        if self.plot_qframe is not None:
+        if self.plot_qframe is not None: # TODO: This seems to be false always
             frame_to_delete = self.plot_qframe
             self.layout.removeWidget(self.plot_qframe)
             frame_to_delete.deleteLater()
         self.plot_qframe = PlotQFrame(self.app, self.experiment_controller, plot_status=PlotQFrame.experiment)
-        self.plot_qframe.plot(vectors=vectors)
-        # self.layout.addWidget(self.plot_qframe)
-        self.set_plot_tab_widget(self.plot_qframe, experiment_vectors=vectors)    
+        self.plot_qframe.plot(collision, extra_circles)
+        self.set_plot_tab_widget(self.plot_qframe, experiment_vectors=collision)    
 
     def plot_transformed_experiment_vectors(self, vectors_transformed, experiment_vectors):
 
@@ -92,9 +91,9 @@ class View(QWidget):
             frame_to_delete.deleteLater()
 
         self.plot_qframe = PlotQFrame(self.app, self.experiment_controller, plot_status=PlotQFrame.experiment)
-        self.plot_qframe.plot(vectors=experiment_vectors)
+        self.plot_qframe.plot(experiment_vectors)
         self.plot_qframe_transformed = PlotQFrame(self.app, self.experiment_controller, plot_status=PlotQFrame.transformed)
-        self.plot_qframe_transformed.plot(vectors=vectors_transformed)
+        self.plot_qframe_transformed.plot(vectors_transformed)
 
         self.add_transformation_splitter(experiment_vectors=experiment_vectors, transformed_vectors=vectors_transformed)
 

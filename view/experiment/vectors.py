@@ -20,7 +20,7 @@ class VectorsGrid:
     def __init__(self, grid_layout, form): # We may need the whole parent, but for now just the style.
         self._grid_layout = grid_layout
         self.parent_form = form
-        self._backing_vectors = None # 2D array, array of vectors
+        self._backing_vectors = [] # 2D array, array of vectors
         self.set_up_grid(self._grid_layout)
 
     def set_widgets_to_enable_disable(self, widgets_to_enable_disable):
@@ -172,6 +172,7 @@ class VectorsGrid:
         # Delete old grid layout and initialize new one.
         self.parent_form.delete_grid_for_refresh()
         del self._grid_layout
+        self.vector_validation.remove_fields()
         self._grid_layout = QGridLayout()
         self.set_up_grid(self._grid_layout) # put the column headers in
 
