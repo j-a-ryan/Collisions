@@ -1,13 +1,15 @@
 from PySide6.QtWidgets import QApplication
 from main.application import MainWindow
 
-# This is the launcher
-app = QApplication()
 
-window = MainWindow(app)
-window.show()
+if __name__ == "__main__":
+    # This is the launcher
+    app = QApplication()
 
-app.exec()
+    window = MainWindow(app)
+    window.show()
+
+    app.exec()
 """
 TODO:   
 1. Round zero in plotted vectors
