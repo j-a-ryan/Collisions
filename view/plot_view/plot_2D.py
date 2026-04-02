@@ -7,7 +7,7 @@ from PySide6.QtGui import Qt
 import numpy as np
 
 import config
-from main.custom_title_bar import CustomTitleBar
+from app.custom_title_bar import CustomTitleBar
 
 
 class PlotVectorCanvas2D(FigureCanvas):

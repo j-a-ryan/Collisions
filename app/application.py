@@ -4,7 +4,7 @@ from PySide6.QtCore import Qt, QEvent
 import sys
 import qdarktheme
 
-from main.custom_title_bar import CustomTitleBar
+from app.custom_title_bar import CustomTitleBar
 from view.common.details import HorizontalDivider
 from view.view import View
 
