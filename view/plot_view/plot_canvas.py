@@ -9,6 +9,7 @@ import numpy as np
 # from pyqttoast import Toast, ToastPosition, ToastPreset
 
 import config
+from view.plot_view.widgets import ConfigureTransformationPopup
 
 os.environ["QT_API"] = "PySide6" # Doesn't seem to do anything. What is it?
 # from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
@@ -93,112 +94,22 @@ class PlotVectorCanvas(FigureCanvas):
                     self.particle_indices_picked.append(index) # two picked now
                     indices = self.particle_indices_picked.copy()
                     self.experiment_controller.plot_current_experiment(extra_circles=indices)
-                    popup = FinalizeTransformationChoicePopup(indices, self.particle_names)
+                    popup = ConfigureTransformationPopup(indices, self.particle_names)
                     if popup.exec() == QDialog.Accepted:
+                        
                         self.experiment_controller.plot_current_experiment() # Get rid of circles
-                        self.particles_picked = [self.particle_names[i] for i in self.particle_indices_picked]
+                        self.particles_picked = [popup.transformation_config["V"], popup.transformation_config["Y"]]
+                        
                         self.particle_indices_picked.clear() # Get rid of circles
+
+                        if popup.transformation_config["RotateV+Ytoz"]:
+                            pass
+                        if popup.transformation_config["ApplyTransformationMatrix"]:
+                            pass
+                        if popup.transformation_config["ApplyPostTransformation"]:
+                            pass
                         self.experiment_controller.plot_transformation(self.particles_picked.copy())
                         self.particles_picked.clear()                  
                     else:
                         self.particle_indices_picked.clear()
                         self.experiment_controller.plot_current_experiment()
-    
-    def onpick_popup(self, event):
-        if event.artist == self.scatter:  # Ensure the event is from our scatter plot
-            ind = event.ind  # Indices of the clicked points
-            index = ind[0]
-
-            if len(self.particles_picked) == 0:
-                name_of_picked_particle = self.particle_names[index]
-                popup = PickTwoParticlesPopup([name_of_picked_particle])
-                if popup.exec() == QDialog.Accepted:
-                    self.particles_picked.append(name_of_picked_particle)
-                else:
-                    self.particles_picked.clear()
-            else: # len(self.particles_picked) == 1                
-                name_of_picked_particle = self.particle_names[index]
-                popup = PickTwoParticlesPopup(self.particles_picked, name_of_picked_particle)
-                if popup.exec() == QDialog.Accepted:
-                    self.experiment_controller.plot_transformation(self.particles_picked.copy())
-                    self.particles_picked.clear()                  
-                else:
-                    self.particles_picked.clear()
-
-    # def show_toast(self, initial_plot):
-    #     toast = Toast(self) 
-    #     toast.setDuration(5000)  # Hide after 5 seconds
-    #     toast.setTitle("Pick Vectors for Transformation")
-    #     if initial_plot:
-    #         toast.setText("To transform, pick two particles.")
-    #     else:
-    #         toast.setText("Pick a second particle.")
-    #     toast.setPosition(ToastPosition.CENTER)
-    #     # Toast.setOffset(30, 55)
-    #     toast.setAlwaysOnMainScreen(True) 
-    #     toast.applyPreset(ToastPreset.INFORMATION)  # Apply a style preset
-    #     toast.show()         
-
-class PickTwoParticlesPopup(QDialog):
-    def __init__(self, particle_names, newly_picked_particle=None, parent=None):
-        super().__init__(parent)
-        self.setWindowTitle("Configure Transformation Matrix")
-
-        names = particle_names[0]
-        # if len(particle_names) == 2:
-        #     names += (" and " + particle_names[1])
-        #     self.instructions_label = QLabel("Proceed with the transformation?")
-        if newly_picked_particle:
-            if newly_picked_particle == particle_names[0]:
-                self.instructions_label = QLabel("Please pick a different particle for your second one \n(or " \
-                "cancel to discard the transformation)")
-            else:
-                particle_names.append(newly_picked_particle)
-                names += (" and " + particle_names[1])
-                self.instructions_label = QLabel("Proceed with the transformation?")
-        else:
-            self.instructions_label = QLabel("Please pick a second particle \n(or " \
-                "cancel to discard the transformation)")
-        self.name_label = QLabel("You picked: " + names)
-
-        self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-
-        self.button_box.accepted.connect(self.accept)
-        self.button_box.rejected.connect(self.reject)
-
-        layout = QVBoxLayout()
-        layout.addWidget(self.name_label)
-        layout.addWidget(self.instructions_label)
-        layout.addWidget(self.button_box)
-        self.setLayout(layout)
-
-class FinalizeTransformationChoicePopup(QDialog):
-    def __init__(self, indices, particle_names, parent=None):
-        super().__init__(parent)
-        self.setWindowTitle("Configure Transformation Matrix")
-        names = particle_names[indices[0]] + " and " + particle_names[indices[1]]        
-        self.name_label = QLabel("Transformation pair: " + names)
-        self.instructions_label = QLabel("Configure transformation (or cancel)")
-        self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        self.button_box.accepted.connect(self.accept)
-        self.button_box.rejected.connect(self.reject)
-
-        layout = QVBoxLayout()
-        layout.addWidget(self.name_label)
-        layout.addWidget(self.instructions_label)
-        layout.addWidget(self.button_box)
-        self.setLayout(layout)
-
-
-# if __name__ == "__main__":
-#     app = QApplication(sys.argv)
-
-#     main_dialog = PickTwoParticlesPopup(["k2", "k1"])
-#     if main_dialog.exec() == QDialog.Accepted:
-#         print("User okayed")
-#     else:
-#         print("User cancelled.")
-
-#     sys.exit(app.exec())
-
-
