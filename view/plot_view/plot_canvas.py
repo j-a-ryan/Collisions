@@ -102,13 +102,12 @@ class PlotVectorCanvas(FigureCanvas):
                         
                         self.particle_indices_picked.clear() # Get rid of circles
 
-                        if popup.transformation_config["RotateV+Ytoz"]:
-                            pass
-                        if popup.transformation_config["ApplyTransformationMatrix"]:
-                            pass
-                        if popup.transformation_config["ApplyPostTransformation"]:
-                            pass
-                        self.experiment_controller.plot_transformation(self.particles_picked.copy())
+                        rest_frame_V_plus_Y = popup.transformation_config["RestFrameV+Y"]
+                        post_transform = popup.transformation_config["ApplyPostTransformation"]
+
+                        V_Y_particle_names = self.particles_picked.copy()
+                        self.experiment_controller.plot_transformation(V_Y_particle_names, rest_frame_V_plus_Y, post_transform)
+                        
                         self.particles_picked.clear()                  
                     else:
                         self.particle_indices_picked.clear()

@@ -49,10 +49,14 @@ class ExperimentController():
 
     def plot_current_experiment(self, extra_circles=None):
         self.view.plot_experiment_vectors(self.experiment.get_collision(), extra_circles)
-
-    def set_up_config_data(self, vector_V, vector_Y, exp_2yT, return_vector_in_minkowski_form, convert_incoming_vector_to_lcc=True):
+    
+    def set_up_config_data(self, vector_V, vector_Y, exp_2yT, return_vector_in_minkowski_form, convert_incoming_vector_to_lcc=True, rest_frame_V_plus_Y=False):
         matrix_configuration_data = LightConeRapidityMatrixConfigurationData()
-        matrix_configuration_data.rest_frame_vector = vector_V
+
+        if rest_frame_V_plus_Y:
+            matrix_configuration_data.rest_frame_vector = [x + y for x, y in zip(vector_V, vector_Y)] # Sum the vectors
+        else:
+            matrix_configuration_data.rest_frame_vector = vector_V
         matrix_configuration_data.vector_to_be_transformed = vector_Y
         matrix_configuration_data.convert_incoming_vector_to_lcc = convert_incoming_vector_to_lcc
         matrix_configuration_data.return_vector_in_minkowski_form = return_vector_in_minkowski_form
@@ -60,12 +64,11 @@ class ExperimentController():
         return matrix_configuration_data
     
     identity_transformation = False
-    def plot_transformation(self, particle_names):
-        V_particle_name = particle_names[0]
-        Y_particle_name = particle_names[1]
-        particle_names.clear() # TODO: This is also done at the calling method.
+    def plot_transformation(self, V_Y_particle_names, rest_frame_V_plus_Y=False, post_transform=False):
+        V_particle_name = V_Y_particle_names[0]
+        Y_particle_name = V_Y_particle_names[1]
+        V_Y_particle_names.clear() # TODO: Probably not nec, just a copy.
         original_vectors = self.experiment.get_original_four_vectors()
-
         vector_V = self.experiment.get_original_four_vector(V_particle_name).copy() # These are numpy
         vector_Y = self.experiment.get_original_four_vector(Y_particle_name).copy()
 
@@ -74,7 +77,7 @@ class ExperimentController():
         #     matrix = IdentityMatrix(None)
         #     particle_id = experiment_collision.get_id_of_origin_vector()
         # else:
-        matrix_configuration_data = self.set_up_config_data(vector_V, vector_Y, 2, False)
+        matrix_configuration_data = self.set_up_config_data(vector_V, vector_Y, 2, False, rest_frame_V_plus_Y=rest_frame_V_plus_Y)
         matrix = LightConeRapidityMatrix(matrix_configuration_data)
 
         transformed_vectors_temp = []
