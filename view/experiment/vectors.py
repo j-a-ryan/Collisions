@@ -47,7 +47,7 @@ class VectorsGrid:
         x_label = QLabel("X")
         y_label = QLabel("Y")
         z_label = QLabel("Z")
-        pt_label = QLabel("Particle Type")
+        pt_label = QLabel("Name")
         speed_label = QLabel("Speed")
 
         # Set up the grid layout and the Vectors backing object for it.

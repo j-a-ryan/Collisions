@@ -50,18 +50,19 @@ class ConfigureTransformationPopup(QDialog):
         self.V_plus_Y_rest_frame_checkbox = QCheckBox("V + Y")
         self.rest_frame_checkboxes_group.addButton(self.V_rest_frame_checkbox)
         self.rest_frame_checkboxes_group.addButton(self.V_plus_Y_rest_frame_checkbox)
-        hbox_rest_frame.addWidget(rest_frame_label)
-        hbox_rest_frame.addWidget(self.V_rest_frame_checkbox)
-        hbox_rest_frame.addWidget(self.V_plus_Y_rest_frame_checkbox)
-        layout.addLayout(hbox_rest_frame)#, Qt.AlignmentFlag.AlignCenter)
+        hbox_rest_frame.addWidget(rest_frame_label) #, alignment=Qt.AlignmentFlag.AlignLeft)
+        hbox_rest_frame.addWidget(self.V_rest_frame_checkbox) #, alignment=Qt.AlignmentFlag.AlignLeft)
+        hbox_rest_frame.addWidget(self.V_plus_Y_rest_frame_checkbox) #, alignment=Qt.AlignmentFlag.AlignLeft)
+        hbox_rest_frame.addStretch()
+        layout.addLayout(hbox_rest_frame) #, Qt.AlignmentFlag.AlignLeft)
 
-        self.post_transformation_checkbox = QCheckBox("Apply Second-Step Transformation")
+        self.post_transformation_checkbox = QCheckBox("Second transformation configured with (V, Y) \u2192 (V' - Y', Y)")
         layout.addWidget(self.post_transformation_checkbox)#, alignment=Qt.AlignmentFlag.AlignHCenter)
 
         self.submit_cancel_button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         self.submit_cancel_button_box.accepted.connect(self.accept)
         self.submit_cancel_button_box.rejected.connect(self.reject)
-        layout.addWidget(self.submit_cancel_button_box)
+        layout.addWidget(self.submit_cancel_button_box, alignment=Qt.AlignmentFlag.AlignLeft)
         self.setLayout(layout)
 
     def on_reversed(self):
