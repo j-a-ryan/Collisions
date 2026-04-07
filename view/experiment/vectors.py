@@ -48,7 +48,6 @@ class VectorsGrid:
         y_label = QLabel("Y")
         z_label = QLabel("Z")
         pt_label = QLabel("Name")
-        speed_label = QLabel("Speed")
 
         # Set up the grid layout and the Vectors backing object for it.
         # Load these header lables into grid layout, leaving the first column blank. It is
@@ -58,7 +57,6 @@ class VectorsGrid:
         grid_layout.addWidget(y_label, 0, 3, alignment=(Qt.AlignCenter | Qt.AlignTop))
         grid_layout.addWidget(z_label, 0, 4, alignment=(Qt.AlignCenter | Qt.AlignTop))
         grid_layout.addWidget(pt_label, 0, 5, alignment=(Qt.AlignCenter | Qt.AlignTop))
-        grid_layout.addWidget(speed_label, 0, 6, alignment=(Qt.AlignCenter | Qt.AlignTop))
 
     """
     After user enters data and grid entries are all deemed valid, this method updates the backing
@@ -66,7 +64,7 @@ class VectorsGrid:
     """
     def update_backing_grid(self):
         num_rows = self.grid_layout.rowCount()
-        num_columns = self.grid_layout.columnCount()
+        # num_columns = self.grid_layout.columnCount()
         del self._backing_vectors # Good idea? Set to None instead?
         self._backing_vectors = []
         for i in range(1, num_rows): # Skip over the header row
@@ -108,11 +106,14 @@ class VectorsGrid:
         particle_combo_box.addItem("k1")
         particle_combo_box.addItem("k2")
         particle_combo_box.addItem("k3")
+        particle_combo_box.addItem("k4")
+        particle_combo_box.addItem("k5")
+        particle_combo_box.addItem("k6")
         particle_combo_box.setEditable(True)
         particle_combo_box.lineEdit().setReadOnly(True)
         particle_combo_box.setMinimumContentsLength(6)
         particle_combo_box.setCurrentIndex(-1)
-        speed_field = VectorMemberField(self.vector_validation, set_field_values)
+        particle_combo_box.activated.connect(self.activated)
 
         if set_field_values:
             time_field.setText(field_values[0])
@@ -123,7 +124,6 @@ class VectorsGrid:
             # If the text is found (index is not -1), set the current index
             if index >= 0: # Should not be necessary
                 particle_combo_box.setCurrentIndex(index)
-            speed_field.setText("1")
 
         self.grid_layout.addWidget(row_index_label, new_row_index, 0, alignment=Qt.AlignTop)
         self.grid_layout.addWidget(time_field, new_row_index, 1, alignment=Qt.AlignTop)
@@ -131,8 +131,7 @@ class VectorsGrid:
         self.grid_layout.addWidget(y_field, new_row_index, 3, alignment=Qt.AlignTop)
         self.grid_layout.addWidget(z_field, new_row_index, 4, alignment=Qt.AlignTop)
         self.grid_layout.addWidget(particle_combo_box, new_row_index, 5)
-        self.grid_layout.addWidget(speed_field, new_row_index, 6, alignment=Qt.AlignTop)
-
+        
         delete_row_button = DeleteVectorRowButton(self.parent_form.style())  # Row's index = row count. The 0th row is the headers.
         if new_row_index != 1:
             delete_icon = self.parent_form.style().standardIcon(QStyle.StandardPixmap.SP_MessageBoxCritical) #SP_BrowserStop
@@ -144,7 +143,7 @@ class VectorsGrid:
         delete_row_button.clicked.connect(lambda: self.delete_vector(delete_row_button))
         self.grid_layout.addWidget(delete_row_button, new_row_index, 7, alignment=Qt.AlignTop)
             
-        self.vector_validation.add_fields(time_field, x_field, y_field, z_field, speed_field)
+        self.vector_validation.add_fields(time_field, x_field, y_field, z_field)
         self.parent_form.set_buttons_enabled_state(False)
 
         # Check delete button activation states.
@@ -153,6 +152,9 @@ class VectorsGrid:
         if set_focus:
             first_line_edit_in_new_row = self.grid_layout.itemAtPosition(new_row_index, 1) # Column 0 is index label; column 1 is presumably time field. 
             first_line_edit_in_new_row.widget().setFocus()
+
+    def activated(self, index):
+        self.update_backing_grid()
 
     """
     Deletes vector from both grid layout and backing vectors. The problem is that the deletion from

@@ -50,7 +50,7 @@ class ExperimentController():
     def plot_current_experiment(self, extra_circles=None):
         self.view.plot_experiment_vectors(self.experiment.get_collision(), extra_circles)
     
-    def set_up_config_data(self, vector_V, vector_Y, exp_2yT, return_vector_in_minkowski_form, convert_incoming_vector_to_lcc=True, rest_frame_V_plus_Y=False):
+    def set_up_config_data(self, vector_V, vector_Y, exp_2yT, return_vector_in_minkowski_form=True, convert_incoming_vector_to_lcc=True, rest_frame_V_plus_Y=False):
         matrix_configuration_data = LightConeRapidityMatrixConfigurationData()
 
         if rest_frame_V_plus_Y:
@@ -77,7 +77,7 @@ class ExperimentController():
         #     matrix = IdentityMatrix(None)
         #     particle_id = experiment_collision.get_id_of_origin_vector()
         # else:
-        matrix_configuration_data = self.set_up_config_data(vector_V, vector_Y, 2, False, rest_frame_V_plus_Y=rest_frame_V_plus_Y)
+        matrix_configuration_data = self.set_up_config_data(vector_V, vector_Y, 2, rest_frame_V_plus_Y=rest_frame_V_plus_Y)
         matrix = LightConeRapidityMatrix(matrix_configuration_data)
 
         transformed_vectors_temp = []

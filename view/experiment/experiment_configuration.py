@@ -1,9 +1,6 @@
-from PySide6.QtWidgets import QComboBox, QGridLayout, QRadioButton, QSizePolicy, QMessageBox, QStyle, QVBoxLayout, QHBoxLayout, QFrame, QLineEdit, QPushButton, QDialog, QLabel
+from PySide6.QtWidgets import QComboBox, QGridLayout, QRadioButton, QSizePolicy, QMessageBox, QVBoxLayout, QHBoxLayout, QFrame, QLineEdit, QPushButton, QDialog, QLabel
 from PySide6.QtGui import Qt, QPixmap
 import config
-from controller.experiment_controller import ExperimentController
-from view.experiment.validation import VectorValidation
-from view.experiment.vector_components import VectorMemberField
 from view.experiment.vectors import VectorsGrid
 
 class ExperimentConfigurationForm(QDialog):

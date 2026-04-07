@@ -23,7 +23,7 @@ class Experiment():
         return self.collision.get_four_vector(name)
 
     def get_original_spatial_vectors(self):
-        return self.collision.get_vectors_column()
+        return self.collision.get_vectors_columns()
     
     def set_transformed_four_vectors(self, transformed_vectors, names):
         self.transformed_collision = Collision(transformed_vectors, names)
@@ -32,7 +32,7 @@ class Experiment():
         return self.transformed_collision
     
     def get_transformed_spatial_vectors(self):
-        return self.transformed_collision.get_vectors_column()
+        return self.transformed_collision.get_vectors_columns()
     
     def get_particle_names(self):
         return self.collision.get_vectors_name_column()
