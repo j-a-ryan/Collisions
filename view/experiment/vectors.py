@@ -143,7 +143,7 @@ class VectorsGrid:
         delete_row_button.clicked.connect(lambda: self.delete_vector(delete_row_button))
         self.grid_layout.addWidget(delete_row_button, new_row_index, 7, alignment=Qt.AlignTop)
             
-        self.vector_validation.add_fields(time_field, x_field, y_field, z_field)
+        self.vector_validation.add_fields(particle_combo_box, time_field, x_field, y_field, z_field)
         self.parent_form.set_buttons_enabled_state(False)
 
         # Check delete button activation states.
@@ -155,6 +155,7 @@ class VectorsGrid:
 
     def activated(self, index):
         self.update_backing_grid()
+        self.vector_validation.run_validation(False)
 
     """
     Deletes vector from both grid layout and backing vectors. The problem is that the deletion from

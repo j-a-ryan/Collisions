@@ -1,6 +1,5 @@
 from PySide6.QtWidgets import QLineEdit
-from PySide6.QtGui import QColor, QDoubleValidator, QFontInfo, QPalette
-from PySide6.QtCore import Qt
+from PySide6.QtGui import QDoubleValidator, QPalette
 import config
 
 class VectorMemberField(QLineEdit):
@@ -8,9 +7,6 @@ class VectorMemberField(QLineEdit):
         super(VectorMemberField, self).__init__(*args, **kwargs)
         self.setFixedHeight(16) # default was too tall
         current_font = self.font()
-        # font_info = QFontInfo(current_font)
-        # point_size = font_info.pointSize()
-        # print(point_size)
         current_font.setPointSize(11) # Sets the font size to 16 points
         self.setFont(current_font) 
         self.setStyleSheet("QLineEdit:focus { color: black; background-color: PaleTurquoise; }")
@@ -39,7 +35,7 @@ class VectorMemberField(QLineEdit):
                 self.form_validation.field_updated(True)
         else:
             self.currently_valid = False
-            style_string = "QLineEdit { color: red; background-color: LightYellow; } QLineEdit:focus { color: red; background-color: PaleTurquoise; }"
+            style_string = "QLineEdit { color: white; background-color: " + config.form_field_invalid_color + "; } QLineEdit:focus { color: red; background-color: PaleTurquoise; }"
             self.setStyleSheet(style_string)
             if run_form_validation:
                 self.form_validation.field_updated(False)

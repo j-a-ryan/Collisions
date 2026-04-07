@@ -6,12 +6,12 @@ slider_accent_color = "#42A1FF" # "#4DA6FF" #
 slider_background_color = graph_area_color # "#D6FFFF" # "#D1FFFF"
 # Vector configuration, both model- and GUI-side
 gui_vectors_header = ["t", "x", "y", "z", "name"]
-max_num_vectors = 3
+max_num_vectors = 6
 xyz_min = -10
 xyz_max = 10
 xyz_decimal_precision = 2
 zero_rounding_tolerance = 1e-5
-rest_mass = {}
+form_field_invalid_color = "#FA0730"
 
 
 

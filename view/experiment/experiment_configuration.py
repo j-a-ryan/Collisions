@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QComboBox, QGridLayout, QRadioButton, QSizePolicy, QMessageBox, QVBoxLayout, QHBoxLayout, QFrame, QLineEdit, QPushButton, QDialog, QLabel
+from PySide6.QtWidgets import QGridLayout, QMessageBox, QVBoxLayout, QHBoxLayout, QFrame, QPushButton, QDialog, QLabel
 from PySide6.QtGui import Qt, QPixmap
 import config
 from view.experiment.vectors import VectorsGrid
@@ -17,7 +17,7 @@ class ExperimentConfigurationForm(QDialog):
 
         # Set up vectors grid, its header, its layout, and its parent layout.
         
-        vectors_grid_layout = QGridLayout(self.vectors_grid_frame) # needed as instance var?
+        vectors_grid_layout = QGridLayout()#self.vectors_grid_frame) # needed as instance var?
         self.vectors_grid = VectorsGrid(vectors_grid_layout, self)
         values_requirements = f"(Values {config.xyz_min} to {config.xyz_max}, {config.xyz_decimal_precision}-decimal precision)"
         header_label = QLabel("Enter four-vectors " + values_requirements) # Insert header and grid for vectors layout
