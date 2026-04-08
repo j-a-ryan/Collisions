@@ -2,7 +2,7 @@
 
 An application in Python (PyQt-PySide6, Matplotlib) for particle accelerator physicists and theoretical physicists working in particle physics, QCD, or nuclear physics.
 
-Currently (April 2026) the application is in its initial stage, being build for a very narrow QCD use case. I plan to have a prototype to deploy to a couple of physicists by end of April 2026.
+Currently (April 2026) the application is in its initial stage, being build for a very narrow QCD use case. An alpha version will be deployed to my team of QCD physicists this month.
 
 
 ## Dependencies
