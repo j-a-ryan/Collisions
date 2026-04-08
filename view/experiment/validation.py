@@ -20,6 +20,7 @@ class VectorValidation():
 
     def remove_fields(self):
         self.fields.clear()
+        self.name_combo_boxes.clear()
 
     def remove_field(self, field):
         if field in self.fields: # Shouldn't be necessary, but error if not in list
