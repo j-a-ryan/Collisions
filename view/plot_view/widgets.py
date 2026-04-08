@@ -102,8 +102,8 @@ class ConfigureTransformationPopup(QDialog):
         else:
             self.transformation_config["V"] = self.second_particle
             self.transformation_config["Y"] = self.first_particle
-        self.transformation_config["RestFrameV+Y"] = self.V_plus_Y_rest_frame_checkbox.isChecked()
-        self.transformation_config["ApplyPostTransformation"] = self.post_transformation_checkbox.isChecked()
+        self.transformation_config["V+YConfig"] = self.V_plus_Y_rest_frame_checkbox.isChecked()
+        self.transformation_config["ApplyPostTransformationV'-Y'"] = self.post_transformation_checkbox.isChecked()
         
         super().accept()
 

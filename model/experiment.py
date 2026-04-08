@@ -28,6 +28,9 @@ class Experiment():
     def set_transformed_four_vectors(self, transformed_vectors, names):
         self.transformed_collision = Collision(transformed_vectors, names)
 
+    def get_transformed_four_vector(self, name):
+        return self.transformed_collision.get_four_vector(name)
+
     def get_transformed_collision(self):
         return self.transformed_collision
     

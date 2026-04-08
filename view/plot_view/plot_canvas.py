@@ -6,13 +6,11 @@ from PySide6.QtWidgets import QApplication, QDialog, QDialogButtonBox, QLabel, Q
 import os
 import mplcursors
 import numpy as np
-# from pyqttoast import Toast, ToastPosition, ToastPreset
-
 import config
+from controller.transformation_controller import TransformationController
 from view.plot_view.widgets import ConfigureTransformationPopup
 
 os.environ["QT_API"] = "PySide6" # Doesn't seem to do anything. What is it?
-# from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 
 
 class PlotVectorCanvas(FigureCanvas):
@@ -102,11 +100,16 @@ class PlotVectorCanvas(FigureCanvas):
                         
                         self.particle_indices_picked.clear() # Get rid of circles
 
-                        rest_frame_V_plus_Y = popup.transformation_config["RestFrameV+Y"]
-                        post_transform = popup.transformation_config["ApplyPostTransformation"]
-
+                        V_plus_Y = popup.transformation_config["V+YConfig"]
+                        V_minus_Y = popup.transformation_config["ApplyPostTransformationV'-Y'"]
+                        argument_type = TransformationController.V
+                        if V_plus_Y:
+                            if V_minus_Y:
+                                argument_type = TransformationController.V_MINUS_Y
+                            else:
+                                argument_type = TransformationController.V_PLUS_Y
                         V_Y_particle_names = self.particles_picked.copy()
-                        self.experiment_controller.plot_transformation(V_Y_particle_names, rest_frame_V_plus_Y, post_transform)
+                        self.experiment_controller.plot_transformation(V_Y_particle_names, argument_type)
                         
                         self.particles_picked.clear()                  
                     else:
