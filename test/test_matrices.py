@@ -3,6 +3,7 @@ import unittest
 
 import numpy as np
 import numpy.testing as npt
+import config
 from model.four_vector_matrix import GalileanTransformationMatrix, IdentityMatrix, MatrixConfigurationData
 from model.general_matrix import GeneralTransformationMatrix
 from model.qcd_matrix import LightConeRapidityMatrix, LightConeRapidityMatrixConfigurationData
@@ -98,14 +99,14 @@ class TestLightConeRapidityMatrix(unittest.TestCase):
         
         matrix = LightConeRapidityMatrix(matrix_configuration_data)
         transformed_vector_Y_lcc = matrix.transform(vector_Y)
-        correctly_transformed_vector_Y_lcc = [math.sqrt((2169 - 704 * math.sqrt(2)) / 41), math.sqrt(2169 / 164 + 176 * math.sqrt(2) / 41), -2 * math.sqrt(6), 0]
+        correctly_transformed_vector_Y_lcc = [math.sqrt((2169 - 704 * config.sqrt2) / 41), math.sqrt(2169 / 164 + 176 * config.sqrt2 / 41), -2 * math.sqrt(6), 0]
         npt.assert_allclose(np.array(transformed_vector_Y_lcc), np.array(correctly_transformed_vector_Y_lcc), atol=1e-07)
 
         # Test Minkowski output via reconfiguration.
         matrix_configuration_data.return_vector_in_minkowski_form = True # Testing the setting back once again to True
         matrix = LightConeRapidityMatrix(matrix_configuration_data)
         transformed_vector_Y_mink = matrix.transform(vector_Y)
-        correctly_transformed_vector_Y_mink = [(2 * math.sqrt(2169 - 704 * math.sqrt(2)) + math.sqrt(2169 + 704 * math.sqrt(2))) / (2 * math.sqrt(82)), -2 * math.sqrt(6), 0, math.sqrt((2169 - 704 * math.sqrt(2)) / 82) - 0.5 * math.sqrt((2169 + 704 * math.sqrt(2)) / 82)]
+        correctly_transformed_vector_Y_mink = [(2 * math.sqrt(2169 - 704 * config.sqrt2) + math.sqrt(2169 + 704 * config.sqrt2)) / (2 * config.sqrt2), -2 * math.sqrt(6), 0, math.sqrt((2169 - 704 * config.sqrt2) / 82) - 0.5 * math.sqrt((2169 + 704 * config.sqrt2) / 82)]
         npt.assert_allclose(np.array(transformed_vector_Y_mink), np.array(correctly_transformed_vector_Y_mink), atol=1e-07)
 
     def test_basic_case_minkowski_Y_vec_mink_out(self):
@@ -115,7 +116,7 @@ class TestLightConeRapidityMatrix(unittest.TestCase):
         
         matrix = LightConeRapidityMatrix(matrix_configuration_data)
         transformed_vector_Y_lcc = matrix.transform(vector_Y)
-        correctly_transformed_vector_Y_mink = [(2 * math.sqrt(2169 - 704 * math.sqrt(2)) + math.sqrt(2169 + 704 * math.sqrt(2))) / (2 * math.sqrt(82)), -2 * math.sqrt(6), 0, math.sqrt((2169 - 704 * math.sqrt(2)) / 82) - 0.5 * math.sqrt((2169 + 704 * math.sqrt(2)) / 82)]
+        correctly_transformed_vector_Y_mink = [(2 * math.sqrt(2169 - 704 * config.sqrt2) + math.sqrt(2169 + 704 * config.sqrt2)) / (2 * config.sqrt2), -2 * math.sqrt(6), 0, math.sqrt((2169 - 704 * config.sqrt2) / 82) - 0.5 * math.sqrt((2169 + 704 * config.sqrt2) / 82)]
         npt.assert_allclose(np.array(transformed_vector_Y_lcc), np.array(correctly_transformed_vector_Y_mink), atol=1e-07)
 
     def test_basic_case_2_minkowski_in_lcc_out(self):

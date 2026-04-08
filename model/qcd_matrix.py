@@ -1,6 +1,8 @@
 
 
 import math
+import config
+from model import util
 from model.four_vector_matrix import FourVectorTransformationMatrix, MatrixConfigurationData
 from model.util import convert_light_cone_coordinates_to_minkowski_form, convert_minkowski_to_light_cone_coordinates
 
@@ -41,18 +43,18 @@ class LightConeRapidityMatrix(FourVectorTransformationMatrix):
 
         self.m00 = 0.5 * math.exp(delta) * R_plus
         self.m01 = 0.5 * math.exp(delta) * R_minus
-        self.m02 = math.exp(delta) * rest_frame_vector_x / (math.sqrt(2) * rest_frame_vector_xyz)
-        self.m03 = math.exp(delta) * rest_frame_vector_y / (math.sqrt(2) * rest_frame_vector_xyz)
+        self.m02 = math.exp(delta) * rest_frame_vector_x / (config.sqrt2 * rest_frame_vector_xyz)
+        self.m03 = math.exp(delta) * rest_frame_vector_y / (config.sqrt2 * rest_frame_vector_xyz)
         self.m10 = 0.5 * math.exp(-delta) * R_minus
         self.m11 = 0.5 * math.exp(-delta) * R_plus
-        self.m12 = -math.exp(-delta) * rest_frame_vector_x / (math.sqrt(2) * rest_frame_vector_xyz)
-        self.m13 = -math.exp(-delta) * rest_frame_vector_y / (math.sqrt(2) * rest_frame_vector_xyz)
-        self.m20 = -((rest_frame_vector_x / (math.sqrt(2) * rest_frame_vector_xz)) * f) - (f_hat * rest_frame_vector_y * rest_frame_vector_z / (math.sqrt(2) * rest_frame_vector_xyz * rest_frame_vector_xz))
-        self.m21 = -self.m20 # (rest_frame_vector_x / (math.sqrt(2) * rest_frame_vector_xz) * f) + (f_hat * rest_frame_vector_y * rest_frame_vector_z / (math.sqrt(2) * rest_frame_vector_xyz * rest_frame_vector_xz))
+        self.m12 = -math.exp(-delta) * rest_frame_vector_x / (config.sqrt2 * rest_frame_vector_xyz)
+        self.m13 = -math.exp(-delta) * rest_frame_vector_y / (config.sqrt2 * rest_frame_vector_xyz)
+        self.m20 = -((rest_frame_vector_x / (config.sqrt2 * rest_frame_vector_xz)) * f) - (f_hat * rest_frame_vector_y * rest_frame_vector_z / (config.sqrt2 * rest_frame_vector_xyz * rest_frame_vector_xz))
+        self.m21 = -self.m20 # (rest_frame_vector_x / (config.sqrt2 * rest_frame_vector_xz) * f) + (f_hat * rest_frame_vector_y * rest_frame_vector_z / (config.sqrt2 * rest_frame_vector_xyz * rest_frame_vector_xz))
         self.m22 = ((rest_frame_vector_z / rest_frame_vector_xz) * f) - (f_hat * rest_frame_vector_y * rest_frame_vector_x / (rest_frame_vector_xyz * rest_frame_vector_xz))
         self.m23 = f_hat * rest_frame_vector_xz / rest_frame_vector_xyz
-        self.m30 = ((rest_frame_vector_x / (math.sqrt(2) * rest_frame_vector_xz)) * f_hat) - (f * rest_frame_vector_y * rest_frame_vector_z / (math.sqrt(2) * rest_frame_vector_xyz * rest_frame_vector_xz))
-        self.m31 = -(rest_frame_vector_x / (math.sqrt(2) * rest_frame_vector_xz) * f_hat) + (f * rest_frame_vector_y * rest_frame_vector_z / (math.sqrt(2) * rest_frame_vector_xyz * rest_frame_vector_xz))
+        self.m30 = ((rest_frame_vector_x / (config.sqrt2 * rest_frame_vector_xz)) * f_hat) - (f * rest_frame_vector_y * rest_frame_vector_z / (config.sqrt2 * rest_frame_vector_xyz * rest_frame_vector_xz))
+        self.m31 = -(rest_frame_vector_x / (config.sqrt2 * rest_frame_vector_xz) * f_hat) + (f * rest_frame_vector_y * rest_frame_vector_z / (config.sqrt2 * rest_frame_vector_xyz * rest_frame_vector_xz))
         self.m32 = -((rest_frame_vector_z / rest_frame_vector_xz) * f_hat) - (f * rest_frame_vector_y * rest_frame_vector_x / (rest_frame_vector_xyz * rest_frame_vector_xz))
         self.m33 = f * rest_frame_vector_xz / rest_frame_vector_xyz
 
@@ -78,17 +80,16 @@ class LightConeRapidityMatrixConfigurationData(MatrixConfigurationData):
         exponential of 2yT. The boost value, such that V+ = AV−.
         """
         self.exp_2yT = None
+
+    
         
     def calculate_calculated_values(self):
         super().calculate_calculated_values()
-        self.rest_frame_vector_xyz_magnitude = math.sqrt(math.pow(self.rest_frame_vector[1], 2) +
-                                                         math.pow(self.rest_frame_vector[2], 2) +
-                                                         math.pow(self.rest_frame_vector[3], 2))
-        self.rest_frame_vector_xz_magnitude = math.sqrt(math.pow(self.rest_frame_vector[1], 2) +
-                                                        math.pow(self.rest_frame_vector[3], 2))
+        self.rest_frame_vector_xyz_magnitude = util.calculate_four_vector_xyz_magnitude(self.rest_frame_vector)
+        self.rest_frame_vector_xz_magnitude = util.calculate_four_vector_xz_magnitude(self.rest_frame_vector)
 
         self.exp_2yr = abs((self.rest_frame_vector[0] + self.rest_frame_vector_xyz_magnitude) /
-                           (self.rest_frame_vector[0] - self.rest_frame_vector_xyz_magnitude))
+                           (util.calculate_difference_t_minus_xyz_magnitude(self.rest_frame_vector)))
 
         self.YLx = (self.rest_frame_vector[3] * self.vector_to_be_transformed[1] - self.rest_frame_vector[1]
                     * self.vector_to_be_transformed[3]) / self.rest_frame_vector_xz_magnitude

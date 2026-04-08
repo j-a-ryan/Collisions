@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 
 graph_area_color = "#E0FFFF" #"#FCFEE7"
@@ -11,7 +13,10 @@ xyz_min = -10
 xyz_max = 10
 xyz_decimal_precision = 2
 zero_rounding_tolerance = 1e-5
+zero_rounding_tolerance_string = "1e-5"
 form_field_invalid_color = "#FA0730"
+exp_2yT = 2
+sqrt2 = math.sqrt(2)
 
 
 

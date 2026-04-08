@@ -1,5 +1,11 @@
+import config
+from model import util
 from model.particle import Particle
 import numpy as np
+
+from model.qcd_matrix import LightConeRapidityMatrix, LightConeRapidityMatrixConfigurationData
+
+
 
 def galilean_coordinate_transform1(to_particle, from_particle):
     from_vector = from_particle.vector
@@ -67,3 +73,104 @@ def configure_lorentz_transformation_matrix(particle):
               [0, 0, 0, 0],
               [0, 0, 0, 0],
               [0, 0, 0, 0]])
+    
+def set_up_config_data(vector_V, vector_Y_for_calculated_V, vector_Y, exp_2yT, argument_type, return_vector_in_minkowski_form=True, convert_incoming_vector_to_lcc=True):
+        matrix_configuration_data = LightConeRapidityMatrixConfigurationData()
+
+        match argument_type:
+            case util.V:
+                matrix_configuration_data.rest_frame_vector = vector_V
+            case util.V_PLUS_Y:
+                matrix_configuration_data.rest_frame_vector = util.add_vectors(vector_V, vector_Y)
+            case util.V_MINUS_Y:
+                matrix_configuration_data.rest_frame_vector = util.subtract_vectors(vector_V, vector_Y_for_calculated_V)
+
+        matrix_configuration_data.vector_to_be_transformed = vector_Y
+        matrix_configuration_data.convert_incoming_vector_to_lcc = convert_incoming_vector_to_lcc
+        matrix_configuration_data.return_vector_in_minkowski_form = return_vector_in_minkowski_form
+        matrix_configuration_data.exp_2yT = exp_2yT
+        return matrix_configuration_data
+
+def handle_transformation(vector_V, vector_Y, V_particle_name, Y_particle_name, particle_names, experiment, argument_type):
+        
+        original_vectors = experiment.get_original_four_vectors()
+        
+        match argument_type:
+            case util.V:
+                transformed_vectors = transform(vector_V, vector_Y, vector_Y, original_vectors, argument_type)
+            case util.V_MINUS_Y:
+                # This is a secondary transformation. First we must tranform by (V + Y, Y)
+                initial_transformed_vectors = transform(vector_V, vector_Y, vector_Y, original_vectors, util.V_PLUS_Y)
+                
+                # Set the transformed vectors in the experiment only for the convenience of being able to
+                # get the V and Y vectors from there using the lookup. This collision will soon be overwritten
+                # with the final one.
+                experiment.set_transformed_four_vectors(initial_transformed_vectors, particle_names) # Not numpy for this because using the pathway that comes from the GUI to the model.        
+                vector_V_prime = experiment.get_transformed_four_vector(V_particle_name).copy() # These are numpy
+                vector_Y_prime = experiment.get_transformed_four_vector(Y_particle_name).copy()
+                # We use V' and Y for the next pair.
+                transformed_vectors = transform(vector_V_prime, vector_Y_prime, vector_Y, initial_transformed_vectors, argument_type)
+            case util.V_PLUS_Y:
+                transformed_vectors = transform(vector_V, vector_Y, vector_Y, original_vectors, argument_type)
+        return transformed_vectors
+
+def transform_vector_set(vector_V, vector_Y, vectors, argument_type):
+    match argument_type:
+        case util.V:
+            vector_Y_for_calculated_V = vector_Y
+        case util.V_PLUS_Y:
+            vector_Y_for_calculated_V = vector_Y
+        case util.V_MINUS_Y:
+            vector_Y_for_calculated_V = None #???
+    return transform(vector_V, vector_Y_for_calculated_V, vector_Y, vectors, argument_type)
+
+def transform(vector_V, vector_Y_for_calculated_V, vector_Y, vectors, argument_type):
+    
+        matrix_configuration_data = set_up_config_data(vector_V, vector_Y_for_calculated_V, vector_Y, config.exp_2yT, argument_type)
+        matrix = LightConeRapidityMatrix(matrix_configuration_data)
+
+        transformed_vectors_temp = []
+        
+        for i in range(len(vectors)):
+            vec_copy = vectors[i].copy() # Just to be sure no changes are made to original.
+            transformed_vec = matrix.transform(vec_copy)
+            transformed_vectors_temp.append(transformed_vec.tolist())
+
+        transformed_vectors = np.array(transformed_vectors_temp)
+        return transformed_vectors
+
+def validate_vectors(vector_V, vector_Y, argument_type, V_particle_name=None, Y_particle_name=None, experiment=None, particle_names=None):
+        invalidity_message1 = None
+        invalidity_message2 = None
+        invalidity_message3 = None
+
+        match argument_type:
+            case util.V:
+                vector_to_use = vector_V
+            case util.V_MINUS_Y:
+                original_vectors = experiment.get_original_four_vectors()
+                transformed_vectors = transform(vector_V, vector_Y, vector_Y, original_vectors, util.V_PLUS_Y)
+                experiment.set_transformed_four_vectors(transformed_vectors, particle_names) # Not numpy for this because using the pathway that comes from the GUI to the model.        
+                vector_V_prime = experiment.get_transformed_four_vector(V_particle_name).copy()
+                vector_Y_prime = experiment.get_transformed_four_vector(Y_particle_name).copy()
+
+                vector_to_use = util.subtract_vectors(vector_V_prime, vector_Y_prime)
+            case util.V_PLUS_Y:
+                vector_to_use = util.add_vectors(vector_V, vector_Y)
+
+        xyz_magnitude_V = util.calculate_four_vector_xyz_magnitude(vector_to_use)
+        if xyz_magnitude_V == 0:
+            invalidity_message1 = "Magnitude of V is zero"
+        elif xyz_magnitude_V < config.zero_rounding_tolerance:
+            invalidity_message1 = "Magnitude of V is ~0 (<" + config.zero_rounding_tolerance_string +")"
+        xz_magnitude_V = util.calculate_four_vector_xz_magnitude(vector_to_use)
+        if xz_magnitude_V == 0:
+            invalidity_message2 = "Magnitude of V in x-z plane is zero"
+        elif xz_magnitude_V < config.zero_rounding_tolerance:
+            invalidity_message2 = "Magnitude of V in x-z plane is ~0 (<" + config.zero_rounding_tolerance_string +")"
+        t_minus_xyz = util.calculate_difference_t_minus_xyz_magnitude(vector_to_use)
+        if t_minus_xyz == 0:
+            invalidity_message3 = "The difference between the time component of V and the xyz magnitude of V is zero"
+        elif t_minus_xyz < config.zero_rounding_tolerance:
+            invalidity_message3 = "The difference between the time component of V and the xyz magnitude of V is ~0 (<" + config.zero_rounding_tolerance_string +")"
+        return invalidity_message1, invalidity_message2, invalidity_message3

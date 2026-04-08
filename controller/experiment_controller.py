@@ -56,12 +56,11 @@ class ExperimentController():
         V_particle_name = V_Y_particle_names[0]
         Y_particle_name = V_Y_particle_names[1]
         V_Y_particle_names.clear() # TODO: Probably not nec, just a copy.
-        # original_vectors = self.experiment.get_original_four_vectors()
         vector_V = self.experiment.get_original_four_vector(V_particle_name).copy() # These are numpy
         vector_Y = self.experiment.get_original_four_vector(Y_particle_name).copy()
         names = self.experiment.get_particle_names()
 
-        transformed_vectors = self.transformation_controller.handle_transformation(vector_V, vector_Y, V_particle_name, names, self.experiment, argument_type)
+        transformed_vectors = self.transformation_controller.handle_transformation(vector_V, vector_Y, V_particle_name, Y_particle_name, names, self.experiment, argument_type)
         
         self.experiment.set_transformed_four_vectors(transformed_vectors, names) # Not numpy for this because using the pathway that comes from the GUI to the model.  
         self.view.plot_transformed_experiment_vectors(self.experiment.get_transformed_collision(), self.experiment.get_collision())
