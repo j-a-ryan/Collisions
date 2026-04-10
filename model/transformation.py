@@ -1,5 +1,6 @@
 import config
 from model import util
+from model import qcd_matrix
 from model.particle import Particle
 import numpy as np
 
@@ -25,8 +26,7 @@ def galilean_coordinate_transform2(to_particle, from_particle):
               [0, 0, 0, 1 - from_vector[3] / to_vector[3]]])
     transformed_vector = from_vector @ matrix
     # transformed_vector = np.dot(from_vector, matrix)
-    from_particle_transformed = Particle(
-        from_particle.id, from_particle.type, transformed_vector, False)
+    from_particle_transformed = Particle(from_particle.id, from_particle.type, transformed_vector, False)
     return from_particle_transformed
 
 # Galilean transformation matrix for arbitray position vectors.Purely for fun/exercise, 
@@ -140,37 +140,75 @@ def transform(vector_V, vector_Y_for_calculated_V, vector_Y, vectors, argument_t
         return transformed_vectors
 
 def validate_vectors(vector_V, vector_Y, argument_type, V_particle_name=None, Y_particle_name=None, experiment=None, particle_names=None):
-        invalidity_message1 = None
-        invalidity_message2 = None
-        invalidity_message3 = None
 
-        match argument_type:
-            case util.V:
-                vector_to_use = vector_V
-            case util.V_MINUS_Y:
-                original_vectors = experiment.get_original_four_vectors()
-                transformed_vectors = transform(vector_V, vector_Y, vector_Y, original_vectors, util.V_PLUS_Y)
-                experiment.set_transformed_four_vectors(transformed_vectors, particle_names) # Not numpy for this because using the pathway that comes from the GUI to the model.        
-                vector_V_prime = experiment.get_transformed_four_vector(V_particle_name).copy()
-                vector_Y_prime = experiment.get_transformed_four_vector(Y_particle_name).copy()
+        vector_V_to_use = None
+        vector_Y_to_use = vector_Y
+        ret_val = None
+        transformation_type = None
 
-                vector_to_use = util.subtract_vectors(vector_V_prime, vector_Y_prime)
-            case util.V_PLUS_Y:
-                vector_to_use = util.add_vectors(vector_V, vector_Y)
+        if argument_type == util.V:
+            vector_V_to_use = vector_V
+            transformation_type = util.V
+            ret_val = check_for_errors(vector_V_to_use, vector_Y_to_use)
+        else:
+            vector_V_to_use_1 = util.add_vectors(vector_V, vector_Y)
+            ret_val_1 = check_for_errors(vector_V_to_use_1, vector_Y_to_use)
+            # transformation_type = util.V_PLUS_Y Works, but for clarity we moved this down to the two elses below.
+            if not ret_val_1:
+                if argument_type ==util.V_MINUS_Y:
+                    transformation_type = util.V_MINUS_Y
+                    
+                    # First we must make the V_PLUS_Y transformation; we now know that it won't cause exceptions.
+                    original_vectors = experiment.get_original_four_vectors()
+                    transformed_vectors = transform(vector_V, vector_Y, vector_Y, original_vectors, util.V_PLUS_Y) # Yes, pass in vector_V, not vector_V_to_use. We will redundantly re-add V and Y. No big deal.
+                    experiment.set_transformed_four_vectors(transformed_vectors, particle_names) # Not numpy for this because using the pathway that comes from the GUI to the model.        
+                    vector_V_prime = experiment.get_transformed_four_vector(V_particle_name).copy()
+                    vector_Y_prime = experiment.get_transformed_four_vector(Y_particle_name).copy()
+                    # Now check the second transformation.
+                    vector_V_to_use = util.subtract_vectors(vector_V_prime, vector_Y_prime)
+                    ret_val = check_for_errors(vector_V_to_use, vector_Y_to_use)
+                else:
+                    transformation_type = util.V_PLUS_Y
+            else:
+                ret_val = ret_val_1
+                transformation_type = util.V_PLUS_Y
+        
+        return ret_val, transformation_type
 
-        xyz_magnitude_V = util.calculate_four_vector_xyz_magnitude(vector_to_use)
-        if xyz_magnitude_V == 0:
-            invalidity_message1 = "Magnitude of V is zero"
-        elif xyz_magnitude_V < config.zero_rounding_tolerance:
-            invalidity_message1 = "Magnitude of V is ~0 (<" + config.zero_rounding_tolerance_string +")"
-        xz_magnitude_V = util.calculate_four_vector_xz_magnitude(vector_to_use)
-        if xz_magnitude_V == 0:
-            invalidity_message2 = "Magnitude of V in x-z plane is zero"
-        elif xz_magnitude_V < config.zero_rounding_tolerance:
-            invalidity_message2 = "Magnitude of V in x-z plane is ~0 (<" + config.zero_rounding_tolerance_string +")"
-        t_minus_xyz = util.calculate_difference_t_minus_xyz_magnitude(vector_to_use)
-        if t_minus_xyz == 0:
-            invalidity_message3 = "The difference between the time component of V and the xyz magnitude of V is zero"
-        elif t_minus_xyz < config.zero_rounding_tolerance:
-            invalidity_message3 = "The difference between the time component of V and the xyz magnitude of V is ~0 (<" + config.zero_rounding_tolerance_string +")"
-        return invalidity_message1, invalidity_message2, invalidity_message3
+def check_for_errors(vector_V_to_use, vector_Y_to_use):
+    invalidity_message1 = None
+    invalidity_message2 = None
+    invalidity_message3 = None
+    invalidity_message4 = None
+
+    xyz_magnitude_V = util.calculate_four_vector_xyz_magnitude(vector_V_to_use)
+    if xyz_magnitude_V == 0:
+        invalidity_message1 = "Magnitude of V is zero"
+    elif abs(xyz_magnitude_V) < config.zero_rounding_tolerance:
+        invalidity_message1 = "Magnitude of V is ~0 (<" + config.zero_rounding_tolerance_string +")"
+    xz_magnitude_V = util.calculate_four_vector_xz_magnitude(vector_V_to_use)
+    if xz_magnitude_V == 0:
+        invalidity_message2 = "Magnitude of V in x-z plane is zero"
+    elif abs(xz_magnitude_V) < config.zero_rounding_tolerance:
+        invalidity_message2 = "Magnitude of V in x-z plane is ~0 (<" + config.zero_rounding_tolerance_string +")"
+    diff_t_minus_xyz = abs(util.calculate_difference_t_minus_xyz_magnitude(vector_V_to_use))
+    if diff_t_minus_xyz == 0:
+        invalidity_message3 = "The difference between the time component of V and the xyz magnitude of V is zero"
+    elif abs(diff_t_minus_xyz) < config.zero_rounding_tolerance:
+        invalidity_message3 = "The difference between the time component of V and the xyz magnitude of V is ~0 (<" + config.zero_rounding_tolerance_string +")"
+    numerator_of_YLy = qcd_matrix.calculate_numerator_of_YLy(vector_V_to_use, vector_Y_to_use)
+    if numerator_of_YLy == 0:
+        invalidity_message4 = "The value of YLy is zero"
+    elif abs(numerator_of_YLy) < config.zero_rounding_tolerance:
+        invalidity_message4 = "The value of YLy is ~0 (<" + config.zero_rounding_tolerance_string +")"
+
+    ret_val = []
+    if invalidity_message1:
+        ret_val.append(invalidity_message1)
+    if invalidity_message2:
+        ret_val.append(invalidity_message2)
+    if invalidity_message3:
+        ret_val.append(invalidity_message3)
+    if invalidity_message4:
+        ret_val.append(invalidity_message4)
+    return ret_val

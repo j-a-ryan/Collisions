@@ -80,8 +80,6 @@ class LightConeRapidityMatrixConfigurationData(MatrixConfigurationData):
         exponential of 2yT. The boost value, such that V+ = AV−.
         """
         self.exp_2yT = None
-
-    
         
     def calculate_calculated_values(self):
         super().calculate_calculated_values()
@@ -93,9 +91,10 @@ class LightConeRapidityMatrixConfigurationData(MatrixConfigurationData):
 
         self.YLx = (self.rest_frame_vector[3] * self.vector_to_be_transformed[1] - self.rest_frame_vector[1]
                     * self.vector_to_be_transformed[3]) / self.rest_frame_vector_xz_magnitude
+        
+        numerator_of_YLy = calculate_numerator_of_YLy(self.rest_frame_vector, self.vector_to_be_transformed)
 
-        self.YLy = (math.pow(self.rest_frame_vector[1], 2) * self.vector_to_be_transformed[2] - self.rest_frame_vector[1] * self.rest_frame_vector[2] * self.vector_to_be_transformed[1] +
-                    self.rest_frame_vector[3] * (self.rest_frame_vector[3] * self.vector_to_be_transformed[2] - self.rest_frame_vector[2] * self.vector_to_be_transformed[3])) / (self.rest_frame_vector_xz_magnitude * self.rest_frame_vector_xyz_magnitude)
+        self.YLy =  numerator_of_YLy / (self.rest_frame_vector_xz_magnitude * self.rest_frame_vector_xyz_magnitude)
 
         self.f = (self.YLx / self.YLy) / math.sqrt(1 + math.pow(self.YLx / self.YLy, 2))
         self.f_hat = math.sqrt(1 - math.pow(self.f, 2))
@@ -115,3 +114,6 @@ class LightConeRapidityMatrixConfigurationData(MatrixConfigurationData):
         else:
             self.vector_posttreatment_function = convert_light_cone_coordinates_to_minkowski_form
         
+def calculate_numerator_of_YLy(V_vector, Y_vector):
+        return math.pow(V_vector[1], 2) * Y_vector[2] - V_vector[1] * V_vector[2] * Y_vector[1] + \
+                V_vector[3] * (V_vector[3] * Y_vector[2] - V_vector[2] * Y_vector[3])

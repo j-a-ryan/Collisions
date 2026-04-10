@@ -11,7 +11,7 @@ class Collision():
         self.particles = {} # We keep the particles but...
         self.vectors = np.array(vectors)
         self.names = names
-        for i in range(len(vectors)):
+        for i in range(len(vectors)): # TODO: We need a dictionary or similar to be promoted from here to Vectors itself, so that we don't depend on order of names corresponding to order of vectors.
             self.create_particle(i, self.names[i], self.vectors[i])
 
     def create_particle(self, index, name, vector):

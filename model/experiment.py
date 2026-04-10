@@ -7,7 +7,7 @@ any metadata (name of experiment, filepath, etc.)
 """
 class Experiment():
 
-    def __init__(self, vectors, names, metadata):
+    def __init__(self, vectors, names, metadata=None):
         # self.original_vectors = vectors # FINAL, do not transform TODO: Needed? delete
         self.metadata = metadata
         self.transformed_collision = None # Just as a reminder

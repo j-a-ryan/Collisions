@@ -8,9 +8,18 @@ import numpy as np
 
 import config
 
-V = "V"
-V_PLUS_Y = "V_plus_Y"
-V_MINUS_Y = "V_minus_Y"
+V = "(V, Y)"
+V_PLUS_Y = "(V + Y, Y)"
+V_MINUS_Y = "(V' - Y', Y)"
+
+def get_config_argument(V_plus_Y, V_minus_Y):
+    argument_type = V
+    if V_plus_Y:
+        if V_minus_Y:
+            argument_type = V_MINUS_Y
+        else:
+            argument_type = V_PLUS_Y
+    return argument_type
 
 '''
 Takes Numpy arrays or Python lists, appends column to end of list.

@@ -2,6 +2,7 @@ from PySide6.QtWidgets import QGridLayout, QMessageBox, QVBoxLayout, QHBoxLayout
 from PySide6.QtGui import Qt, QPixmap
 import config
 from view.experiment.vectors import VectorsGrid
+from view.experiment.widgets import VectorIssueCheck
 
 class ExperimentConfigurationForm(QDialog):
 
@@ -27,89 +28,6 @@ class ExperimentConfigurationForm(QDialog):
         self.max_vector_count = max_vector_count
         self.add_row_button = QPushButton(f"Add New Row (max {config.max_num_vectors}:)")
         self.add_row_button.clicked.connect(lambda: self.add_new_row(True))
-        # self.vectors_qvbox_layout.addWidget(self.add_row_button)
-
-        # self.experiment_type_qhbox_layout = QVBoxLayout()
-        # self.experiment_type_qhbox_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        
-        # self.experiment_type_frame = QFrame()
-        # self.experiment_type_frame.setFrameShape(QFrame.StyledPanel)
-        # self.experiment_type_frame.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        # self.exp_type_qhbox = QHBoxLayout(self.experiment_type_frame)
-        # self.exp_type_qhbox.setAlignment(Qt.AlignmentFlag.AlignLeft)
-
-        # self.field_radio_layout = QVBoxLayout()
-        # self.field_label = QLabel("Physics Field:")
-        # self.field_radio_layout.addWidget(self.field_label)
-        # self.radio1 = QRadioButton("General")
-        # self.radio2 = QRadioButton("Nuclear")
-        # self.radio3 = QRadioButton("Particle")
-        # self.radio4 = QRadioButton("QCD")
-        # self.field_radio_layout.addWidget(self.radio1)
-        # self.field_radio_layout.addWidget(self.radio2)
-        # self.field_radio_layout.addWidget(self.radio3)
-        # self.field_radio_layout.addWidget(self.radio4)
-        # self.radio1.setChecked(True)
-        # self.exp_type_qhbox.addLayout(self.field_radio_layout)
-
-        # self.experiment_type_combo_box_label = QLabel("Experiment Type:")
-        # self.experiment_type_combo_box = QComboBox()
-        # self.experiment_type_combo_box.setEditable(False)
-        # self.experiment_type_combo_box.addItem("e⁺e⁻")
-        # self.experiment_type_combo_box.addItem("p-p")
-        # self.experiment_type_combo_box.addItem("Heavy ion")
-        # self.experiment_type_combo_box.addItem("e-p/e-A")
-        # self.experiment_type_combo_box.setMinimumContentsLength(5)
-        # self.experiment_type_combo_box.setCurrentIndex(-1)
-        # self.combo_box_qvbox_layout_exp_type_units = QVBoxLayout()
-        # self.combo_box_qvbox_layout_exp_type_units.setAlignment(Qt.AlignmentFlag.AlignTop)
-        # self.combo_box_qvbox_layout_exp_type_units.addWidget(self.experiment_type_combo_box_label)
-        # self.combo_box_qvbox_layout_exp_type_units.addWidget(self.experiment_type_combo_box)
-        # self.combo_box_qvbox_layout_exp_type_units.addStretch()
-        # self.combo_box_qvbox_layout_exp_type_units2 = QVBoxLayout()
-        # self.combo_box_qvbox_layout_exp_type_units2.setAlignment(Qt.AlignmentFlag.AlignBottom)
-        # self.vector_units_combo_box_label = QLabel("Units:")
-        # self.vector_units_combo_box = QComboBox()
-        # self.vector_units_combo_box.setEditable(False)
-        # self.vector_units_combo_box.addItem("m")
-        # self.vector_units_combo_box.addItem("ss")
-        # self.combo_box_qvbox_layout_exp_type_units2.addWidget(self.vector_units_combo_box_label)
-        # self.combo_box_qvbox_layout_exp_type_units2.addWidget(self.vector_units_combo_box)
-        # self.combo_box_qvbox_layout_exp_type_units_both = QVBoxLayout()
-        # self.combo_box_qvbox_layout_exp_type_units_both.addLayout(self.combo_box_qvbox_layout_exp_type_units)
-        # self.combo_box_qvbox_layout_exp_type_units_both.addLayout(self.combo_box_qvbox_layout_exp_type_units2)
-        
-        # self.matrix_type_combo_box_label = QLabel("Transformation Matrix:")
-        # self.matrix_type_combo_box = QComboBox()
-        # self.matrix_type_combo_box.setEditable(False)
-        # self.matrix_type_combo_box.addItem("Galilean")
-        # self.matrix_type_combo_box.addItem("General Boost")
-        # self.matrix_type_combo_box.addItem("Momentum-Realignment Boost")
-        # self.matrix_type_combo_box.addItem("Identity Matrix (for app testing)")
-        # self.matrix_type_combo_box.setMinimumContentsLength(5)
-        # self.matrix_type_combo_box.setCurrentIndex(-1)
-        # self.matrix_type_combo_box_qvbox_layout = QVBoxLayout()
-        # self.matrix_type_combo_box_qvbox_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        # self.matrix_type_combo_box_qvbox_layout.addWidget(self.matrix_type_combo_box_label)
-        # self.matrix_type_combo_box_qvbox_layout.addWidget(self.matrix_type_combo_box)
-        # self.matrix_view_button = QPushButton("View Matrix")
-        # self.matrix_view_button.clicked.connect(self.view_matrix)
-        # self.matrix_type_combo_box_qvbox_layout.addWidget(self.matrix_view_button)
-        
-        # self.vector_type_combo_box_label = QLabel("Four-Vector Type:")
-        # self.vector_type_combo_box = QComboBox()
-        # self.vector_type_combo_box.setEditable(False)
-        # self.vector_type_combo_box.addItem("Location")
-        # self.vector_type_combo_box.addItem("Velocity")
-        # self.vector_type_combo_box.addItem("Momentum")
-        # self.vector_type_combo_box.addItem("Energy-Momentum")
-        # self.matrix_type_combo_box_qvbox_layout.addWidget(self.vector_type_combo_box_label)
-        # self.matrix_type_combo_box_qvbox_layout.addWidget(self.vector_type_combo_box)
-
-        # self.exp_type_qhbox.addLayout(self.combo_box_qvbox_layout_exp_type_units_both)
-        # self.exp_type_qhbox.addLayout(self.matrix_type_combo_box_qvbox_layout)
-
-        # self.experiment_type_qhbox_layout.addWidget(self.experiment_type_frame)
 
         self.qhbox_layout_1 = QHBoxLayout()
         self.qhbox_layout_1.setAlignment(Qt.AlignmentFlag.AlignLeft)        
@@ -122,9 +40,9 @@ class ExperimentConfigurationForm(QDialog):
         self.submit_button = QPushButton("Submit")
         self.submit_button.clicked.connect(self.submit)
         self.save_button = QPushButton("Save")
-        # self.save_button.clicked.connect(self.save)
+        self.save_button.clicked.connect(self.save)
         self.cancel_button = QPushButton("Cancel")
-        self.cancel_button.clicked.connect(self.close)
+        self.cancel_button.clicked.connect(self.cancel)
 
         self.set_buttons_enabled_state(False)
         widgets_to_enable_disable = {"ADD_ROW": self.add_row_button, "SAVE": self.save_button, 
@@ -208,12 +126,8 @@ class ExperimentConfigurationForm(QDialog):
 
 
     def check_parameters(self):
-        msg = QMessageBox(self)
-        msg.setWindowTitle("Parameter Check")
-        msg.setText("No conflicts detected")
-        msg.setIcon(QMessageBox.Icon.Information)
-        msg.setStandardButtons(QMessageBox.StandardButton.Ok)
-        msg.exec()
+        vector_issues_dialog = VectorIssueCheck(self.vectors_grid.backing_vectors)
+        vector_issues_dialog.exec()
         
     def submit(self):
         # Send experiment configuration data to the controller
@@ -223,3 +137,9 @@ class ExperimentConfigurationForm(QDialog):
                                 "hi": "ho", "experiment_directory": ""}}
         self.controller.create_experiment(payload)
         self.done(1) # self.close() instead? See the plot2d form, same question
+
+    def save(self):
+        pass
+
+    def cancel(self):
+        self.done(0) # TODO: self.close() instead? See the plot2d form, same question

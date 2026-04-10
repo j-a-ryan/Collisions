@@ -121,13 +121,13 @@ def create_argument_type_checkboxes(parent_form, parent_form_vbox_layout):
 
     
             
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
+# if __name__ == "__main__":
+#     app = QApplication(sys.argv)
 
-    main_dialog = ConfigureTransformationPopup([0, 1], ["k2", "k1"])
-    if main_dialog.exec() == QDialog.Accepted:
-        print("User okayed")
-    else:
-        print("User cancelled.")
+#     main_dialog = ConfigureTransformationPopup([0, 1], ["k2", "k1"])
+#     if main_dialog.exec() == QDialog.Accepted:
+#         print("User okayed")
+#     else:
+#         print("User cancelled.")
 
-    sys.exit(app.exec())
+#     sys.exit(app.exec())

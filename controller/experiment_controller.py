@@ -34,10 +34,9 @@ class ExperimentController():
         pre_treated_vectors = []
         names = []
         for vec in raw_vectors:
-            four_vec = [float(j) for j in vec[:4]]
+            pre_treated_vectors.append([float(j) for j in vec[:4]])
             names.append(vec[4])
-            pre_treated_vectors.append(four_vec)
-
+            
         return pre_treated_vectors, names
     
     def _extract_metadata(self, experiment_configuration_data):

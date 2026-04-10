@@ -103,12 +103,7 @@ class PlotVectorCanvas(FigureCanvas):
 
                         V_plus_Y = popup.transformation_config["V+YConfig"]
                         V_minus_Y = popup.transformation_config["ApplyPostTransformationV'-Y'"]
-                        argument_type = util.V
-                        if V_plus_Y:
-                            if V_minus_Y:
-                                argument_type = util.V_MINUS_Y
-                            else:
-                                argument_type = util.V_PLUS_Y
+                        argument_type = util.get_config_argument(V_plus_Y, V_minus_Y)
                         V_Y_particle_names = self.particles_picked.copy()
                         self.experiment_controller.plot_transformation(V_Y_particle_names, argument_type)
                         
