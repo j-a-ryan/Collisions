@@ -106,27 +106,27 @@ class ExperimentConfigurationForm(QDialog):
     def add_new_row(self, set_focus=False):
         self.vectors_grid.add_vector_row(set_focus)
 
-    matrix_view_lookup = {"General Boost": "resources/GeneralBoost.png", "Momentum-Realignment Boost": "resources/LCC-RapidityBoost.png"}
+    # matrix_view_lookup = {"General Boost": "resources/GeneralBoost.png", "Momentum-Realignment Boost": "resources/LCC-RapidityBoost.png"}
         
-    def view_matrix(self):
-        msg_box = QMessageBox(self)
+    # def view_matrix(self):
+    #     msg_box = QMessageBox(self)
 
-        selected_matrix_name = self.matrix_type_combo_box.currentText()
-        if selected_matrix_name is not None and selected_matrix_name != "":
-            msg_box.setWindowTitle(selected_matrix_name + " matrix")
-            if selected_matrix_name in self.matrix_view_lookup:
-                file = self.matrix_view_lookup[selected_matrix_name]
-                pixmap = QPixmap(file)
-                pixmap = pixmap.scaled(600, 600, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
-                msg_box.setIconPixmap(pixmap)
-            else:
-                msg_box.setText("Image of " + selected_matrix_name)
-            msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
-            msg_box.exec()
+    #     selected_matrix_name = self.matrix_type_combo_box.currentText()
+    #     if selected_matrix_name is not None and selected_matrix_name != "":
+    #         msg_box.setWindowTitle(selected_matrix_name + " matrix")
+    #         if selected_matrix_name in self.matrix_view_lookup:
+    #             file = self.matrix_view_lookup[selected_matrix_name]
+    #             pixmap = QPixmap(file)
+    #             pixmap = pixmap.scaled(600, 600, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+    #             msg_box.setIconPixmap(pixmap)
+    #         else:
+    #             msg_box.setText("Image of " + selected_matrix_name)
+    #         msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+    #         msg_box.exec()
 
 
     def check_parameters(self):
-        vector_issues_dialog = VectorIssueCheck(self.vectors_grid.backing_vectors)
+        vector_issues_dialog = VectorIssueCheck(self.controller, self.vectors_grid.backing_vectors)
         vector_issues_dialog.exec()
         
     def submit(self):
@@ -135,7 +135,7 @@ class ExperimentConfigurationForm(QDialog):
         payload = {"vectors": self.vectors_grid.backing_vectors,
                    "metadata": {"vectors_header": VectorsGrid.header_row, 
                                 "hi": "ho", "experiment_directory": ""}}
-        self.controller.create_experiment(payload)
+        self.controller.configure_and_create_experiment(payload)
         self.done(1) # self.close() instead? See the plot2d form, same question
 
     def save(self):

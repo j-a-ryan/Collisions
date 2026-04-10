@@ -4,8 +4,8 @@ from PySide6.QtWidgets import QApplication, QComboBox, QDialog, QDialogButtonBox
 from PySide6.QtGui import QIcon, Qt
 
 import config
-from model import transformation, util
-from model.experiment import Experiment
+from controller.transformation_controller import TransformationController
+from model import util
 from view.plot_view.widgets import create_argument_type_checkboxes
 
 class DeleteVectorRowButton(QPushButton):
@@ -38,7 +38,7 @@ class DeleteVectorRowButton(QPushButton):
 
 class VectorIssueCheck(QDialog):
     
-    def __init__(self, vectors): # These vectors are the VectorsGrid's backing_vectors member
+    def __init__(self, experiment_controller, vectors): # These vectors are the VectorsGrid's backing_vectors member
         super().__init__()
         self.setWindowTitle("Check Vectors for Issues")
         self.setFixedSize(240, 400)
@@ -48,7 +48,9 @@ class VectorIssueCheck(QDialog):
         for vec in raw_four_vectors:
             self.vectors.append([float(j) for j in vec[:4]])
         self.names = [vec[4] for vec in vectors]
-        self.experiment = Experiment(self.vectors, self.names)
+
+        self.experiment = experiment_controller.create_experiment(self.vectors, self.names)
+        self.transformation_controller = TransformationController()
 
         layout = QVBoxLayout()
         layout.setAlignment(Qt.AlignTop)
@@ -112,7 +114,7 @@ class VectorIssueCheck(QDialog):
         V_plus_Y = self.V_plus_Y_argument_type_checkbox.isChecked()
         V_minus_Y = self.post_transformation_checkbox.isChecked()
         argument_type = util.get_config_argument(V_plus_Y, V_minus_Y)
-        results, transformation_type = transformation.validate_vectors(vector_V, vector_Y, argument_type, V_particle_name, Y_particle_name, self.experiment, self.names)
+        results, transformation_type = self.transformation_controller.validate_vectors(vector_V, vector_Y, argument_type, V_particle_name, Y_particle_name, self.experiment, self.names)
 
         if results:
             self.results_text_area.setAlignment(Qt.AlignLeft)

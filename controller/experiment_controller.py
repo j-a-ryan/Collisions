@@ -42,11 +42,14 @@ class ExperimentController():
     def _extract_metadata(self, experiment_configuration_data):
         return experiment_configuration_data["metadata"] # Perhaps more logic needed in future.
         
-    def create_experiment(self, experiment_configuration_data):
+    def configure_and_create_experiment(self, experiment_configuration_data):
         
         experiment_vectors, names = self._extract_vectors(experiment_configuration_data)
-        experiment_metadata = self._extract_metadata(experiment_configuration_data)   
-        self.experiment = Experiment(experiment_vectors, names, experiment_metadata)
+        experiment_metadata = self._extract_metadata(experiment_configuration_data)
+        self.experiment = self.create_experiment(experiment_vectors, names, experiment_metadata)
+
+    def create_experiment(self, experiment_vectors, names, experiment_metadata=None):
+        return Experiment(experiment_vectors, names, experiment_metadata)
 
     def plot_current_experiment(self, extra_circles=None):
         self.view.plot_experiment_vectors(self.experiment.get_collision(), extra_circles)
