@@ -53,26 +53,26 @@ class ExperimentController():
 
     def plot_current_experiment(self, extra_circles=None):
         self.view.plot_experiment_vectors(self.experiment.get_collision(), extra_circles)
-    
-    def plot_transformation(self, V_Y_particle_names, argument_type):
+
+    def _unpack_vector_arguments(self, V_Y_particle_names, argument_type):
         V_particle_name = V_Y_particle_names[0]
         Y_particle_name = V_Y_particle_names[1]
-        V_Y_particle_names.clear() # TODO: Probably not nec, just a copy.
         vector_V = self.experiment.get_original_four_vector(V_particle_name).copy() # These are numpy
         vector_Y = self.experiment.get_original_four_vector(Y_particle_name).copy()
         names = self.experiment.get_particle_names()
-
+        return V_particle_name, Y_particle_name, vector_V, vector_Y, names
+    
+    def pre_check_transformation(self, V_Y_particle_names, argument_type):
+        V_particle_name, Y_particle_name, vector_V, vector_Y, names = self._unpack_vector_arguments(V_Y_particle_names, argument_type)
+        results, transformation_type = self.transformation_controller.validate_vectors(vector_V, vector_Y, argument_type, V_particle_name, Y_particle_name, self.experiment, names)
+        return results, transformation_type
+    
+    def plot_transformation(self, V_Y_particle_names, argument_type):
+        V_particle_name, Y_particle_name, vector_V, vector_Y, names = self._unpack_vector_arguments(V_Y_particle_names, argument_type)
         transformed_vectors = self.transformation_controller.handle_transformation(vector_V, vector_Y, V_particle_name, Y_particle_name, names, self.experiment, argument_type)
-        
         self.experiment.set_transformed_four_vectors(transformed_vectors, names) # Not numpy for this because using the pathway that comes from the GUI to the model.  
         self.view.plot_transformed_experiment_vectors(self.experiment.get_transformed_collision(), self.experiment.get_collision())
     
     def close_current_experiment(self):
         self.view.clear_experiment_plot(True)
-
-    def get_experiment_vectors(self):
-        return self.experiment.get_collision_vectors()
-    
-    def get_experiment_vectors_xyz(self):
-        vectors = self.get_experiment_vectors().get_vectors()
-        return vectors[-3:]
+        self.view.delete_experiment()

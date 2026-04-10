@@ -1,12 +1,13 @@
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QSplitter, QSizePolicy, QComboBox, QPushButton
 from PySide6.QtCore import QSize, Qt
 
+import config
 from controller.experiment_controller import ExperimentController
 from view.controls import ControlsLayout
 from view.controls_view.custom_menu_bar import CustomMenuBar
+from view.experiment.experiment_configuration import ExperimentConfigurationForm
 from view.plot import PlotQFrame
 from view.plot_view.plot_tabs_widget import PlotTabsWidget
-from view.transformations import TransformationsLayout
 
 '''
 
@@ -44,6 +45,7 @@ class View(QWidget):
         super().__init__()
         self.experiment_controller = ExperimentController(self)
         self.app = app
+        self.dlg = None
         self.set_up_view()
 
     def set_up_view(self):
@@ -57,17 +59,32 @@ class View(QWidget):
         controls_layout = ControlsLayout()
         control_panel = QVBoxLayout()
         control_panel.setAlignment(Qt.AlignmentFlag.AlignTop)
-        menu_bar = CustomMenuBar(self.app, self.experiment_controller)
+        menu_bar = CustomMenuBar(self, self.app, self.experiment_controller)
         menu_bar.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         control_panel.addWidget(menu_bar)
         control_panel.addWidget(controls_layout)
 
         self.layout.addLayout(control_panel)
-        self.plot_qframe = PlotQFrame(self.app, self.experiment_controller)
+        self.plot_qframe = PlotQFrame(self, self.experiment_controller)
         # self.layout.addWidget(self.plot_qframe) # Set up with a blank plot
         self.set_plot_tab_widget(self.plot_qframe)
 
         self.setLayout(self.layout)
+
+    def show_experiment_configuration_form(self, create_new):
+        if self.dlg is not None:
+            if create_new:
+                self.experiment_controller.close_current_experiment()
+                # self.delete_experiment()
+                self.dlg = ExperimentConfigurationForm(self, int(config.max_num_vectors)) 
+            else:
+                self.dlg.show()
+        else:
+            self.dlg = ExperimentConfigurationForm(self, int(config.max_num_vectors)) 
+        if self.dlg.exec() == 1:
+            self.experiment_controller.plot_current_experiment()
+        else: # == 0, presumably
+            self.delete_experiment()
 
     def plot_experiment_vectors(self, collision, extra_circles=None):
 
@@ -77,7 +94,7 @@ class View(QWidget):
             frame_to_delete = self.plot_qframe
             self.layout.removeWidget(self.plot_qframe)
             frame_to_delete.deleteLater()
-        self.plot_qframe = PlotQFrame(self.app, self.experiment_controller, plot_status=PlotQFrame.experiment)
+        self.plot_qframe = PlotQFrame(self, self.experiment_controller, plot_status=PlotQFrame.experiment)
         self.plot_qframe.plot(collision, extra_circles)
         self.set_plot_tab_widget(self.plot_qframe, experiment_vectors=collision)    
 
@@ -90,12 +107,18 @@ class View(QWidget):
             self.layout.removeWidget(self.plot_qframe)
             frame_to_delete.deleteLater()
 
-        self.plot_qframe = PlotQFrame(self.app, self.experiment_controller, plot_status=PlotQFrame.experiment)
+        self.plot_qframe = PlotQFrame(self, self.experiment_controller, plot_status=PlotQFrame.experiment)
         self.plot_qframe.plot(experiment_vectors)
-        self.plot_qframe_transformed = PlotQFrame(self.app, self.experiment_controller, plot_status=PlotQFrame.transformed)
+        self.plot_qframe_transformed = PlotQFrame(self, self.experiment_controller, plot_status=PlotQFrame.transformed)
         self.plot_qframe_transformed.plot(vectors_transformed)
 
         self.add_transformation_splitter(experiment_vectors=experiment_vectors, transformed_vectors=vectors_transformed)
+
+    def delete_experiment(self):
+        if self.dlg is not None:
+            self.dlg.deleteLater()
+            del self.dlg
+            self.dlg = None
 
     def clear_experiment_plot(self, set_up_blank_afterwards):
 
@@ -125,7 +148,7 @@ class View(QWidget):
 
         if set_up_blank_afterwards:
             # Put the blank plot in
-            self.plot_qframe = PlotQFrame(self.app, self.experiment_controller)
+            self.plot_qframe = PlotQFrame(self, self.experiment_controller)
             # self.layout.addWidget(self.plot_qframe)
             self.set_plot_tab_widget(self.plot_qframe)
 

@@ -2,12 +2,10 @@ import sys
 
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qtagg import FigureCanvas
-from PySide6.QtWidgets import QApplication, QDialog, QDialogButtonBox, QLabel, QWidget, QVBoxLayout
+from PySide6.QtWidgets import QDialog, QMessageBox
 import os
 import mplcursors
-import numpy as np
 import config
-from controller.transformation_controller import TransformationController
 from model import util
 from view.plot_view.widgets import ConfigureTransformationPopup
 
@@ -15,7 +13,7 @@ os.environ["QT_API"] = "PySide6" # Doesn't seem to do anything. What is it?
 
 
 class PlotVectorCanvas(FigureCanvas):
-    def __init__(self, experiment_controller, parent=None, width=7, height=7, dpi=100):
+    def __init__(self, view, experiment_controller, parent=None, width=7, height=7, dpi=100):
         fig = Figure(figsize=(width, height), dpi=dpi)
         self.ax = fig.add_subplot(111, projection='3d')
         fig.set_facecolor(config.graph_encasing_area_color)       
@@ -30,6 +28,7 @@ class PlotVectorCanvas(FigureCanvas):
         fig.tight_layout()
         self.fig = fig
         super().__init__(fig)
+        self.view = view
         self.experiment_controller = experiment_controller
         self.particles_picked = []
     
@@ -95,19 +94,34 @@ class PlotVectorCanvas(FigureCanvas):
                     self.experiment_controller.plot_current_experiment(extra_circles=indices)
                     popup = ConfigureTransformationPopup(indices, self.particle_names)
                     if popup.exec() == QDialog.Accepted:
-                        
-                        self.experiment_controller.plot_current_experiment() # Get rid of circles
+                        # Check for issues
                         self.particles_picked = [popup.transformation_config["V"], popup.transformation_config["Y"]]
-                        
+                            
                         self.particle_indices_picked.clear() # Get rid of circles
 
                         V_plus_Y = popup.transformation_config["V+YConfig"]
                         V_minus_Y = popup.transformation_config["ApplyPostTransformationV'-Y'"]
                         argument_type = util.get_config_argument(V_plus_Y, V_minus_Y)
                         V_Y_particle_names = self.particles_picked.copy()
-                        self.experiment_controller.plot_transformation(V_Y_particle_names, argument_type)
+                        results, _ = self.experiment_controller.pre_check_transformation(V_Y_particle_names, argument_type)
                         
-                        self.particles_picked.clear()                  
+                        if results:
+                            msg = QMessageBox()
+                            msg.setWindowTitle("Transformation Problem")
+                            msg.setIcon(QMessageBox.Icon.Warning) 
+                            msg.setText(f"Transformation error")
+                            msg.setInformativeText(f"Transformation of type {argument_type} on this vector set " +\
+                                                "will lead to an error, such\nas division by zero. Please run the " +\
+                                                "vector check to address this issue.")
+                            font = msg.font()
+                            font.setPointSize(11)
+                            msg.setFont(font)
+                            msg.exec()
+                            self.view.show_experiment_configuration_form(False)
+                        else:
+                            self.experiment_controller.plot_current_experiment() # Get rid of circles
+                            self.experiment_controller.plot_transformation(V_Y_particle_names, argument_type)
+                            self.particles_picked.clear()                  
                     else:
                         self.particle_indices_picked.clear()
                         self.experiment_controller.plot_current_experiment()

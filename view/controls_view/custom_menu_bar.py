@@ -2,13 +2,10 @@ from PySide6.QtWidgets import QMainWindow, QMenu, QMenuBar, QVBoxLayout, QWidget
 from PySide6.QtGui import QAction
 import qdarktheme
 
-import config
-from view.experiment.experiment_configuration import ExperimentConfigurationForm
-
-
 class CustomMenuBar(QMenuBar):
-    def __init__(self, app, experiment_controller):
+    def __init__(self, view, app, experiment_controller):
         super().__init__()
+        self.view = view
         self.app = app
         self.experiment_controller = experiment_controller
         file_menu = self.addMenu("File")
@@ -17,15 +14,25 @@ class CustomMenuBar(QMenuBar):
         file_menu.addAction("Save Current")
         quit_action = file_menu.addAction("Quit")
         quit_action.triggered.connect(self.quit_app)
-
+        
         experiment_menu = self.addMenu("Experiment")
         open_experiment_action = experiment_menu.addAction("Open Experiment File")
         open_experiment_action.triggered.connect(self.show_file_browser)
-        create_experiment_action = experiment_menu.addAction("Create Experiment")
-        create_experiment_action.triggered.connect(self.show_experiment_creation_form)
+
+        exp_submenu = QMenu("Configure Experiment", self)
+        experiment_menu.addMenu(exp_submenu)
+        create_new_exp_action = QAction("Create new experiment", self)
+        exp_submenu.addAction(create_new_exp_action)
+        create_new_exp_action.triggered.connect(lambda: self.show_experiment_configuration_form(True))
+        experiment_menu.addMenu(exp_submenu)
+        edit_current_exp_action = QAction("Edit current experiment", self)
+        exp_submenu.addAction(edit_current_exp_action)
+        edit_current_exp_action.triggered.connect(lambda: self.show_experiment_configuration_form(False))
+
         close_experiment_action = experiment_menu.addAction("Close Experiment")
         close_experiment_action.triggered.connect(self.close_experiment)
-        experiment_menu.addAction("Save Current")
+        save_experiment_action = experiment_menu.addAction("Save Current")
+        save_experiment_action.triggered.connect(self.save_experiment)
 
         help_menu = self.addMenu("Help")
         welcome_action = help_menu.addAction("Welcome")
@@ -52,13 +59,14 @@ class CustomMenuBar(QMenuBar):
     def show_file_browser(self):
         print("Show file browser")
     
-    def show_experiment_creation_form(self):
-        dlg = ExperimentConfigurationForm(self, int(config.max_num_vectors)) # TODO: Hardcoded vector num max
-        if dlg.exec() == 1:
-            self.experiment_controller.plot_current_experiment()
+    def show_experiment_configuration_form(self, create_new=True):
+        self.view.show_experiment_configuration_form(create_new)
 
     def close_experiment(self):
         self.experiment_controller.close_current_experiment()
+
+    def save_experiment(self):
+        print("Save")
 
     def quit_app(self):
         self.app.quit()

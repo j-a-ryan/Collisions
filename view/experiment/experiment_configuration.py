@@ -10,7 +10,7 @@ class ExperimentConfigurationForm(QDialog):
         super().__init__(parent)
         self.setWindowTitle("Experiment Configuration")
         self.resize(550, 150)
-        self.controller = parent.experiment_controller
+        self.experiment_controller = parent.experiment_controller
         self.vectors_grid_frame = QFrame()
         self.vectors_grid_frame.setFrameShape(QFrame.StyledPanel)
         self.vectors_qvbox_layout = QVBoxLayout(self.vectors_grid_frame)
@@ -126,7 +126,7 @@ class ExperimentConfigurationForm(QDialog):
 
 
     def check_parameters(self):
-        vector_issues_dialog = VectorIssueCheck(self.controller, self.vectors_grid.backing_vectors)
+        vector_issues_dialog = VectorIssueCheck(self.experiment_controller, self.vectors_grid.backing_vectors)
         vector_issues_dialog.exec()
         
     def submit(self):
@@ -135,7 +135,7 @@ class ExperimentConfigurationForm(QDialog):
         payload = {"vectors": self.vectors_grid.backing_vectors,
                    "metadata": {"vectors_header": VectorsGrid.header_row, 
                                 "hi": "ho", "experiment_directory": ""}}
-        self.controller.configure_and_create_experiment(payload)
+        self.experiment_controller.configure_and_create_experiment(payload)
         self.done(1) # self.close() instead? See the plot2d form, same question
 
     def save(self):

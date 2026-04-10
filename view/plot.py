@@ -12,9 +12,9 @@ class PlotQFrame(QFrame):
     experiment = "EXPERIMENT"
     transformed = "TRANSFORMED"
 
-    def __init__(self, app, experiment_controller, plot_status=blank):
+    def __init__(self, view, experiment_controller, plot_status=blank):
         super().__init__()
-        self.app = app
+        self.view = view
         self.experiment_controller = experiment_controller
         self.plot_status = plot_status
         self.setFrameShape(QFrame.StyledPanel) # Optional: sets a default styled panel look
@@ -42,7 +42,7 @@ class PlotQFrame(QFrame):
             button2.setEnabled(False)
             button3.setEnabled(False)
         inner_layout.addLayout(plot_buttons_2D)
-        self.canvas = PlotVectorCanvas(self.experiment_controller, self)
+        self.canvas = PlotVectorCanvas(self.view, self.experiment_controller, self)
         
         self.canvas.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         inner_layout.addWidget(self.canvas)
