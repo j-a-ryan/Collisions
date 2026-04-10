@@ -75,7 +75,7 @@ class VectorValidation():
             valid = False
         for box in self.name_combo_boxes: # The QLineEdits handle their own validity colorization. QComboBoxes we do by hand.
             if box in boxes_with_invalid_text and box.currentText(): # Do not show red/invalid color just for empty string.
-                box.setStyleSheet("background-color: " + config.form_field_invalid_color + ";")
+                box.setStyleSheet(config.combo_box_invalid_stylesheet)
             else:
                 box.setStyleSheet(self.default_combobox_stylesheet)
         return valid

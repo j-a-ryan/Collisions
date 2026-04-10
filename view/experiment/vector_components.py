@@ -35,7 +35,7 @@ class VectorMemberField(QLineEdit):
                 self.form_validation.field_updated(True)
         else:
             self.currently_valid = False
-            style_string = "QLineEdit { color: white; background-color: " + config.form_field_invalid_color + "; } QLineEdit:focus { color: red; background-color: PaleTurquoise; }"
+            style_string = "QLineEdit { " + config.field_invalid_stylestring + "; } QLineEdit:focus { color: red; background-color: PaleTurquoise; }"
             self.setStyleSheet(style_string)
             if run_form_validation:
                 self.form_validation.field_updated(False)

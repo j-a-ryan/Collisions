@@ -136,8 +136,8 @@ class VectorIssueCheck(QDialog):
                 self.Y_combo_box.setStyleSheet(self.default_combobox_stylesheet)
                 valid_selection_pair = True
             else:
-                self.V_combo_box.setStyleSheet("background-color: " + config.form_field_invalid_color + ";")
-                self.Y_combo_box.setStyleSheet("background-color: " + config.form_field_invalid_color + ";")
+                self.V_combo_box.setStyleSheet(config.combo_box_invalid_stylesheet)
+                self.Y_combo_box.setStyleSheet(config.combo_box_invalid_stylesheet)
         self.check_button.setEnabled(valid_selection_pair)
 
     def two_step_transformation_check(self):
