@@ -41,7 +41,7 @@ class PlotVectorCanvas(FigureCanvas):
         vectors = collision.get_spatial_vectors_xyz()
         vectors_columns = collision.get_vectors_spatial_columns()      
         self.particle_names = collision.get_vectors_name_column()
-        edgecolors = ['black'] * len(vectors)
+        edgecolors = [config.graph_circles_color] * len(vectors)
         # facecolorscolors = ['lightcyan', 'tomato', 'aquamarine'] # TODO: add more
         
         # Plot the vectors (no arrowheads: arrow_length_ratio=0) and the names at the tips.
@@ -49,12 +49,12 @@ class PlotVectorCanvas(FigureCanvas):
             self.ax.quiver(0, 0, 0, # Starting point
                         vectors[i][0], vectors[i][1], vectors[i][2], # Vector components
                         color='black', arrow_length_ratio=0, linewidths=0.7)  # Customize color and arrow size
-            self.ax.scatter(vectors[i][0], vectors[i][1], vectors[i][2], marker=f'${self.particle_names[i]}$', s=90, color='black')
+            self.ax.scatter(vectors[i][0], vectors[i][1], vectors[i][2], marker=f'${self.particle_names[i]}$', s=90, color='black', depthshade=False)
         
         # Plot the particle points as circles at the tips of the vectors around the names. Catch
         # the scatter return for event handling (event source identification) later.
         self.scatter = self.ax.scatter(vectors_columns['x'], vectors_columns['y'], vectors_columns['z'], facecolors='none',
-                                       edgecolors=edgecolors, marker='o', s=180, picker=True, pickradius=5)
+                                       depthshade=False, edgecolors=edgecolors, marker='o', s=180, picker=True, pickradius=5)
         
         # Plot the extra circles, if any.
         if extra_circles:
