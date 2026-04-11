@@ -1,4 +1,6 @@
-from PySide6.QtWidgets import QGridLayout, QMessageBox, QVBoxLayout, QHBoxLayout, QFrame, QPushButton, QDialog, QLabel
+import csv
+
+from PySide6.QtWidgets import QFileDialog, QGridLayout, QMessageBox, QVBoxLayout, QHBoxLayout, QFrame, QPushButton, QDialog, QLabel
 from PySide6.QtGui import Qt, QPixmap
 import config
 from view.experiment.vectors import VectorsGrid
@@ -10,6 +12,7 @@ class ExperimentConfigurationForm(QDialog):
         super().__init__(parent)
         self.setWindowTitle("Experiment Configuration")
         self.resize(550, 150)
+        self.view = parent
         self.experiment_controller = parent.experiment_controller
         self.vectors_grid_frame = QFrame()
         self.vectors_grid_frame.setFrameShape(QFrame.StyledPanel)
@@ -128,18 +131,31 @@ class ExperimentConfigurationForm(QDialog):
     def check_parameters(self):
         vector_issues_dialog = VectorIssueCheck(self.experiment_controller, self.vectors_grid.backing_vectors)
         vector_issues_dialog.exec()
-        
-    def submit(self):
+
+    def create_experiment(self):
         # Send experiment configuration data to the controller
         # Get list of vectors, etc. and create payload dict.
         payload = {"vectors": self.vectors_grid.backing_vectors,
                    "metadata": {"vectors_header": VectorsGrid.header_row, 
                                 "hi": "ho", "experiment_directory": ""}}
         self.experiment_controller.configure_and_create_experiment(payload)
+        
+    def submit(self):
+        self.create_experiment()
         self.done(1) # self.close() instead? See the plot2d form, same question
 
     def save(self):
-        pass
+        msg = QMessageBox()
+        msg.setWindowTitle("Save Experiment")
+        msg.setText("This will save the vectors and delete\n" +\
+                    "any current transformation of them that\n" +\
+                    "you may currently have. Proceed?")
+        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        msg.setDefaultButton(QMessageBox.Ok)
+        result = msg.exec()
+        if result == QMessageBox.Ok:
+            self.create_experiment()
+            self.experiment_controller.save_current_experiment()
 
     def cancel(self):
-        self.done(0) # TODO: self.close() instead? See the plot2d form, same question
+        self.done(1) # TODO: self.close() instead? See the plot2d form, same question

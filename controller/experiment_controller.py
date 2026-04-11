@@ -13,6 +13,7 @@ class ExperimentController():
 
     def __init__(self, view):
         self.view = view
+        self.experiment = None
         self._particle_indices_picked_for_transformation = []
         self.transformation_controller = TransformationController()
 
@@ -53,6 +54,9 @@ class ExperimentController():
 
     def plot_current_experiment(self, extra_circles=None):
         self.view.plot_experiment_vectors(self.experiment.get_collision(), extra_circles)
+
+    def save_current_experiment(self):
+        self.view.save_experiment(self.experiment.get_original_vectors())
 
     def _unpack_vector_arguments(self, V_Y_particle_names, argument_type):
         V_particle_name = V_Y_particle_names[0]

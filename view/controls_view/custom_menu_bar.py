@@ -66,7 +66,7 @@ class CustomMenuBar(QMenuBar):
         self.experiment_controller.close_current_experiment()
 
     def save_experiment(self):
-        print("Save")
+        self.experiment_controller.save_current_experiment()
 
     def quit_app(self):
         self.app.quit()

@@ -1,3 +1,5 @@
+import numpy as np
+
 from model.collision import Collision
 
 
@@ -15,6 +17,15 @@ class Experiment():
     
     def get_collision(self):
         return self.collision
+    
+    def get_original_vectors(self):
+        names = self.get_particle_names()
+        vectors = []
+        for name in names:
+            vec = self.get_original_four_vector(name)
+            np.append(vec, name)
+            vectors.append(vec)
+        return vectors
 
     def get_original_four_vectors(self):
         return self.collision.get_four_vectors()

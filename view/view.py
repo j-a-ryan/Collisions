@@ -1,4 +1,6 @@
-from PySide6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QSplitter, QSizePolicy, QComboBox, QPushButton
+import csv
+
+from PySide6.QtWidgets import QFileDialog, QWidget, QHBoxLayout, QVBoxLayout, QSplitter, QSizePolicy, QComboBox, QPushButton
 from PySide6.QtCore import QSize, Qt
 
 import config
@@ -113,6 +115,27 @@ class View(QWidget):
         self.plot_qframe_transformed.plot(vectors_transformed)
 
         self.add_transformation_splitter(experiment_vectors=experiment_vectors, transformed_vectors=vectors_transformed)
+
+    def save_experiment(self, vectors):
+        header = config.gui_vectors_header
+        data = vectors
+        
+        file_path, _ = QFileDialog.getSaveFileName( # Ignore the "filter" return
+            self, 
+            "Save Experiment File", 
+            "",                 # Starting directory (empty = current)
+            "CSV Files (*.csv)" # File type filter
+        )
+
+        if file_path:
+            # Ensure the file has the correct extension if not typed by user
+            if not file_path.endswith('.csv'):
+                file_path += '.csv'
+            
+            with open(file_path, 'w', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerow(header)
+                writer.writerows(data)
 
     def delete_experiment(self):
         if self.dlg is not None:
