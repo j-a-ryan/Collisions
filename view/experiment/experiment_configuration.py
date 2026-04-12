@@ -1,6 +1,6 @@
 import csv
 
-from PySide6.QtWidgets import QFileDialog, QGridLayout, QMessageBox, QVBoxLayout, QHBoxLayout, QFrame, QPushButton, QDialog, QLabel
+from PySide6.QtWidgets import QGridLayout, QMessageBox, QVBoxLayout, QHBoxLayout, QFrame, QPushButton, QDialog, QLabel
 from PySide6.QtGui import Qt, QPixmap
 import config
 from view.experiment.vectors import VectorsGrid
@@ -8,7 +8,7 @@ from view.experiment.widgets import VectorIssueCheck
 
 class ExperimentConfigurationForm(QDialog):
 
-    def __init__(self, parent, max_vector_count):
+    def __init__(self, parent, max_vector_count, vector_data=None):
         super().__init__(parent)
         self.setWindowTitle("Experiment Configuration")
         self.resize(550, 150)
@@ -30,7 +30,7 @@ class ExperimentConfigurationForm(QDialog):
 
         self.max_vector_count = max_vector_count
         self.add_row_button = QPushButton(f"Add New Row (max {config.max_num_vectors}:)")
-        self.add_row_button.clicked.connect(lambda: self.add_new_row(True))
+        self.add_row_button.clicked.connect(lambda: self.initialize_grid_rows(True))
 
         self.qhbox_layout_1 = QHBoxLayout()
         self.qhbox_layout_1.setAlignment(Qt.AlignmentFlag.AlignLeft)        
@@ -52,8 +52,8 @@ class ExperimentConfigurationForm(QDialog):
                                      "SUBMIT": self.submit_button, "CHECK": self.check_button}
         self.vectors_grid.set_widgets_to_enable_disable(widgets_to_enable_disable)
         
-        self.row_count = 0
-        self.add_new_row()
+        self.row_count = 0 # TODO: Refactor into the vectors object itself.
+        self.initialize_grid_rows(False, vector_data)
 
         self.submit_buttons_layout = QGridLayout()
         self.submit_buttons_layout.setAlignment(Qt.AlignmentFlag.AlignRight)
@@ -84,8 +84,6 @@ class ExperimentConfigurationForm(QDialog):
     def insert_vectors_grid_layout(self, vectors_grid_layout, remove_current=False):
         self.vectors_grid_layout = vectors_grid_layout
         self.vectors_qvbox_layout.addLayout(vectors_grid_layout)
-        # if remove_current:
-            # self.vectors_qvbox_layout.addWidget(self.add_row_button)
         self.update() # or more immediate repaint()
 
     def updated_vector_validation(self, vector_valid):
@@ -106,9 +104,18 @@ class ExperimentConfigurationForm(QDialog):
             self.check_button.setEnabled(False)
             self.save_button.setEnabled(False)
 
-    def add_new_row(self, set_focus=False):
-        self.vectors_grid.add_vector_row(set_focus)
+    def initialize_grid_rows(self, set_focus=False, grid_data=None):
+        if grid_data:
+            self.vectors_grid.add_vector_rows(grid_data)
+            self.vectors_grid.refresh_grid()
+        else:
+            self.vectors_grid.add_vector_row(set_focus) # Add empty row
 
+    def _create_payload(self, vectors, **kwargs):
+        metadict = {"vectors_header": VectorsGrid.header_row}
+        metadict.update(kwargs)
+        return {"vectors": vectors, "metadata": metadict}
+    
     # matrix_view_lookup = {"General Boost": "resources/GeneralBoost.png", "Momentum-Realignment Boost": "resources/LCC-RapidityBoost.png"}
         
     # def view_matrix(self):
@@ -135,9 +142,7 @@ class ExperimentConfigurationForm(QDialog):
     def create_experiment(self):
         # Send experiment configuration data to the controller
         # Get list of vectors, etc. and create payload dict.
-        payload = {"vectors": self.vectors_grid.backing_vectors,
-                   "metadata": {"vectors_header": VectorsGrid.header_row, 
-                                "hi": "ho", "experiment_directory": ""}}
+        payload = self._create_payload(self.vectors_grid.backing_vectors)
         self.experiment_controller.configure_and_create_experiment(payload)
         
     def submit(self):

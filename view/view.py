@@ -1,6 +1,6 @@
 import csv
 
-from PySide6.QtWidgets import QFileDialog, QWidget, QHBoxLayout, QVBoxLayout, QSplitter, QSizePolicy, QComboBox, QPushButton
+from PySide6.QtWidgets import QFileDialog, QMessageBox, QWidget, QHBoxLayout, QVBoxLayout, QSplitter, QSizePolicy
 from PySide6.QtCore import QSize, Qt
 
 import config
@@ -47,7 +47,7 @@ class View(QWidget):
         super().__init__()
         self.experiment_controller = ExperimentController(self)
         self.app = app
-        self.dlg = None
+        self.experiment_configuration_form = None
         self.set_up_view()
 
     def set_up_view(self):
@@ -73,20 +73,21 @@ class View(QWidget):
 
         self.setLayout(self.layout)
 
-    def show_experiment_configuration_form(self, create_new):
-        if self.dlg is not None:
+    def show_experiment_configuration_form(self, create_new, vector_data=None):
+        if self.experiment_configuration_form is not None:
             if create_new:
                 self.experiment_controller.close_current_experiment()
-                # self.delete_experiment()
-                self.dlg = ExperimentConfigurationForm(self, int(config.max_num_vectors)) 
+                self.delete_experiment() # I had commented this out for some reason. ??? Uncommenting it....
+                self.experiment_configuration_form = ExperimentConfigurationForm(self, int(config.max_num_vectors), vector_data) 
             else:
-                self.dlg.show()
-        else:
-            self.dlg = ExperimentConfigurationForm(self, int(config.max_num_vectors)) 
-        if self.dlg.exec() == 1:
-            self.experiment_controller.plot_current_experiment()
-        else: # == 0, presumably
-            self.delete_experiment()
+                self.experiment_configuration_form.show()
+        elif create_new:
+            self.experiment_configuration_form = ExperimentConfigurationForm(self, int(config.max_num_vectors), vector_data)
+        if self.experiment_configuration_form is not None:
+            if self.experiment_configuration_form.exec() == 1:
+                self.experiment_controller.plot_current_experiment()
+            else: # == 0, presumably
+                self.delete_experiment()
 
     def plot_experiment_vectors(self, collision, extra_circles=None):
 
@@ -120,28 +121,57 @@ class View(QWidget):
         header = config.gui_vectors_header
         data = vectors
         
-        file_path, _ = QFileDialog.getSaveFileName( # Ignore the "filter" return
-            self, 
-            "Save Experiment File", 
-            "",                 # Starting directory (empty = current)
-            "CSV Files (*.csv)" # File type filter
-        )
-
+        # Ignore the "filter" return.  Starting directory empty = current.
+        file_path, _ = QFileDialog.getSaveFileName(self, "Save Experiment File", "", "CSV Files (*.csv)")
         if file_path:
-            # Ensure the file has the correct extension if not typed by user
             if not file_path.endswith('.csv'):
                 file_path += '.csv'
+            try:
+                with open(file_path, 'w', newline='') as f:
+                    writer = csv.writer(f)
+                    writer.writerow(header)
+                    writer.writerows(data)
+            except FileNotFoundError:
+                print("Problem writing to file path, FileNotFoundError.")
+            except Exception as e:
+                print(f"An error occurred: {e}")
             
-            with open(file_path, 'w', newline='') as f:
+            with open(file_path, "w", newline="") as f:
                 writer = csv.writer(f)
                 writer.writerow(header)
                 writer.writerows(data)
 
+    def pre_treat_csv_data(self, data):
+        if data[0] == config.gui_vectors_header: # Should be true; from CSV file with header
+            del data[0] # Get rid of header row
+
+    def load_experiment(self):
+        data = []
+        file_path, _ = QFileDialog.getOpenFileName(self, "Open CSV File", "", "CSV Files (*.csv);;All Files (*)")
+        if file_path:
+            try:
+                with open(file_path, mode='r') as file:
+                    reader = csv.reader(file)
+                    for row in reader:
+                        data.append(row)
+            except FileNotFoundError:
+                print("The file was not found.")
+            except Exception as e:
+                print(f"An error occurred: {e}")
+        
+        num_columns = len(data[0]) if data else 0
+        if num_columns == len(config.gui_vectors_header): # Sanity check
+            self.pre_treat_csv_data(data)
+            self.show_experiment_configuration_form(True, data)
+        else:
+            QMessageBox.warning(None, "Warning", "The file is not usable because it does not have " + int(len(config.gui_vectors_header)) + " columns.")
+        
+
     def delete_experiment(self):
-        if self.dlg is not None:
-            self.dlg.deleteLater()
-            del self.dlg
-            self.dlg = None
+        if self.experiment_configuration_form is not None:
+            self.experiment_configuration_form.deleteLater()
+            del self.experiment_configuration_form
+            self.experiment_configuration_form = None
 
     def clear_experiment_plot(self, set_up_blank_afterwards):
 

@@ -79,6 +79,16 @@ class VectorsGrid:
                         else: # assuming QComboBox for now
                             row.append(widget.currentText())
             self._backing_vectors.append(row)
+
+    def set_field_values(self, time_field, x_field, y_field, z_field, particle_combo_box, field_values):
+        time_field.setText(field_values[0])
+        x_field.setText(field_values[1])
+        y_field.setText(field_values[2])
+        z_field.setText(field_values[3])
+        index = particle_combo_box.findText(field_values[4], Qt.MatchFixedString)
+        # If the text is found (index is not -1), set the current index
+        if index >= 0: # Should not be necessary
+            particle_combo_box.setCurrentIndex(index)
             
     
     """
@@ -113,18 +123,10 @@ class VectorsGrid:
         particle_combo_box.lineEdit().setReadOnly(True)
         particle_combo_box.setMinimumContentsLength(6)
         particle_combo_box.setCurrentIndex(-1)
-        particle_combo_box.activated.connect(self.activated)
+        particle_combo_box.activated.connect(self.refresh_grid)
 
         if set_field_values:
-            time_field.setText(field_values[0])
-            x_field.setText(field_values[1])
-            y_field.setText(field_values[2])
-            z_field.setText(field_values[3])
-            index = particle_combo_box.findText(field_values[4], Qt.MatchFixedString)
-            # If the text is found (index is not -1), set the current index
-            if index >= 0: # Should not be necessary
-                particle_combo_box.setCurrentIndex(index)
-
+            self.set_field_values(time_field, x_field, y_field, z_field, particle_combo_box, field_values)
         self.grid_layout.addWidget(row_index_label, new_row_index, 0, alignment=Qt.AlignTop)
         self.grid_layout.addWidget(time_field, new_row_index, 1, alignment=Qt.AlignTop)
         self.grid_layout.addWidget(x_field, new_row_index, 2, alignment=Qt.AlignTop)
@@ -153,7 +155,19 @@ class VectorsGrid:
             first_line_edit_in_new_row = self.grid_layout.itemAtPosition(new_row_index, 1) # Column 0 is index label; column 1 is presumably time field. 
             first_line_edit_in_new_row.widget().setFocus()
 
-    def activated(self, index):
+    def add_vector_rows(self, vectors):
+        for vector in vectors:
+            self.add_vector_row(set_focus=False, field_values=vector)
+
+    def clear_grid(self):
+        # Delete old grid layout and initialize new one.
+        self.parent_form.delete_grid_for_refresh()
+        del self._grid_layout
+        self.vector_validation.remove_fields()
+        self._grid_layout = QGridLayout()
+        self.set_up_grid(self._grid_layout) # put the column headers in
+
+    def refresh_grid(self):
         self.update_backing_grid()
         self.vector_validation.run_validation(False)
 
@@ -172,12 +186,7 @@ class VectorsGrid:
         index = self.grid_layout.indexOf(delete_row_button)
         index_of_grid_row_to_delete, _, _, _ = self.grid_layout.getItemPosition(index)
 
-        # Delete old grid layout and initialize new one.
-        self.parent_form.delete_grid_for_refresh()
-        del self._grid_layout
-        self.vector_validation.remove_fields()
-        self._grid_layout = QGridLayout()
-        self.set_up_grid(self._grid_layout) # put the column headers in
+        self.clear_grid()
 
         # From the backing vectors delete the unwanted row.
         backing_vectors_row_index = self.__backing_vectors_row_index(index_of_grid_row_to_delete)

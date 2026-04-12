@@ -41,10 +41,12 @@ class ExperimentController():
         return pre_treated_vectors, names
     
     def _extract_metadata(self, experiment_configuration_data):
-        return experiment_configuration_data["metadata"] # Perhaps more logic needed in future.
+        metadata = None
+        if "metadata" in experiment_configuration_data:
+            metadata = experiment_configuration_data["metadata"]
+        return metadata
         
     def configure_and_create_experiment(self, experiment_configuration_data):
-        
         experiment_vectors, names = self._extract_vectors(experiment_configuration_data)
         experiment_metadata = self._extract_metadata(experiment_configuration_data)
         self.experiment = self.create_experiment(experiment_vectors, names, experiment_metadata)
@@ -56,7 +58,8 @@ class ExperimentController():
         self.view.plot_experiment_vectors(self.experiment.get_collision(), extra_circles)
 
     def save_current_experiment(self):
-        self.view.save_experiment(self.experiment.get_original_vectors())
+        if self.experiment:
+            self.view.save_experiment(self.experiment.get_original_vectors())
 
     def _unpack_vector_arguments(self, V_Y_particle_names, argument_type):
         V_particle_name = V_Y_particle_names[0]

@@ -22,9 +22,8 @@ class Experiment():
         names = self.get_particle_names()
         vectors = []
         for name in names:
-            vec = self.get_original_four_vector(name)
-            np.append(vec, name)
-            vectors.append(vec)
+            vec_temp = self.get_original_four_vector(name)
+            vectors.append(np.append(vec_temp, name))
         return vectors
 
     def get_original_four_vectors(self):

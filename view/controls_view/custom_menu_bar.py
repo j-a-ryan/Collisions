@@ -8,16 +8,16 @@ class CustomMenuBar(QMenuBar):
         self.view = view
         self.app = app
         self.experiment_controller = experiment_controller
-        file_menu = self.addMenu("File")
-        open_file_action = file_menu.addAction("Open Experiment")
-        open_file_action.triggered.connect(self.show_file_browser)
-        file_menu.addAction("Save Current")
+        file_menu = self.addMenu("Application")
+        # open_file_action = file_menu.addAction("Open Experiment")
+        # open_file_action.triggered.connect(self.show_file_browser)
+        # file_menu.addAction("Save Current")
         quit_action = file_menu.addAction("Quit")
         quit_action.triggered.connect(self.quit_app)
         
         experiment_menu = self.addMenu("Experiment")
         open_experiment_action = experiment_menu.addAction("Open Experiment File")
-        open_experiment_action.triggered.connect(self.show_file_browser)
+        open_experiment_action.triggered.connect(self.load_experiment_file)
 
         exp_submenu = QMenu("Configure Experiment", self)
         experiment_menu.addMenu(exp_submenu)
@@ -56,8 +56,8 @@ class CustomMenuBar(QMenuBar):
         qdarktheme.setup_theme("light")
         # self.set_title_font_for_theme("light")
 
-    def show_file_browser(self):
-        print("Show file browser")
+    def load_experiment_file(self):
+        self.view.load_experiment()
     
     def show_experiment_configuration_form(self, create_new=True):
         self.view.show_experiment_configuration_form(create_new)
