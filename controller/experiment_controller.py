@@ -99,6 +99,7 @@ class ExperimentController():
 
     def close_current_experiment(self):
         self.view.clear_experiment_plot(True)
+        self.view.clear_controls_layout()
         self.view.delete_experiment()
 
     def get_vector(self, vector_name):

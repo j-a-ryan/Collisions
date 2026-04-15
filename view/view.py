@@ -172,6 +172,9 @@ class View(QWidget):
             del self.experiment_configuration_form
             self.experiment_configuration_form = None
 
+    def clear_controls_layout(self):
+        self.controls_layout.clear_controls()
+
     def clear_experiment_plot(self, set_up_blank_afterwards):
 
         if self.plot_qframe_transformed is not None:

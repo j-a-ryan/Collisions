@@ -1,3 +1,5 @@
+import config
+
 from PySide6.QtWidgets import QMainWindow, QMenu, QMenuBar, QVBoxLayout, QWidget
 from PySide6.QtGui import QAction
 from PySide6.QtCore import Qt, QEvent
@@ -26,7 +28,7 @@ class MainWindow(QMainWindow):
         # })
         qdarktheme.setup_theme()
         self.setWindowFlags(Qt.FramelessWindowHint)
-        self.title_bar = CustomTitleBar(self, "Collisions", 14, appstyle=app.style())
+        self.title_bar = CustomTitleBar(self, "Collisions-" + config.subtitle, 14, appstyle=app.style())
         self.app = app # TODO: needed?
 
         

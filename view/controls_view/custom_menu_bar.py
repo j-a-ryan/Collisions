@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QMainWindow, QMenu, QMenuBar, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QMainWindow, QMenu, QMenuBar, QMessageBox, QVBoxLayout, QWidget
 from PySide6.QtGui import QAction
 import qdarktheme
 
@@ -36,7 +36,9 @@ class CustomMenuBar(QMenuBar):
 
         help_menu = self.addMenu("Help")
         welcome_action = help_menu.addAction("Welcome")
+        welcome_action.triggered.connect(self.show_welcome)
         manual_action = help_menu.addAction("User's Manual")
+        manual_action.triggered.connect(self.show_manual)
 
         new_submenu = QMenu("Theme", self)
         help_menu.addMenu(new_submenu)
@@ -68,5 +70,39 @@ class CustomMenuBar(QMenuBar):
     def save_experiment(self):
         self.experiment_controller.save_current_experiment()
 
+    def show_welcome(self):
+        msg = QMessageBox()
+        msg.setWindowTitle("Collisions-QCD/TMD")
+        msg.setText("Collisions-QCD/TMD")
+        msg.setInformativeText("This is an application for use in the visualization of the outcomes of particle " +\
+                    "collider experiments in QCD/TMD (quantum chromodynamics/transverse " +\
+                    "momentum dependent parton distribution functions).")
+        msg.setStandardButtons(QMessageBox.Ok)
+        msg.setDefaultButton(QMessageBox.Ok)
+        font = msg.font()
+        font.setPointSize(11)
+        msg.setFont(font)
+        msg.exec()
+
+    def show_manual(self):
+        manual = get_user_manual()
+        manual.exec()
+
     def quit_app(self):
         self.app.quit()
+
+def get_user_manual():
+    msg = QMessageBox()
+    msg.setWindowTitle("Collisions-QCD/TMD Quick Start")
+    msg.setText("Quick Start\n")
+    msg.setInformativeText('1. Experiment -> Configure experiment -> Create new experiment. Fill in the vector member values.\n' +\
+                '\n2. Options: (1.) submit the vector set - "experiment" and graph it, (b.) check for transformation issues, '+\
+                'or (c.) to save it as a file.\n' +\
+                '\n3. After submitting/graphing, use sliders to adjust adjust vectors or click on two points to transform the ' +\
+                'vector set. Select the transformation type and proceed. Use sliders to adjust both graphs simultaneously.')
+    msg.setStandardButtons(QMessageBox.Ok)
+    msg.setDefaultButton(QMessageBox.Ok)
+    font = msg.font()
+    font.setPointSize(11)
+    msg.setFont(font)
+    return msg

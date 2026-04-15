@@ -62,7 +62,6 @@ class SliderUpdateHandler():
                 self.update_problem = True
                 msg = widgets.get_slider_transformation_issue_popup(transformation_type, self.axis_num, value)
                 msg.exec()
-            # QMessageBox.information(None, "on", "Hey text")
             self.update_problem = False
         return self.update_problem
     

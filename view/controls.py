@@ -24,13 +24,16 @@ class ControlsLayout(QFrame):
         self.controls_panel = QVBoxLayout()
         self.inner_layout.addLayout(self.controls_panel)
 
-    def add_xyz_sliders(self, vector_names, vector_set_xyz):
-
+    def clear_controls(self):
         # Clear out and renew the controls panel
         self.inner_layout.removeItem(self.controls_panel)
         self.controls_panel.deleteLater()
         del self.controls_panel
         self.controls_panel = QVBoxLayout()
+
+    def add_xyz_sliders(self, vector_names, vector_set_xyz):
+
+        self.clear_controls()
 
         for i in range(len(vector_names)):
             vector_name = vector_names[i]

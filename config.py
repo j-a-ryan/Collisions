@@ -22,6 +22,7 @@ combo_box_invalid_stylesheet = "QComboBox { " + field_invalid_stylestring + " }"
 text_edit_invalid_stylesheet = "QLineEdit { " + field_invalid_stylestring + "; } QLineEdit:focus { color: red; background-color: PaleTurquoise; }"
 exp_2yT = 2
 sqrt2 = math.sqrt(2)
+subtitle = "QCD/TMD"
 
 
 
