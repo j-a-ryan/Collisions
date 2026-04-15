@@ -93,26 +93,27 @@ def set_up_config_data(vector_V, vector_Y_for_calculated_V, vector_Y, exp_2yT, a
 
 def handle_transformation(vector_V, vector_Y, V_particle_name, Y_particle_name, particle_names, experiment, argument_type):
         
-        original_vectors = experiment.get_original_four_vectors()
-        
-        match argument_type:
-            case util.V:
-                transformed_vectors = transform(vector_V, vector_Y, vector_Y, original_vectors, argument_type)
-            case util.V_MINUS_Y:
-                # This is a secondary transformation. First we must tranform by (V + Y, Y)
-                initial_transformed_vectors = transform(vector_V, vector_Y, vector_Y, original_vectors, util.V_PLUS_Y)
-                
-                # Set the transformed vectors in the experiment only for the convenience of being able to
-                # get the V and Y vectors from there using the lookup. This collision will soon be overwritten
-                # with the final one.
-                experiment.set_transformed_four_vectors(initial_transformed_vectors, particle_names) # Not numpy for this because using the pathway that comes from the GUI to the model.        
-                vector_V_prime = experiment.get_transformed_four_vector(V_particle_name).copy() # These are numpy
-                vector_Y_prime = experiment.get_transformed_four_vector(Y_particle_name).copy()
-                # We use V' and Y for the next pair.
-                transformed_vectors = transform(vector_V_prime, vector_Y_prime, vector_Y, initial_transformed_vectors, argument_type)
-            case util.V_PLUS_Y:
-                transformed_vectors = transform(vector_V, vector_Y, vector_Y, original_vectors, argument_type)
-        return transformed_vectors
+    original_vectors = experiment.get_original_four_vectors()
+    
+    match argument_type:
+        case util.V:
+            transformed_vectors = transform(vector_V, vector_Y, vector_Y, original_vectors, argument_type)
+        case util.V_MINUS_Y:
+            # This is a secondary transformation. First we must tranform by (V + Y, Y)
+            initial_transformed_vectors = transform(vector_V, vector_Y, vector_Y, original_vectors, util.V_PLUS_Y)
+            
+            # Set the transformed vectors in the experiment only for the convenience of being able to
+            # get the V and Y vectors from there using the lookup. This collision will soon be overwritten
+            # with the final one.
+            experiment.set_transformed_four_vectors(initial_transformed_vectors, particle_names) # Not numpy for this because using the pathway that comes from the GUI to the model.        
+            vector_V_prime = experiment.get_transformed_four_vector(V_particle_name).copy() # These are numpy
+            vector_Y_prime = experiment.get_transformed_four_vector(Y_particle_name).copy()
+            # We use V' and Y for the next pair.
+            transformed_vectors = transform(vector_V_prime, vector_Y_prime, vector_Y, initial_transformed_vectors, argument_type)
+        case util.V_PLUS_Y:
+            transformed_vectors = transform(vector_V, vector_Y, vector_Y, original_vectors, argument_type)
+    
+    return transformed_vectors
 
 def transform_vector_set(vector_V, vector_Y, vectors, argument_type):
     match argument_type:
@@ -161,7 +162,7 @@ def validate_vectors(vector_V, vector_Y, argument_type, V_particle_name=None, Y_
                     # First we must make the V_PLUS_Y transformation; we now know that it won't cause exceptions.
                     original_vectors = experiment.get_original_four_vectors()
                     transformed_vectors = transform(vector_V, vector_Y, vector_Y, original_vectors, util.V_PLUS_Y) # Yes, pass in vector_V, not vector_V_to_use. We will redundantly re-add V and Y. No big deal.
-                    experiment.set_transformed_four_vectors(transformed_vectors, particle_names) # Not numpy for this because using the pathway that comes from the GUI to the model.        
+                    experiment.set_transformation([V_particle_name, Y_particle_name], argument_type, transformed_vectors, particle_names)
                     vector_V_prime = experiment.get_transformed_four_vector(V_particle_name).copy()
                     vector_Y_prime = experiment.get_transformed_four_vector(Y_particle_name).copy()
                     # Now check the second transformation.

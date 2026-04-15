@@ -2,11 +2,12 @@ import sys
 
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qtagg import FigureCanvas
-from PySide6.QtWidgets import QDialog, QMessageBox
+from PySide6.QtWidgets import QDialog
 import os
 import mplcursors
 import config
 from model import util
+from view.experiment import widgets
 from view.plot_view.widgets import ConfigureTransformationPopup
 
 os.environ["QT_API"] = "PySide6" # Doesn't seem to do anything. What is it?
@@ -18,10 +19,6 @@ class PlotVectorCanvas(FigureCanvas):
         self.ax = fig.add_subplot(111, projection='3d')
         fig.set_facecolor(config.graph_encasing_area_color)       
         self.ax.set_facecolor(config.graph_area_color)
-        # fig.set_facecolor("#FCFEE7")       
-        # self.ax.set_facecolor("#FCFEE7")
-        # fig.set_facecolor("#FCFEE7")       
-        # self.ax.set_facecolor("#FCFEE7")
         self.ax.xaxis._axinfo["grid"].update({"linewidth":0.5})
         self.ax.yaxis._axinfo["grid"].update({"linewidth":0.5})
         self.ax.zaxis._axinfo["grid"].update({"linewidth":0.5})
@@ -106,16 +103,7 @@ class PlotVectorCanvas(FigureCanvas):
                         results, _ = self.experiment_controller.pre_check_transformation(V_Y_particle_names, argument_type)
                         
                         if results:
-                            msg = QMessageBox()
-                            msg.setWindowTitle("Transformation Problem")
-                            msg.setIcon(QMessageBox.Icon.Warning) 
-                            msg.setText(f"Transformation error")
-                            msg.setInformativeText(f"Transformation of type {argument_type} on this vector set " +\
-                                                "will lead to an error, such\nas division by zero. Please run the " +\
-                                                "vector check to address this issue.")
-                            font = msg.font()
-                            font.setPointSize(11)
-                            msg.setFont(font)
+                            msg = msg = widgets.get_slider_transformation_issue_popup(argument_type)
                             msg.exec()
                             self.view.show_experiment_configuration_form(False)
                         else:

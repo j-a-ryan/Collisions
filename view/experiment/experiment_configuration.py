@@ -32,17 +32,25 @@ class ExperimentConfigurationForm(QDialog):
         self.add_row_button = QPushButton(f"Add New Row (max {config.max_num_vectors}:)")
         self.add_row_button.clicked.connect(lambda: self.initialize_grid_rows(True))
 
-        self.qhbox_layout_1 = QHBoxLayout()
-        self.qhbox_layout_1.setAlignment(Qt.AlignmentFlag.AlignLeft)        
+        self.grid_hbox_layout = QHBoxLayout()
+        self.grid_hbox_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)        
         # self.qhbox_layout_1.addLayout(self.experiment_type_qhbox_layout)
         # self.qhbox_layout_1.addLayout(self.vectors_qvbox_layout)
-        self.qhbox_layout_1.addWidget(self.vectors_grid_frame)
+        self.grid_hbox_layout.addWidget(self.vectors_grid_frame)
+
+        self.refresh_button = QPushButton("Refresh Grid")
+        self.refresh_button.setVisible(False)
+        self.refresh_button.setToolTip("Refreshes grid values when graph\nhas been altered manually.")
+        self.refresh_button.clicked.connect(self.refresh_grid)
 
         self.check_button = QPushButton("Check Parameters")
+        self.check_button.setToolTip("Checks for issues in vector set,\nsuch as division by zero.")
         self.check_button.clicked.connect(self.check_parameters)
         self.submit_button = QPushButton("Submit")
+        self.submit_button.setToolTip("Graph the vector set.")
         self.submit_button.clicked.connect(self.submit)
         self.save_button = QPushButton("Save")
+        self.save_button.setToolTip("Save the vector set as a local CSV file.")
         self.save_button.clicked.connect(self.save)
         self.cancel_button = QPushButton("Cancel")
         self.cancel_button.clicked.connect(self.cancel)
@@ -56,16 +64,18 @@ class ExperimentConfigurationForm(QDialog):
         self.initialize_grid_rows(False, vector_data)
 
         self.submit_buttons_layout = QGridLayout()
-        self.submit_buttons_layout.setAlignment(Qt.AlignmentFlag.AlignRight)
-        self.submit_buttons_layout.addWidget(self.add_row_button, 0, 0, 1, 4)
-        self.submit_buttons_layout.addWidget(self.check_button, 1, 0)
-        self.submit_buttons_layout.addWidget(self.submit_button, 1, 1)
-        self.submit_buttons_layout.addWidget(self.save_button, 1, 2)
-        self.submit_buttons_layout.addWidget(self.cancel_button, 1, 3)
+        # self.submit_buttons_layout.setAlignment(Qt.AlignmentFlag.AlignRight)
+        self.submit_buttons_layout.addWidget(self.add_row_button, 0, 2, 1, 4)
+        self.submit_buttons_layout.setColumnStretch(1, 1)
+        self.submit_buttons_layout.addWidget(self.refresh_button, 1, 0)
+        self.submit_buttons_layout.addWidget(self.check_button, 1, 2)
+        self.submit_buttons_layout.addWidget(self.submit_button, 1, 3)
+        self.submit_buttons_layout.addWidget(self.save_button, 1, 4)
+        self.submit_buttons_layout.addWidget(self.cancel_button, 1, 5)
 
         self.main_layout = QVBoxLayout()
         self.main_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.main_layout.addLayout(self.qhbox_layout_1)
+        self.main_layout.addLayout(self.grid_hbox_layout)
         self.main_layout.addLayout(self.submit_buttons_layout)
         self.setLayout(self.main_layout)
 
@@ -75,7 +85,6 @@ class ExperimentConfigurationForm(QDialog):
             widget = item.widget()
             if widget:
                 widget.deleteLater()
-        # self.vectors_qvbox_layout.removeWidget(self.add_row_button)
         self.vectors_qvbox_layout.removeItem(self.vectors_grid_layout)
         
         self.vectors_grid_layout.deleteLater()
@@ -134,6 +143,8 @@ class ExperimentConfigurationForm(QDialog):
     #         msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
     #         msg_box.exec()
 
+    def refresh_grid(self):
+        pass
 
     def check_parameters(self):
         vector_issues_dialog = VectorIssueCheck(self.experiment_controller, self.vectors_grid.backing_vectors)

@@ -58,17 +58,16 @@ class View(QWidget):
         self.layout = QHBoxLayout()
         self.layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
         
-        controls_layout = ControlsLayout()
+        self.controls_layout = ControlsLayout(self.experiment_controller)
         control_panel = QVBoxLayout()
         control_panel.setAlignment(Qt.AlignmentFlag.AlignTop)
         menu_bar = CustomMenuBar(self, self.app, self.experiment_controller)
         menu_bar.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         control_panel.addWidget(menu_bar)
-        control_panel.addWidget(controls_layout)
+        control_panel.addWidget(self.controls_layout)
 
         self.layout.addLayout(control_panel)
         self.plot_qframe = PlotQFrame(self, self.experiment_controller)
-        # self.layout.addWidget(self.plot_qframe) # Set up with a blank plot
         self.set_plot_tab_widget(self.plot_qframe)
 
         self.setLayout(self.layout)
@@ -85,7 +84,7 @@ class View(QWidget):
             self.experiment_configuration_form = ExperimentConfigurationForm(self, int(config.max_num_vectors), vector_data)
         if self.experiment_configuration_form is not None:
             if self.experiment_configuration_form.exec() == 1:
-                self.experiment_controller.plot_current_experiment()
+                self.experiment_controller.plot_current_experiment(initial_plot=True)
             else: # == 0, presumably
                 self.delete_experiment()
 
@@ -217,3 +216,6 @@ class View(QWidget):
         self.plot_tabs = PlotTabsWidget(self, plot_qframe_to_be_set_in_tab,
                                         experiment_vectors=experiment_vectors, transformed_vectors=transformed_vectors)
         self.layout.addWidget(self.plot_tabs)
+
+    def set_up_controls(self, vector_names, vector_set_xyz):
+        self.controls_layout.add_xyz_sliders(vector_names, vector_set_xyz)

@@ -1,11 +1,12 @@
 import sys
 
-from PySide6.QtWidgets import QApplication, QComboBox, QDialog, QDialogButtonBox, QGridLayout, QHBoxLayout, QLabel, QPushButton, QStyle, QTextEdit, QVBoxLayout
+from PySide6.QtWidgets import QApplication, QComboBox, QDialog, QDialogButtonBox, QGridLayout, QHBoxLayout, QLabel, QMessageBox, QPushButton, QStyle, QTextEdit, QVBoxLayout
 from PySide6.QtGui import QIcon, Qt
 
 import config
 from controller.transformation_controller import TransformationController
 from model import util
+from view.controls_view import slider
 from view.plot_view.widgets import create_argument_type_checkboxes
 
 class DeleteVectorRowButton(QPushButton):
@@ -50,7 +51,7 @@ class VectorIssueCheck(QDialog):
         self.names = [vec[4] for vec in vectors]
 
         self.experiment = experiment_controller.create_experiment(self.vectors, self.names)
-        self.transformation_controller = TransformationController()
+        self.transformation_controller = TransformationController(experiment_controller)
 
         layout = QVBoxLayout()
         layout.setAlignment(Qt.AlignTop)
@@ -146,3 +147,23 @@ class VectorIssueCheck(QDialog):
         else:
             self.post_transformation_checkbox.setChecked(False)
             self.post_transformation_checkbox.setEnabled(False)
+
+def get_slider_transformation_issue_popup(argument_type, axis=None, value=None):
+    msg = QMessageBox()
+    msg.setWindowTitle("Transformation Problem")
+    msg.setIcon(QMessageBox.Icon.Warning) 
+    msg.setText(f"Transformation error")
+    
+    if not axis and not value:
+        msg.setInformativeText(f"Transformation of type {argument_type} on this vector set " +\
+                        "will leads to an error, such as division by zero. You can run the " +\
+                        "vector check to address this issue.")
+    else: # Assumes value and axis are not none.
+        axis_name = slider.VectorSlider.lookup_123_xyz[str(axis)]
+        msg.setInformativeText(f"Transformation type {argument_type} with {axis_name} = {value} leads to an error, " +\
+                            "such as division by zero.")
+    font = msg.font()
+    font.setPointSize(11)
+    msg.setFont(font)
+    return msg
+        
