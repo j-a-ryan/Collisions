@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest       # this is a real macOS machine
+    runs-on: macos-13           # this is a real macOS machine
 
     steps:
       - name: Checkout code
