@@ -8,6 +8,7 @@ class CustomMenuBar(QMenuBar):
         self.view = view
         self.app = app
         self.experiment_controller = experiment_controller
+        self.setNativeMenuBar(False)
         file_menu = self.addMenu("Application")
         # open_file_action = file_menu.addAction("Open Experiment")
         # open_file_action.triggered.connect(self.show_file_browser)
