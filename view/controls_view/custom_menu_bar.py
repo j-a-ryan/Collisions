@@ -8,30 +8,23 @@ class CustomMenuBar(QMenuBar):
         self.view = view
         self.app = app
         self.experiment_controller = experiment_controller
-        file_menu = self.addMenu("Application")
-        # open_file_action = file_menu.addAction("Open Experiment")
-        # open_file_action.triggered.connect(self.show_file_browser)
-        # file_menu.addAction("Save Current")
-        quit_action = file_menu.addAction("Quit")
-        quit_action.triggered.connect(self.quit_app)
+        # file_menu = self.addMenu("Application")
+        # quit_action = file_menu.addAction("Quit")
+        # quit_action.triggered.connect(self.quit_app)
         
         experiment_menu = self.addMenu("Experiment")
         open_experiment_action = experiment_menu.addAction("Open Experiment File")
         open_experiment_action.triggered.connect(self.load_experiment_file)
-        # exp_submenu = QMenu("Configure Experiment", self)
-        # experiment_menu.addMenu(exp_submenu)
-        # create_new_exp_action = QAction("Create new experiment", self)
-        # exp_submenu.addAction(create_new_exp_action)
-        # create_new_exp_action.triggered.connect(self.show_blank_experiment_configuration_form)
-        # experiment_menu.addMenu(exp_submenu)
-        # edit_current_exp_action = QAction("Edit current experiment", self)
-        # exp_submenu.addAction(edit_current_exp_action)
-        # edit_current_exp_action.triggered.connect(self.show_loaded_experiment_configuration_form)
-        configure_new_experiment_action = experiment_menu.addAction("Configure new experiment")
-        configure_new_experiment_action.triggered.connect(self.show_blank_experiment_configuration_form)
-        reconfigure_current_experiment_action = experiment_menu.addAction("Reconfigure current experiment")
-        reconfigure_current_experiment_action.triggered.connect(self.show_loaded_experiment_configuration_form)
-        close_experiment_action = experiment_menu.addAction("Close Experiment")
+        exp_submenu = QMenu("Set up experiment", self)
+        experiment_menu.addMenu(exp_submenu)
+        create_new_exp_action = QAction("New experiment", self)
+        exp_submenu.addAction(create_new_exp_action)
+        create_new_exp_action.triggered.connect(self.show_blank_experiment_configuration_form)
+        experiment_menu.addMenu(exp_submenu)
+        edit_current_exp_action = QAction("Change current experiment", self)
+        exp_submenu.addAction(edit_current_exp_action)
+        edit_current_exp_action.triggered.connect(self.show_loaded_experiment_configuration_form)
+        close_experiment_action = experiment_menu.addAction("End Experiment")
         close_experiment_action.triggered.connect(self.close_experiment)
         save_experiment_action = experiment_menu.addAction("Save Current")
         save_experiment_action.triggered.connect(self.save_experiment)
@@ -51,6 +44,11 @@ class CustomMenuBar(QMenuBar):
         light_theme_action = QAction("Light", self)
         new_submenu.addAction(light_theme_action)
         light_theme_action.triggered.connect(self.set_light_theme)
+
+        # configure_new_experiment_action = experiment_menu.addAction("Configure new experiment")
+        # configure_new_experiment_action.triggered.connect(self.show_blank_experiment_configuration_form)
+        # reconfigure_current_experiment_action = experiment_menu.addAction("Reconfigure current experiment")
+        # reconfigure_current_experiment_action.triggered.connect(self.show_loaded_experiment_configuration_form)
 
     def set_dark_theme(self):
         qdarktheme.setup_theme("dark")
@@ -96,8 +94,8 @@ class CustomMenuBar(QMenuBar):
         manual = get_user_manual()
         manual.exec()
 
-    def quit_app(self):
-        self.app.quit()
+    # def quit_app(self):
+    #     self.app.quit()
 
 def get_user_manual():
     msg = QMessageBox()
