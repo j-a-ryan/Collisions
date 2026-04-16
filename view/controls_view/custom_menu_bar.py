@@ -8,7 +8,6 @@ class CustomMenuBar(QMenuBar):
         self.view = view
         self.app = app
         self.experiment_controller = experiment_controller
-        self.setNativeMenuBar(False)
         file_menu = self.addMenu("Application")
         # open_file_action = file_menu.addAction("Open Experiment")
         # open_file_action.triggered.connect(self.show_file_browser)
@@ -24,11 +23,13 @@ class CustomMenuBar(QMenuBar):
         experiment_menu.addMenu(exp_submenu)
         create_new_exp_action = QAction("Create new experiment", self)
         exp_submenu.addAction(create_new_exp_action)
-        create_new_exp_action.triggered.connect(lambda: self.show_experiment_configuration_form(True))
+        create_new_exp_action.triggered.connect(self.show_blank_experiment_configuration_form)
+        # create_new_exp_action.triggered.connect(lambda: self.show_experiment_configuration_form(True))
         experiment_menu.addMenu(exp_submenu)
         edit_current_exp_action = QAction("Edit current experiment", self)
         exp_submenu.addAction(edit_current_exp_action)
-        edit_current_exp_action.triggered.connect(lambda: self.show_experiment_configuration_form(False))
+        edit_current_exp_action.triggered.connect(self.show_loaded_experiment_configuration_form)
+        # edit_current_exp_action.triggered.connect(lambda: self.show_experiment_configuration_form(False))
 
         close_experiment_action = experiment_menu.addAction("Close Experiment")
         close_experiment_action.triggered.connect(self.close_experiment)
@@ -61,6 +62,12 @@ class CustomMenuBar(QMenuBar):
 
     def load_experiment_file(self):
         self.view.load_experiment()
+
+    def show_blank_experiment_configuration_form(self):
+        self.show_experiment_configuration_form(True)
+
+    def show_loaded_experiment_configuration_form(self):
+        self.show_experiment_configuration_form(False)
     
     def show_experiment_configuration_form(self, create_new=True):
         self.view.show_experiment_configuration_form(create_new)
