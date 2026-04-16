@@ -7,7 +7,14 @@ on:
 
 jobs:
   build:
-    runs-on: macos-13           # this is a real macOS machine
+    strategy:
+      matrix:
+        include:
+          - os: macos-13    # Intel
+            arch: x86_64
+          - os: macos-14    # Apple Silicon
+            arch: arm64
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout code
