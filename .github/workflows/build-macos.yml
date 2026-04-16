@@ -30,7 +30,7 @@ jobs:
 
           # Option 1: Simple one-file executable (recommended for most apps)
           pyinstaller --onefile --windowed --name "Collisions-QCD/TMD" main.py
-          # pyinstaller --onefile --windowed --name "Collisions-QCD/TMD" --icon=icon.icns main.py
+          # pyinstaller --onefile --windowed main.py
           # (remove --windowed if it's a console app)
 
           # Option 2: Use your existing .spec file (best for complex apps)
