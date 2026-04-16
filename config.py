@@ -20,7 +20,7 @@ form_field_invalid_color = "#FA0730"
 field_invalid_stylestring = "color: white; background-color: #FF6347;"
 combo_box_invalid_stylesheet = "QComboBox { " + field_invalid_stylestring + " }"
 text_edit_invalid_stylesheet = "QLineEdit { " + field_invalid_stylestring + "; } QLineEdit:focus { color: red; background-color: PaleTurquoise; }"
-exp_2yT = 2
+exp_2yT = 1
 sqrt2 = math.sqrt(2)
 subtitle = "QCD/TMD"
 

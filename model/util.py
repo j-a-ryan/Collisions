@@ -31,7 +31,7 @@ def convert_minkowski_to_light_cone_coordinates(vector):
     return np.array([(vector[0] + vector[3]) / config.sqrt2, (vector[0] - vector[3]) / config.sqrt2, vector[1], vector[2]])
 
 def convert_light_cone_coordinates_to_minkowski_form(vector):
-    return np.array([(vector[0] + vector[1]) * config.sqrt2 / 2, vector[2], vector[3],  (vector[0] - vector[1]) * config.sqrt2 / 2])
+    return np.array([(vector[0] + vector[1]) * config.sqrt2 / 2, vector[2], vector[3], (vector[0] - vector[1]) * config.sqrt2 / 2])
 
 def calculate_four_vector_xyz_magnitude(four_vector):
     return math.sqrt(math.pow(four_vector[1], 2) + math.pow(four_vector[2], 2) + math.pow(four_vector[3], 2))

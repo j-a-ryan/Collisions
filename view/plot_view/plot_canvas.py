@@ -4,7 +4,6 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_qtagg import FigureCanvas
 from PySide6.QtWidgets import QDialog
 import os
-import mplcursors
 import config
 from model import util
 from view.experiment import widgets
