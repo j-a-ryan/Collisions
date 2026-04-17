@@ -8,6 +8,7 @@ import qdarktheme
 
 from app.custom_title_bar import CustomTitleBar
 from view.common.details import HorizontalDivider
+from view.controls_view.custom_menu_bar import MenuButtonPanel
 from view.view import View
 
 
@@ -36,10 +37,11 @@ class MainWindow(QMainWindow):
         centra_widget_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         centra_widget_layout.addWidget(self.title_bar)
         centra_widget_layout.addWidget(HorizontalDivider(3))
-        # menu_bar = CustomMenuBar(app)
-        # centra_widget_layout.addWidget(menu_bar)
 
-        centra_widget_layout.addWidget(View(app))
+        view = View(app)
+        self.menu_buttons = MenuButtonPanel(view, app, view.experiment_controller)
+        centra_widget_layout.addLayout(self.menu_buttons)
+        centra_widget_layout.addWidget(view)
         
         central_widget = QWidget()
         # This container holds the window contents, so we can style it.

@@ -101,6 +101,8 @@ class ExperimentController():
         self.view.clear_experiment_plot(True)
         self.view.clear_controls_layout()
         self.view.delete_experiment()
+        del self.experiment
+        self.experiment = None
 
     def get_vector(self, vector_name):
         return self.experiment.get_original_four_vector(vector_name)

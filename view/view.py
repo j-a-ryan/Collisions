@@ -6,7 +6,6 @@ from PySide6.QtCore import QSize, Qt
 import config
 from controller.experiment_controller import ExperimentController
 from view.controls import ControlsLayout
-from view.controls_view.custom_menu_bar import CustomMenuBar
 from view.experiment.experiment_configuration import ExperimentConfigurationForm
 from view.plot import PlotQFrame
 from view.plot_view.plot_tabs_widget import PlotTabsWidget
@@ -57,13 +56,11 @@ class View(QWidget):
         self.plot_tabs = None
         self.layout = QHBoxLayout()
         self.layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.layout.setContentsMargins(0, 0, 0, 0)
         
         self.controls_layout = ControlsLayout(self.experiment_controller)
         control_panel = QVBoxLayout()
         control_panel.setAlignment(Qt.AlignmentFlag.AlignTop)
-        menu_bar = CustomMenuBar(self, self.app, self.experiment_controller)
-        menu_bar.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        control_panel.addWidget(menu_bar)
         control_panel.addWidget(self.controls_layout)
 
         self.layout.addLayout(control_panel)

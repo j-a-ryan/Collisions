@@ -1,58 +1,81 @@
-from PySide6.QtWidgets import QMainWindow, QMenu, QMenuBar, QMessageBox, QVBoxLayout, QWidget
-from PySide6.QtGui import QAction
+from PySide6.QtWidgets import  QHBoxLayout, QMessageBox, QPushButton
+from PySide6.QtGui import Qt
 import qdarktheme
 
-class CustomMenuBar(QMenuBar):
+def get_user_manual():
+    msg = QMessageBox()
+    msg.setWindowTitle("Collisions-QCD/TMD Quick Start")
+    msg.setText("Quick Start\n")
+    
+    msg.setInformativeText("1. Use buttons to open an experiment file, create a new experiment, edit the currently loaded experiment, " +\
+                "save, or close the currently loaded experiment. Configure your vectors in the form. To learn how to do this, click the \"new\""+\
+                " button to open the experiment configuration form. Type your vectors' components into the form fields and press the \"submit\" button."
+                "\n\n2. Options when the experiment configuration form is visible: (a.) submit the vector set - \"experiment\" and graph it,"+\
+                " (b.) check for transformation issues, or (c.) to save it as a file." +\
+                "\n\n3. After submitting the experiment and see the graph, use sliders to adjust adjust vectors or click on two points to"+\
+                " transform the vector set. Select the transformation type and proceed. Use sliders to adjust both graphs simultaneously.")
+    msg.setStandardButtons(QMessageBox.Ok)
+    msg.setDefaultButton(QMessageBox.Ok)
+    font = msg.font()
+    font.setPointSize(11)
+    msg.setFont(font)
+    return msg
+
+class MenuButtonPanel(QHBoxLayout):
     def __init__(self, view, app, experiment_controller):
         super().__init__()
         self.view = view
         self.app = app
         self.experiment_controller = experiment_controller
-        # file_menu = self.addMenu("Application")
-        # quit_action = file_menu.addAction("Quit")
-        # quit_action.triggered.connect(self.quit_app)
+        self.setContentsMargins(0, 2, 0, 2)
         
-        experiment_menu = self.addMenu("Experiment")
-        open_experiment_action = experiment_menu.addAction("Open Experiment File")
-        open_experiment_action.triggered.connect(self.load_experiment_file)
-        exp_submenu = QMenu("Set up experiment", self)
-        experiment_menu.addMenu(exp_submenu)
-        create_new_exp_action = QAction("New experiment", self)
-        exp_submenu.addAction(create_new_exp_action)
-        create_new_exp_action.triggered.connect(self.show_blank_experiment_configuration_form)
-        experiment_menu.addMenu(exp_submenu)
-        edit_current_exp_action = QAction("Change current experiment", self)
-        exp_submenu.addAction(edit_current_exp_action)
-        edit_current_exp_action.triggered.connect(self.show_loaded_experiment_configuration_form)
-        close_experiment_action = experiment_menu.addAction("End Experiment")
-        close_experiment_action.triggered.connect(self.close_experiment)
-        save_experiment_action = experiment_menu.addAction("Save Current")
-        save_experiment_action.triggered.connect(self.save_experiment)
+        file_button = QPushButton("File")
+        file_button.clicked.connect(self.load_experiment_file)
+        new_button = QPushButton("New")
+        new_button.clicked.connect(self.show_blank_experiment_configuration_form)
+        edit_button = QPushButton("Edit")
+        edit_button.clicked.connect(self.show_loaded_experiment_configuration_form)
+        save_button = QPushButton("Save")
+        save_button.clicked.connect(self.save_experiment)
+        close_button = QPushButton("Close")
+        close_button.clicked.connect(self.close_experiment)
 
-        help_menu = self.addMenu("Help")
-        welcome_action = help_menu.addAction("Welcome")
-        welcome_action.triggered.connect(self.show_welcome)
-        manual_action = help_menu.addAction("User's Manual")
-        manual_action.triggered.connect(self.show_manual)
-
-        new_submenu = QMenu("Theme", self)
-        help_menu.addMenu(new_submenu)
-        dark_theme_action = QAction("Dark", self)
-        new_submenu.addAction(dark_theme_action)
-        dark_theme_action.triggered.connect(self.set_dark_theme)
-
-        light_theme_action = QAction("Light", self)
-        new_submenu.addAction(light_theme_action)
-        light_theme_action.triggered.connect(self.set_light_theme)
-
-        # configure_new_experiment_action = experiment_menu.addAction("Configure new experiment")
-        # configure_new_experiment_action.triggered.connect(self.show_blank_experiment_configuration_form)
-        # reconfigure_current_experiment_action = experiment_menu.addAction("Reconfigure current experiment")
-        # reconfigure_current_experiment_action.triggered.connect(self.show_loaded_experiment_configuration_form)
+        how_button = QPushButton("Help")
+        how_button.clicked.connect(self.show_manual)
+        dark_button = QPushButton("Dark")
+        dark_button.clicked.connect(self.set_dark_theme)
+        light_button = QPushButton("Light")
+        light_button.clicked.connect(self.set_light_theme)
+        quit_button = QPushButton("Quit")
+        quit_button.clicked.connect(self.quit_app)
+        file_button.setFixedWidth(100)
+        new_button.setFixedWidth(100)
+        edit_button.setFixedWidth(100)
+        save_button.setFixedWidth(100)
+        close_button.setFixedWidth(100)
+        how_button.setFixedWidth(100)
+        dark_button.setFixedWidth(100)
+        light_button.setFixedWidth(100)
+        quit_button.setFixedWidth(100)
+        
+        experiment_buttons_layout = QHBoxLayout()
+        experiment_buttons_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        experiment_buttons_layout.addWidget(file_button)
+        experiment_buttons_layout.addWidget(new_button)
+        experiment_buttons_layout.addWidget(edit_button)
+        experiment_buttons_layout.addWidget(save_button)
+        experiment_buttons_layout.addWidget(close_button)
+        self.addLayout(experiment_buttons_layout)
+        app_buttons_layout = QHBoxLayout()
+        app_buttons_layout.setAlignment(Qt.AlignmentFlag.AlignRight)
+        app_buttons_layout.addWidget(how_button)
+        app_buttons_layout.addWidget(dark_button)
+        app_buttons_layout.addWidget(light_button)
+        app_buttons_layout.addWidget(quit_button)
+        self.addLayout(app_buttons_layout)
 
     def set_dark_theme(self):
         qdarktheme.setup_theme("dark")
-        # self.set_title_font_for_theme("dark")
 
     def set_light_theme(self):
         qdarktheme.setup_theme("light")
@@ -76,39 +99,9 @@ class CustomMenuBar(QMenuBar):
     def save_experiment(self):
         self.experiment_controller.save_current_experiment()
 
-    def show_welcome(self):
-        msg = QMessageBox()
-        msg.setWindowTitle("Collisions-QCD/TMD")
-        msg.setText("Collisions-QCD/TMD")
-        msg.setInformativeText("This is an application for use in the visualization of the outcomes of particle " +\
-                    "collider experiments in QCD/TMD (quantum chromodynamics/transverse " +\
-                    "momentum dependent parton distribution functions).")
-        msg.setStandardButtons(QMessageBox.Ok)
-        msg.setDefaultButton(QMessageBox.Ok)
-        font = msg.font()
-        font.setPointSize(11)
-        msg.setFont(font)
-        msg.exec()
-
     def show_manual(self):
         manual = get_user_manual()
         manual.exec()
 
-    # def quit_app(self):
-    #     self.app.quit()
-
-def get_user_manual():
-    msg = QMessageBox()
-    msg.setWindowTitle("Collisions-QCD/TMD Quick Start")
-    msg.setText("Quick Start\n")
-    msg.setInformativeText('1. Experiment -> Configure experiment -> Create new experiment. Fill in the vector member values.\n' +\
-                '\n2. Options: (1.) submit the vector set - "experiment" and graph it, (b.) check for transformation issues, '+\
-                'or (c.) to save it as a file.\n' +\
-                '\n3. After submitting/graphing, use sliders to adjust adjust vectors or click on two points to transform the ' +\
-                'vector set. Select the transformation type and proceed. Use sliders to adjust both graphs simultaneously.')
-    msg.setStandardButtons(QMessageBox.Ok)
-    msg.setDefaultButton(QMessageBox.Ok)
-    font = msg.font()
-    font.setPointSize(11)
-    msg.setFont(font)
-    return msg
+    def quit_app(self):
+        self.app.quit()
