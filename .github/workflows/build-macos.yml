@@ -1,9 +1,16 @@
 name: Build macOS Executable
 
+# on:
+#   push:
+#     branches: [ main ]          # or whatever your default branch is
+#   workflow_dispatch:            # lets you trigger manually from GitHub UI
 on:
-  push:
-    branches: [ main ]          # or whatever your default branch is
-  workflow_dispatch:            # lets you trigger manually from GitHub UI
+  workflow_dispatch: # manual execution from the UI
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
 
 jobs:
   build:
