@@ -2,13 +2,13 @@
 
 An application in Python (PyQt-PySide6, Matplotlib) for particle accelerator physicists and theoretical physicists working in particle physics, QCD, or nuclear physics.
 
-Currently (April 2026) the application is in its initial stage, being build for a very narrow QCD use case. An alpha version will be deployed to my team of QCD physicists this month.
+Now (April 16, 2026) the application is available for the first time. It is called Collisions-QCD/TMD, and it is in <a href="https://github.com/j-a-ryan/Collisions/releases/tag/v0.1.2-alpha">pre-release version v0.1.2-alpha</a> for Windows and MacOS. Two physicists are test-driving it now and versions v0.1.3-alpha, v0.1.4-alpha, etc. will doubtless be appearing in the coming days and weeks. I hope to release a beta version in early summer.
+
+Physicists interested in this software are encouraged to download it and use it. Physicists who would like a similar application be built are invited to tell me about their ideas at j dot a dot ryan at protonmail.
 
 
 ## Dependencies
 I gratefully use these third-party libraries:
-
-Uses <a href="https://github.com/anntzer/mplcursors">Mplcursors</a>
 
 Uses <a href="https://github.com/niklashenning/pyqt-advanced-slider">PyQt Advanced Slider</a>
 
