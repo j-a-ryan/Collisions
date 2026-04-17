@@ -2,7 +2,7 @@
 
 An application in Python (PyQt-PySide6, Matplotlib) for particle accelerator physicists and theoretical physicists working in particle physics, QCD, or nuclear physics.
 
-Currently (April 16, 2026) the application is available as Collisions-QCD/TMD in pre-release version v0.1.3-alpha for Windows and MacOS.
+Currently (April 16, 2026) the application is available as Collisions-QCD/TMD in pre-release version v0.1.2-alpha for Windows and MacOS.
 
 
 ## Dependencies
