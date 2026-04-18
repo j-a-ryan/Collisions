@@ -12,6 +12,9 @@ on:
         required: true
         default: 'warning'
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true
+
 jobs:
   build:
     strategy:
@@ -21,6 +24,8 @@ jobs:
             arch: x86_64
           - os: macos-14    # Apple Silicon
             arch: arm64
+          - os: windows-latest
+            arch: x86_64
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -53,5 +58,5 @@ jobs:
       - name: Upload macOS build
         uses: actions/upload-artifact@v4.6.0
         with:
-          name: macos-app
+          name: collisions-${{ matrix.os }}-${{ matrix.arch }}
           path: dist/
