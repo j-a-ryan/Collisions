@@ -25,7 +25,7 @@ jobs:
           - os: macos-14    # Apple Silicon
             arch: arm64
           - os: windows-latest
-            arch: x86_64
+            arch: x64
     runs-on: ${{ matrix.os }}
 
     steps:
