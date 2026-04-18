@@ -58,5 +58,5 @@ jobs:
       - name: Upload macOS build
         uses: actions/upload-artifact@v4.6.0
         with:
-          name: collisions-${{ matrix.os }}-${{ matrix.arch }}
+          name: collisions-${{ github.ref_name }}-${{ matrix.os }}-${{ matrix.arch }}
           path: dist/
