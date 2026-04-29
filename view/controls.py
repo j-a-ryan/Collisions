@@ -31,7 +31,7 @@ class ControlsLayout(QFrame):
         del self.controls_panel
         self.controls_panel = QVBoxLayout()
 
-    def add_xyz_sliders(self, vector_names, vector_set_xyz):
+    def add_txyz_sliders(self, vector_names, vector_set_xyz):
 
         self.clear_controls()
 

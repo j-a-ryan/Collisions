@@ -35,6 +35,6 @@ class ControlsController():
         return success, transformation_type
 
     def set_up_controls(self, view, experiment):
-        vectors_xyz = experiment.get_spatial_vectors() # np array
+        vectors_xyz = experiment.get_original_four_vectors() # np array
         names = experiment.get_particle_names()
         view.set_up_controls(names, vectors_xyz)

@@ -13,16 +13,16 @@ Extends Niklas Henning's slider.
 '''
 class VectorSlider(Slider):
 
-    lookup_xyz_123 = {"x": 1, "y": 2, "z": 3}
-    lookup_123_xyz = {"1": "x", "2": "y", "3": "z"}
-    axes = ["x", "y", "z"]
+    lookup_txyz_0123 = {"t": 0, "x": 1, "y": 2, "z": 3}
+    lookup_0123_txyz = {"0": "t", "1": "x", "2": "y", "3": "z"}
+    component = ["t", "x", "y", "z"]
 
     def __init__(self, controller, vector_name, axis, initial_value, use_threading, parent=None):
         super().__init__(parent)
         self.use_threading = use_threading
         self.vector_name = vector_name
         
-        axis_num = VectorSlider.lookup_xyz_123[axis]
+        axis_num = VectorSlider.lookup_txyz_0123[axis]
         self.setRange(-10, 10)  # Set min and max
         self.setValue(initial_value)  # Set value
         
@@ -76,7 +76,7 @@ class SliderUpdateHandler():
                 self.post_mediator.set_value(value)
                 self.post_mediator.post_threaded()
         else:
-            problem = self.post_value(value)
+            problem = self.post_value(value) # TODO: use this boolean?
 
     def signal_post_stream_end(self):
         del self.post_mediator
@@ -128,8 +128,8 @@ class SliderGroupFrame(QFrame):
 
         heading = Heading(vector_name, "Tahoma", False)
         self.inner_layout.addWidget(heading, alignment=Qt.AlignmentFlag.AlignCenter)
-        for i in range(len(VectorSlider.axes)):
-            axis = VectorSlider.axes[i]
+        for i in range(len(VectorSlider.component)):
+            axis = VectorSlider.component[i]
             initial_value = initial_vector[i]
             hbox = QHBoxLayout()
             axis_label = QLabel(axis)

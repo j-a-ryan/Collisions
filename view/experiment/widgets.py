@@ -159,7 +159,7 @@ def get_slider_transformation_issue_popup(argument_type, axis=None, value=None):
                         "will leads to an error, such as division by zero. You can run the " +\
                         "vector check to address this issue.")
     else: # Assumes value and axis are not none.
-        axis_name = slider.VectorSlider.lookup_123_xyz[str(axis)]
+        axis_name = slider.VectorSlider.lookup_0123_txyz[str(axis)]
         msg.setInformativeText(f"Transformation type {argument_type} with {axis_name} = {value} leads to an error, " +\
                             "such as division by zero.")
     font = msg.font()

@@ -160,7 +160,7 @@ class View(QWidget):
             self.pre_treat_csv_data(data)
             self.show_experiment_configuration_form(True, data)
         else:
-            QMessageBox.warning(None, "Warning", "The file is not usable because it does not have " + int(len(config.gui_vectors_header)) + " columns.")
+            QMessageBox.warning(None, "Warning", "The file is not usable because it does not have " + str(len(config.gui_vectors_header)) + " columns: " + str(config.gui_vectors_header))
         
 
     def delete_experiment(self):
@@ -218,4 +218,4 @@ class View(QWidget):
         self.layout.addWidget(self.plot_tabs)
 
     def set_up_controls(self, vector_names, vector_set_xyz):
-        self.controls_layout.add_xyz_sliders(vector_names, vector_set_xyz)
+        self.controls_layout.add_txyz_sliders(vector_names, vector_set_xyz)
