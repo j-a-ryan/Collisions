@@ -1,0 +1,5 @@
+Next Changes: Unordered list of next enhancements and bug fixes to be implemented
+
+*Make the clicked circles stick for the duration of the transformation in both graphs.
+*Slider for m2 option instead of slider for t component of the vectors
+*The stylesheet strings need refactored into config.py for maintainability
