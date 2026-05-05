@@ -1,5 +1,6 @@
 Next Changes: Unordered list of next enhancements and bug fixes to be implemented
 
 *Make the clicked circles stick for the duration of the transformation in both graphs.
-*Slider for m2 option instead of slider for t component of the vectors
+*Slider for m2 option instead of slider for t component of the vectors. User can choose which slider to activate/use.
 *The stylesheet strings need refactored into config.py for maintainability
+*Update the Help->User manual to explain the transformations and the m2 option.
