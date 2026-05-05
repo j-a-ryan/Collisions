@@ -2,7 +2,7 @@
 
 An application in Python (PyQt-PySide6, Matplotlib) for particle accelerator physicists and theoretical physicists working in particle physics, QCD, or nuclear physics. The purpose of the application is to allow physicists to see, rather than having to imagine, the vectors of particle just after particle collisions both in (a.) the laboratory (collider) reference frame and in (b.) a frame obtained by transformation of the vector set with a transformation matrix stipulated by the physicist. The application allows the physicist to enter a set of four-vectors, see them graphed, and vary the vectors on the fly by using sliders, so as to show the results of "what-if" scenarios of interest.
 
-Now (April 16, 2026) the application is available for the first time. It is called Collisions-QCD/TMD, and it is in <a href="https://github.com/j-a-ryan/Collisions/releases/tag/v0.1.2-alpha">pre-release version v0.1.2-alpha</a> for Windows and MacOS. Two physicists are test-driving it now and versions v0.1.3-alpha, v0.1.4-alpha, etc. will doubtless be appearing in the coming days and weeks. I hope to release a beta version in early summer.
+Now (May 5, 2026) the application is available. It is called Collisions-QCD/TMD, and it is in <a href="https://github.com/j-a-ryan/Collisions/releases/tag/v0.2.2-alpha">pre-release version v0.2.2-alpha</a> for Windows and MacOS. More updates will be coming this month. I hope to release a beta version in early summer.
 
 Physicists interested in this software are encouraged to download it and use it. Physicists who would like a similar application be built are invited to tell me about their ideas at j dot a dot ryan at protonmail. I am a former software developer headed to the physics graduate program at ODU in the fall of 2026.
 
