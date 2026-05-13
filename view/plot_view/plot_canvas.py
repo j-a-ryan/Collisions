@@ -1,5 +1,3 @@
-import sys
-
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qtagg import FigureCanvas
 from PySide6.QtWidgets import QDialog
@@ -26,7 +24,7 @@ class PlotVectorCanvas(FigureCanvas):
         super().__init__(fig)
         self.view = view
         self.experiment_controller = experiment_controller
-        self.particles_picked = []
+        self.particles_names_picked = []
     
     @property
     def particle_indices_picked(self):
@@ -77,6 +75,15 @@ class PlotVectorCanvas(FigureCanvas):
             ind = event.ind  # Indices of the clicked points
             index = ind[0]
 
+            if len(self.particle_indices_picked) == 2: # User is picking new pair of vectors V, Y
+                pass # Clear out the current indices picked and add this new one.
+                # If there is a transformation graph (as there should be), clear it away.
+                # Graph collision with the single, new circle pick.
+                self.view.clear_experiment_plot(True)
+                self.particle_indices_picked.clear()
+                self.particle_indices_picked.append(index)
+                self.experiment_controller.plot_current_experiment(extra_circles=self.particle_indices_picked.copy())
+
             if len(self.particle_indices_picked) == 0:
                 self.particle_indices_picked.append(index)
                 self.experiment_controller.plot_current_experiment(extra_circles=self.particle_indices_picked.copy()) # Zero or one picked now.
@@ -84,21 +91,21 @@ class PlotVectorCanvas(FigureCanvas):
                 if index in self.particle_indices_picked:
                     self.particle_indices_picked.remove(index)
                     self.experiment_controller.plot_current_experiment(extra_circles=self.particle_indices_picked.copy()) # Zero or one picked now.
-                else:
+                else: # We have two vectors picked. Now we proceed to transformation configuration.
                     self.particle_indices_picked.append(index) # two picked now
                     indices = self.particle_indices_picked.copy()
                     self.experiment_controller.plot_current_experiment(extra_circles=indices)
                     popup = ConfigureTransformationPopup(indices, self.particle_names)
                     if popup.exec() == QDialog.Accepted:
                         # Check for issues
-                        self.particles_picked = [popup.transformation_config["V"], popup.transformation_config["Y"]]
+                        self.particles_names_picked = [popup.transformation_config["V"], popup.transformation_config["Y"]]
                             
                         self.particle_indices_picked.clear() # Get rid of circles
 
                         V_plus_Y = popup.transformation_config["V+YConfig"]
                         V_minus_Y = popup.transformation_config["ApplyPostTransformationV'-Y'"]
                         argument_type = util.get_config_argument(V_plus_Y, V_minus_Y)
-                        V_Y_particle_names = self.particles_picked.copy()
+                        V_Y_particle_names = self.particles_names_picked.copy()
                         results, _ = self.experiment_controller.pre_check_transformation(V_Y_particle_names, argument_type)
                         
                         if results:
@@ -106,9 +113,9 @@ class PlotVectorCanvas(FigureCanvas):
                             msg.exec()
                             self.view.show_experiment_configuration_form(False)
                         else:
-                            self.experiment_controller.plot_current_experiment() # Get rid of circles
-                            self.experiment_controller.plot_transformation(V_Y_particle_names, argument_type)
-                            self.particles_picked.clear()                  
+                            self.experiment_controller.plot_current_experiment(extra_circles=indices) # Do not get rid of circles
+                            self.experiment_controller.plot_transformation(indices, V_Y_particle_names, argument_type)
+                            self.particles_names_picked.clear()                  
                     else:
                         self.particle_indices_picked.clear()
                         self.experiment_controller.plot_current_experiment()

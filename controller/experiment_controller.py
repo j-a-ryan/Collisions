@@ -1,8 +1,5 @@
-import numpy as np
-
 from controller.transformation_controller import TransformationController
 from model.experiment import Experiment
-from model.transformation import galilean_coordinate_transformation_3, galilean_coordinate_transformation_3_vector
 
 class ExperimentController():
 
@@ -88,10 +85,10 @@ class ExperimentController():
         results, transformation_type = self.transformation_controller.validate_vectors(vector_V, vector_Y, argument_type, V_particle_name, Y_particle_name, self.experiment, names)
         return results, transformation_type
     
-    def plot_transformation(self, V_Y_particle_names, argument_type):
+    def plot_transformation(self, extra_circles, V_Y_particle_names, argument_type):
         V_particle_name, Y_particle_name, vector_V, vector_Y, names = self.unpack_vector_arguments(V_Y_particle_names)
         self.transformation_controller.handle_transformation(vector_V, vector_Y, V_particle_name, Y_particle_name, names, self.experiment, argument_type)
-        self.view.plot_transformed_experiment_vectors(self.experiment.get_transformed_collision(), self.experiment.get_collision())
+        self.view.plot_transformed_experiment_vectors(self.experiment.get_transformed_collision(), self.experiment.get_collision(), extra_circles)
 
     def refresh_transformation(self):
         V_Y_particle_names, argument_type = self.get_current_transformation_arguments()

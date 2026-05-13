@@ -1,8 +1,6 @@
-from PySide6.QtWidgets import QFrame, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy, QComboBox, QPushButton
+from PySide6.QtWidgets import QFrame, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy, QPushButton
 
-from view.common.details import HorizontalDivider
-
-from view.plot_view.plot_2D import Plot2DPopup, PlotVectorCanvas2D
+from view.plot_view.plot_2D import Plot2DPopup
 from view.plot_view.plot_canvas import PlotVectorCanvas
 
 

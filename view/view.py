@@ -1,7 +1,7 @@
 import csv
 
-from PySide6.QtWidgets import QFileDialog, QMessageBox, QWidget, QHBoxLayout, QVBoxLayout, QSplitter, QSizePolicy
-from PySide6.QtCore import QSize, Qt
+from PySide6.QtWidgets import QFileDialog, QMessageBox, QWidget, QHBoxLayout, QVBoxLayout, QSplitter
+from PySide6.QtCore import Qt
 
 import config
 from controller.experiment_controller import ExperimentController
@@ -97,7 +97,7 @@ class View(QWidget):
         self.plot_qframe.plot(collision, extra_circles)
         self.set_plot_tab_widget(self.plot_qframe, experiment_vectors=collision)    
 
-    def plot_transformed_experiment_vectors(self, vectors_transformed, experiment_vectors):
+    def plot_transformed_experiment_vectors(self, vectors_transformed, experiment_vectors, extra_circles):
 
         self.clear_experiment_plot(False)
 
@@ -107,9 +107,9 @@ class View(QWidget):
             frame_to_delete.deleteLater()
 
         self.plot_qframe = PlotQFrame(self, self.experiment_controller, plot_status=PlotQFrame.experiment)
-        self.plot_qframe.plot(experiment_vectors)
+        self.plot_qframe.plot(experiment_vectors, extra_circles)
         self.plot_qframe_transformed = PlotQFrame(self, self.experiment_controller, plot_status=PlotQFrame.transformed)
-        self.plot_qframe_transformed.plot(vectors_transformed)
+        self.plot_qframe_transformed.plot(vectors_transformed, extra_circles)
 
         self.add_transformation_splitter(experiment_vectors=experiment_vectors, transformed_vectors=vectors_transformed)
 
@@ -155,12 +155,12 @@ class View(QWidget):
             except Exception as e:
                 print(f"An error occurred: {e}")
         
-        num_columns = len(data[0]) if data else 0
-        if num_columns == len(config.gui_vectors_header): # Sanity check
-            self.pre_treat_csv_data(data)
-            self.show_experiment_configuration_form(True, data)
-        else:
-            QMessageBox.warning(None, "Warning", "The file is not usable because it does not have " + str(len(config.gui_vectors_header)) + " columns: " + str(config.gui_vectors_header))
+            num_columns = len(data[0]) if data else 0
+            if num_columns == len(config.gui_vectors_header): # Sanity check
+                self.pre_treat_csv_data(data)
+                self.show_experiment_configuration_form(True, data)
+            else:
+                QMessageBox.warning(None, "Warning", "The file is not usable because it does not have " + str(len(config.gui_vectors_header)) + " columns: " + str(config.gui_vectors_header))
         
 
     def delete_experiment(self):
