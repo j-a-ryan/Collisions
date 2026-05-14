@@ -1,7 +1,5 @@
-import csv
-
 from PySide6.QtWidgets import QGridLayout, QMessageBox, QVBoxLayout, QHBoxLayout, QFrame, QPushButton, QDialog, QLabel
-from PySide6.QtGui import Qt, QPixmap
+from PySide6.QtGui import Qt
 import config
 from view.experiment.vectors import VectorsGrid
 from view.experiment.widgets import VectorIssueCheck
