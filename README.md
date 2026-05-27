@@ -1,5 +1,5 @@
 # Collisions
-### Current status, May 27, 2026:
+#### Current status, May 27, 2026:
 - Now adding slider for calculated vector value: the square of the mass (m^2 = t^2 -x^2 - y^2 - z^2) so that user can think in terms of that value, rather than time (t), when adjusting the vectors in a collision.
 - Next: refine the calculation  performed in the second step of the two-step transformation option that the user is offered. Currently that step is a kludge that only gets the gist of the calculation.
 - Lots of TODOs for later, such as
