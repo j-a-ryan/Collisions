@@ -1,6 +1,6 @@
 # Collisions
-#### Current status, May 27, 2026:
-- Now adding slider for calculated vector value: the square of the mass (m^2 = t^2 -x^2 - y^2 - z^2) so that user can think in terms of that value, rather than time (t), when adjusting the vectors in a collision.
+#### Current status, May 30, 2026:
+- Have just added slider for calculated vector value: the square of the mass (m^2 = t^2 -x^2 - y^2 - z^2) so that user can think in terms of that value, rather than time (t), when adjusting the vectors in a collision. These variable names I also changed to E, px, py, pz in GUI, instead of t, x, y, z.
 - Next: refine the calculation  performed in the second step of the two-step transformation option that the user is offered. Currently that step is a kludge that only gets the gist of the calculation.
 - Lots of TODOs for later, such as
   - Fix little issues raised by the linter
@@ -9,7 +9,7 @@
 ## Introduction
 An application in Python (PyQt-PySide6, Matplotlib) for particle accelerator physicists and theoretical physicists working in particle physics, QCD, or nuclear physics. The purpose of the application is to allow physicists to see, rather than having to imagine, the vectors of particle just after particle collisions both in (a.) the laboratory (collider) reference frame and in (b.) a frame obtained by transformation of the vector set with a transformation matrix stipulated by the physicist. The application allows the physicist to enter a set of four-vectors, see them graphed, and vary the vectors on the fly by using sliders, so as to show the results of "what-if" scenarios of interest.
 
-Now (May 5, 2026) the application is available. It is called Collisions-QCD/TMD, and it is in <a href="https://github.com/j-a-ryan/Collisions/releases/tag/v0.2.3-alpha">pre-release version v0.2.3-alpha</a> for Windows and MacOS. More updates will be coming this month. I hope to release a beta version in early summer.
+Now (May 30, 2026) the application is available. It is called Collisions-QCD/TMD, and it is in <a href="https://github.com/j-a-ryan/Collisions/releases/tag/v0.2.3-alpha">pre-release version v0.2.4-alpha</a> for Windows and MacOS. More updates will be coming in June. I plan to release a beta version in early summer.
 
 Physicists interested in this software are encouraged to download it and use it. Physicists who would like a similar application be built are invited to tell me about their ideas at j dot a dot ryan at protonmail. I am a former software developer headed to the physics graduate program at ODU in the fall of 2026.
 #### Notes for Software Developers:
