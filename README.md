@@ -13,7 +13,7 @@ Now (May 5, 2026) the application is available. It is called Collisions-QCD/TMD,
 
 Physicists interested in this software are encouraged to download it and use it. Physicists who would like a similar application be built are invited to tell me about their ideas at j dot a dot ryan at protonmail. I am a former software developer headed to the physics graduate program at ODU in the fall of 2026.
 #### Notes for Software Developers:
-The application design is regular, old-fashioned MVC but not PyQt/PySide's native form of MVC which is model-view and has the controller coupled to (embodied in/blurred with) the view. So, the application has controller classes, as in regular MVC.
+The application design is regular, old-fashioned MVC but not PyQt/PySide's native form of MVC which is model-view and has the controller coupled to (embodied in/blurred with) the view. So, the application has controller classes, as in regular MVC. (I looked at PyQt's innate MV pattern but I couldn't see its superiority for a complicated application like Collisions. For small applications I suppose it might be nice. I am no design pattern master, however.)
 
 I am trying to make an application for the specific use-case of a QCD team while keeping reusable components available to be used as a platform for any particle collider physicist who wants to analyze collision vectors of particles in a collider. I am probably failing at this, such that a sizeable refactoring task (for platform creation) will remain after this application is deployed in a stable beta version. As usual, platformability falls by the wayside when there aren't enough man hours to do it.
 
