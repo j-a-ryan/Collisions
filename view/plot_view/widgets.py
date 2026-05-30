@@ -1,6 +1,4 @@
-import sys
-
-from PySide6.QtWidgets import QApplication, QButtonGroup, QCheckBox, QDialog, QDialogButtonBox, QFrame, QHBoxLayout, QLabel, QPushButton, QVBoxLayout
+from PySide6.QtWidgets import QButtonGroup, QCheckBox, QDialog, QDialogButtonBox, QFrame, QHBoxLayout, QLabel, QPushButton, QVBoxLayout
 from PySide6.QtGui import Qt
 
 
@@ -72,12 +70,6 @@ class ConfigureTransformationPopup(QDialog):
         self.transformation_config["ApplyPostTransformationV'-Y'"] = self.post_transformation_checkbox.isChecked()
         
         super().accept()
-
-    def on_reversed(self):
-        if self.vector_pair_label.text() == self.pairing_text_base_case:
-            self.vector_pair_label.setText(self.pairing_text_switched)
-        else:
-            self.vector_pair_label.setText(self.pairing_text_base_case)
     
     def two_step_transformation_check(self):
         if self.V_plus_Y_argument_type_checkbox.isChecked():
@@ -118,16 +110,3 @@ def create_argument_type_checkboxes(parent_form, parent_form_vbox_layout):
     hbox_arguments.addWidget(arrow_label, alignment=Qt.AlignmentFlag.AlignHCenter)
     hbox_arguments.addWidget(parent_form.post_transformation_checkbox, alignment=Qt.AlignmentFlag.AlignRight)
     parent_form_vbox_layout.addLayout(hbox_arguments)
-
-    
-            
-# if __name__ == "__main__":
-#     app = QApplication(sys.argv)
-
-#     main_dialog = ConfigureTransformationPopup([0, 1], ["k2", "k1"])
-#     if main_dialog.exec() == QDialog.Accepted:
-#         print("User okayed")
-#     else:
-#         print("User cancelled.")
-
-#     sys.exit(app.exec())

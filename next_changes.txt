@@ -1,7 +1,8 @@
 Next Changes: Unordered list of next enhancements and bug fixes to be implemented
 
-*Slider for m2 option instead of slider for t component of the vectors. User can choose which slider to activate/use.
 *The stylesheet strings need refactored into config.py for maintainability
 *Update the Help->User manual to explain the transformations and the m2 option.
-*Linting
+*Linting fixes
 *Finish the two-step transformation's second part, which is only approximated right now.
+*Refactor: the extra_circles needs to be stored along with selected vector names and transformation type, instead of separately stored in the controller.
+

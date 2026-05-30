@@ -74,10 +74,10 @@ class ExperimentController():
     def get_current_transformation_arguments(self):
         V_Y_particle_names = self.experiment.get_transformation_particle_pair_names()
         argument_type = self.experiment.get_transformation_type() # TODO: Pick one or the other of these names
-        return V_Y_particle_names, argument_type
+        return V_Y_particle_names, argument_type, self.particle_indices_picked_for_transformation
     
     def pre_check_transformation_update(self):
-        V_Y_particle_names, argument_type = self.get_current_transformation_arguments()
+        V_Y_particle_names, argument_type, _ = self.get_current_transformation_arguments()
         return self.pre_check_transformation(V_Y_particle_names, argument_type)
     
     def pre_check_transformation(self, V_Y_particle_names, argument_type):
@@ -91,10 +91,11 @@ class ExperimentController():
         self.view.plot_transformed_experiment_vectors(self.experiment.get_transformed_collision(), self.experiment.get_collision(), extra_circles)
 
     def refresh_transformation(self):
-        V_Y_particle_names, argument_type = self.get_current_transformation_arguments()
-        self.plot_transformation(V_Y_particle_names, argument_type)
+        V_Y_particle_names, argument_type, extra_circles = self.get_current_transformation_arguments()
+        self.plot_transformation(extra_circles, V_Y_particle_names, argument_type)
 
     def close_current_experiment(self):
+        self._particle_indices_picked_for_transformation.clear()
         self.view.clear_experiment_plot(True)
         self.view.clear_controls_layout()
         self.view.delete_experiment()

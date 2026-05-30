@@ -5,8 +5,8 @@ from PySide6.QtGui import QFont
 class HorizontalDivider(QFrame):
     def __init__(self, thickness):
         super().__init__()
-        self.setFrameShape(QFrame.HLine)
-        self.setFrameShadow(QFrame.Sunken)
+        self.setFrameShape(QFrame.Shape.HLine)
+        self.setFrameShadow(QFrame.Shadow.Sunken)
         self.setLineWidth(0) # Prevents problems with border
         self.setMidLineWidth(thickness)
         self.setMinimumHeight(thickness)  # Ensures layout respects the size

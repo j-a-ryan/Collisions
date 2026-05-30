@@ -99,9 +99,6 @@ class PlotVectorCanvas(FigureCanvas):
                     if popup.exec() == QDialog.Accepted:
                         # Check for issues
                         self.particles_names_picked = [popup.transformation_config["V"], popup.transformation_config["Y"]]
-                            
-                        self.particle_indices_picked.clear() # Get rid of circles
-
                         V_plus_Y = popup.transformation_config["V+YConfig"]
                         V_minus_Y = popup.transformation_config["ApplyPostTransformationV'-Y'"]
                         argument_type = util.get_config_argument(V_plus_Y, V_minus_Y)

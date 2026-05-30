@@ -71,9 +71,6 @@ class Experiment():
     
     def get_transformed_spatial_vectors(self):
         return self.transformed_collision.get_vectors_columns()
-    
-    def get_transformation_particle_pair_names(self):
-        return self.V_Y_particle_names
 
     def get_particle_names(self):
         return self.collision.get_vectors_name_column()

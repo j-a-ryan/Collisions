@@ -1,5 +1,5 @@
 import config
-from PySide6.QtWidgets import QComboBox, QGridLayout, QLabel, QLineEdit, QSizePolicy, QSpacerItem, QStyle, QWidget
+from PySide6.QtWidgets import QComboBox, QGridLayout, QLabel, QLineEdit, QStyle
 from PySide6.QtGui import Qt
 
 from view.experiment.validation import VectorValidation
@@ -13,7 +13,7 @@ the GUI widget
 """
 class VectorsGrid:
 
-    header_row = config.gui_vectors_header
+    header_row = config.vector_fields
     num_columns = len(header_row)
     max_num_vectors = config.max_num_vectors
 
@@ -43,11 +43,11 @@ class VectorsGrid:
         return self._grid_layout
     
     def set_up_grid(self, grid_layout):
-        t_label = QLabel("t")
-        x_label = QLabel("X")
-        y_label = QLabel("Y")
-        z_label = QLabel("Z")
-        pt_label = QLabel("Name")
+        t_label = QLabel(config.gui_t)
+        x_label = QLabel(config.gui_x)
+        y_label = QLabel(config.gui_y)
+        z_label = QLabel(config.gui_z)
+        pt_label = QLabel(config.gui_vector_name)
 
         # Set up the grid layout and the Vectors backing object for it.
         # Load these header lables into grid layout, leaving the first column blank. It is
@@ -108,10 +108,10 @@ class VectorsGrid:
         new_row_index = self.grid_row_count # We already have at least a header row at index 0.
         set_field_values = field_values is not None
         row_index_label = QLabel(f"{new_row_index}:")
-        time_field = VectorMemberField(self.vector_validation, set_field_values)
-        x_field = VectorMemberField(self.vector_validation, set_field_values)
-        y_field = VectorMemberField(self.vector_validation, set_field_values)
-        z_field = VectorMemberField(self.vector_validation, set_field_values)
+        time_field = VectorMemberField(self.vector_validation, 0, config.t_max, set_field_values)
+        x_field = VectorMemberField(self.vector_validation, config.xyz_min, config.xyz_max, set_field_values)
+        y_field = VectorMemberField(self.vector_validation, config.xyz_min, config.xyz_max, set_field_values)
+        z_field = VectorMemberField(self.vector_validation, config.xyz_min, config.xyz_max, set_field_values)
         particle_combo_box = QComboBox()
         particle_combo_box.addItem("k1")
         particle_combo_box.addItem("k2")

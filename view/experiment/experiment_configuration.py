@@ -21,9 +21,18 @@ class ExperimentConfigurationForm(QDialog):
         
         vectors_grid_layout = QGridLayout()#self.vectors_grid_frame) # needed as instance var?
         self.vectors_grid = VectorsGrid(vectors_grid_layout, self)
-        values_requirements = f"(Values {config.xyz_min} to {config.xyz_max}, {config.xyz_decimal_precision}-decimal precision)"
-        header_label = QLabel("Enter four-vectors " + values_requirements) # Insert header and grid for vectors layout
-        self.vectors_qvbox_layout.addWidget(header_label)
+        
+        header_label = QLabel("Enter four-vectors:")
+        requirements_label1 = QLabel(f"{config.gui_x}, {config.gui_y}, {config.gui_z} in [{config.xyz_min}, {config.xyz_max}]") # Insert header and grid for vectors layout
+        requirements_label2 = QLabel(f"{config.gui_t} in [0, {config.xyz_max}]")
+        requirements_label3 = QLabel(f"{config.xyz_decimal_precision}-decimal precision")
+        header_label_layout = QHBoxLayout()
+        header_label_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        header_label_layout.addWidget(header_label)
+        header_label_layout.addWidget(requirements_label1)
+        header_label_layout.addWidget(requirements_label2)
+        header_label_layout.addWidget(requirements_label3)
+        self.vectors_qvbox_layout.addLayout(header_label_layout)
         self.insert_vectors_grid_layout(vectors_grid_layout) # Insert the grid layout into its parent.
 
         self.max_vector_count = max_vector_count

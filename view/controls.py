@@ -1,9 +1,7 @@
-import sys
-
-from PySide6.QtWidgets import QApplication, QFrame, QButtonGroup, QMainWindow, QVBoxLayout, QPushButton
+from PySide6.QtWidgets import QFrame, QVBoxLayout
 
 from controller.controls_controller import ControlsController
-from view.common.details import Heading, HorizontalDivider
+from view.common.details import Heading
 from PySide6.QtGui import Qt
 
 from view.controls_view.slider import SliderGroupFrame

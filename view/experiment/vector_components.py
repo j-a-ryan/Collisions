@@ -3,7 +3,7 @@ from PySide6.QtGui import QDoubleValidator, QPalette
 import config
 
 class VectorMemberField(QLineEdit):
-    def __init__(self, form_validation, already_validated=False, *args, **kwargs):
+    def __init__(self, form_validation, min_val, max_val, already_validated=False, *args, **kwargs):
         super(VectorMemberField, self).__init__(*args, **kwargs)
         self.setFixedHeight(16) # default was too tall
         current_font = self.font()
@@ -15,7 +15,7 @@ class VectorMemberField(QLineEdit):
         self.default_style_string = None
         self.currently_valid = already_validated
         self.form_validation = form_validation
-        self.validator = QDoubleValidator(config.xyz_min, config.xyz_max, config.xyz_decimal_precision, notation=QDoubleValidator.StandardNotation)
+        self.validator = QDoubleValidator(min_val, max_val, config.xyz_decimal_precision, notation=QDoubleValidator.StandardNotation)
         self.setValidator(self.validator)
 
         self.textEdited.connect(self.new_text) # Perhaps textEdited might be enough here.

@@ -114,7 +114,7 @@ class View(QWidget):
         self.add_transformation_splitter(experiment_vectors=experiment_vectors, transformed_vectors=vectors_transformed)
 
     def save_experiment(self, vectors):
-        header = config.gui_vectors_header
+        header = config.vector_fields
         data = vectors
         
         # Ignore the "filter" return.  Starting directory empty = current.
@@ -138,7 +138,7 @@ class View(QWidget):
                 writer.writerows(data)
 
     def pre_treat_csv_data(self, data):
-        if data[0] == config.gui_vectors_header: # Should be true; from CSV file with header
+        if data[0] == config.vector_fields: # Should be true; from CSV file with header
             del data[0] # Get rid of header row
 
     def load_experiment(self):
@@ -156,11 +156,11 @@ class View(QWidget):
                 print(f"An error occurred: {e}")
         
             num_columns = len(data[0]) if data else 0
-            if num_columns == len(config.gui_vectors_header): # Sanity check
+            if num_columns == len(config.vector_fields): # Sanity check
                 self.pre_treat_csv_data(data)
                 self.show_experiment_configuration_form(True, data)
             else:
-                QMessageBox.warning(None, "Warning", "The file is not usable because it does not have " + str(len(config.gui_vectors_header)) + " columns: " + str(config.gui_vectors_header))
+                QMessageBox.warning(None, "Warning", "The file is not usable because it does not have " + str(len(config.vector_fields)) + " columns: " + str(config.vector_fields))
         
 
     def delete_experiment(self):
