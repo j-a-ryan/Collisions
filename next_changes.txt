@@ -1,8 +1,19 @@
 Next Changes: Unordered list of next enhancements and bug fixes to be implemented
 
+Second step of two-step transformation:
+1. A slider for A for the entire group of vectors
+    Range of A is 0 to 10
+2. Configuration widget: 
+    If there are only two vectors, A defaults to 1. No selection of third vector.
+    If more than two vectors, the user can select which of the others is the third.
+3. The user must be made to wait while the system of equations is solved: back and forth progress bar.
+
+Exceptions log file.
+Do some linting fixes
+
+
+LATER
 *The stylesheet strings need refactored into config.py for maintainability
 *Update the Help->User manual to explain the transformations and the m2 option.
-*Linting fixes
-*Finish the two-step transformation's second part, which is only approximated right now.
 *Refactor: the extra_circles needs to be stored along with selected vector names and transformation type, instead of separately stored in the controller.
 

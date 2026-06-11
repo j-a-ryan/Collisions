@@ -2,6 +2,7 @@ Build
 
 To build Windows version:
 python -m PyInstaller --onefile --windowed main.py
+Rename the result to suit.
 
 MacOS:
 Use build-macos.yml, which currently lives only in GitHub Actions

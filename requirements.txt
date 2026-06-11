@@ -5,3 +5,4 @@ pyside6==6.11.0
 pyside6_addons==6.11.0
 pyside6_essentials==6.11.0
 pyqtdarktheme==2.1.0
+sympy==1.14.0

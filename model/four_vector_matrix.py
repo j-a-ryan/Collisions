@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-import math
+
 import numpy as np
 
 class MatrixConfigurationData():

@@ -5,7 +5,6 @@ import numpy as np
 import numpy.testing as npt
 import config
 from model.four_vector_matrix import GalileanTransformationMatrix, IdentityMatrix, MatrixConfigurationData
-from model.general_matrix import GeneralTransformationMatrix
 from model.qcd_matrix import LightConeRapidityMatrix, LightConeRapidityMatrixConfigurationData
 from test.util import check_vectors_equal
 # python -m unittest discover tests

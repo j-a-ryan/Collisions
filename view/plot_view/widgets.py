@@ -1,6 +1,8 @@
-from PySide6.QtWidgets import QButtonGroup, QCheckBox, QDialog, QDialogButtonBox, QFrame, QHBoxLayout, QLabel, QPushButton, QVBoxLayout
+from PySide6.QtWidgets import QButtonGroup, QCheckBox, QDialog, QDialogButtonBox, QFrame, QHBoxLayout, QLabel, QProgressBar, QPushButton, QVBoxLayout
 from PySide6.QtGui import Qt
 
+import config
+from PySide6.QtCore import QThread, Signal, Slot
 
 class ConfigureTransformationPopup(QDialog):
     def __init__(self, indices, particle_names, parent=None):
@@ -78,6 +80,13 @@ class ConfigureTransformationPopup(QDialog):
             self.post_transformation_checkbox.setChecked(False)
             self.post_transformation_checkbox.setEnabled(False)
 
+    def post_transformation_check(self):
+        if self.post_transformation_checkbox.isChecked():
+            # Show third-vector selection dropdown and make it a required field
+            pass
+        else:
+            pass # Hide third-vector selection dropdown and make it not required field.
+
 def create_argument_type_checkboxes(parent_form, parent_form_vbox_layout):
 
     config_args_label = QLabel("Configuration arguments")
@@ -91,6 +100,7 @@ def create_argument_type_checkboxes(parent_form, parent_form_vbox_layout):
     parent_form.V_Y_argument_type_checkbox.setChecked(True)
     parent_form.V_plus_Y_argument_type_checkbox = QCheckBox("(V + Y, Y)")
     parent_form.V_plus_Y_argument_type_checkbox.checkStateChanged.connect(parent_form.two_step_transformation_check)
+    
     parent_form.argument_types_checkboxes_group.addButton(parent_form.V_Y_argument_type_checkbox)
     parent_form.argument_types_checkboxes_group.addButton(parent_form.V_plus_Y_argument_type_checkbox)
     
@@ -102,6 +112,7 @@ def create_argument_type_checkboxes(parent_form, parent_form_vbox_layout):
     hbox_arguments.addWidget(parent_form.V_plus_Y_argument_type_checkbox, alignment=Qt.AlignmentFlag.AlignLeft)
     parent_form.post_transformation_checkbox = QCheckBox("(V' - Y', Y)")
     parent_form.post_transformation_checkbox.setEnabled(False)
+    parent_form.post_transformation_checkbox.checkStateChanged.connect(parent_form.post_transformation_check)
     arrow_label = QLabel("\u2192")
     arrow_label_font = arrow_label.font()
     # arrow_label_font.setItalic(True)
@@ -110,3 +121,40 @@ def create_argument_type_checkboxes(parent_form, parent_form_vbox_layout):
     hbox_arguments.addWidget(arrow_label, alignment=Qt.AlignmentFlag.AlignHCenter)
     hbox_arguments.addWidget(parent_form.post_transformation_checkbox, alignment=Qt.AlignmentFlag.AlignRight)
     parent_form_vbox_layout.addLayout(hbox_arguments)
+
+class WaitingPopup(QDialog):
+    def __init__(self, parent, title="Please Wait", text="Please stand by.", additional_text=None):
+        super().__init__(parent)
+        self.setWindowTitle(title)
+        self.setFixedSize(400, 150)
+        layout = QVBoxLayout()
+        layout.setAlignment(Qt.AlignTop)
+        label = QLabel(text)
+        larger_font = QLabel().font()
+        larger_font.setPointSize(12)
+        label.setFont(larger_font)
+        layout.addWidget(label)
+        if additional_text:
+            layout.addWidget(QLabel(additional_text))
+        # Initialize the Progress Bar
+        self.progress_bar = QProgressBar()
+        self.progress_bar.setStyleSheet(f"""
+            QProgressBar {{
+                border: 2px solid grey;
+                border-radius: 5px;
+                text-align: center;
+            }}
+            QProgressBar::chunk {{
+                background-color: {config.slider_accent_color};
+                width: 20px;
+            }}
+        """)
+        self.progress_bar.setMinimum(0)   # Default start point
+        self.progress_bar.setMaximum(0) # Default end point
+        self.progress_bar.setValue(0)     # Reset starting value
+        layout.addWidget(self.progress_bar)
+        self.setLayout(layout)
+
+    @Slot()
+    def close_dialog(self):
+        self.accept() 
