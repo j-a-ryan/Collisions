@@ -1,4 +1,3 @@
-import numpy as np
 from sympy import symbols, sqrt, Eq, solve
 
 from model.util import calculate_m_2, minkowski_dot

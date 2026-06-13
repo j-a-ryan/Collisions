@@ -1,6 +1,4 @@
-import sys
-
-from PySide6.QtWidgets import QApplication, QComboBox, QDialog, QDialogButtonBox, QGridLayout, QHBoxLayout, QLabel, QMessageBox, QPushButton, QStyle, QTextEdit, QVBoxLayout
+from PySide6.QtWidgets import QComboBox, QDialog, QDialogButtonBox, QGridLayout, QLabel, QMessageBox, QPushButton, QStyle, QTextEdit, QVBoxLayout
 from PySide6.QtGui import QIcon, Qt
 
 import config
@@ -152,7 +150,7 @@ def get_slider_transformation_issue_popup(argument_type, axis=None, value=None):
     msg = QMessageBox()
     msg.setWindowTitle("Transformation Problem")
     msg.setIcon(QMessageBox.Icon.Warning) 
-    msg.setText(f"Transformation error")
+    msg.setText("Transformation error")
     
     if not axis and not value:
         msg.setInformativeText(f"Transformation of type {argument_type} on this vector set " +\

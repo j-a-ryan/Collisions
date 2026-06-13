@@ -1,8 +1,18 @@
-from PySide6.QtWidgets import QGridLayout, QMessageBox, QVBoxLayout, QHBoxLayout, QFrame, QPushButton, QDialog, QLabel
+from PySide6.QtWidgets import (
+    QGridLayout,
+    QMessageBox,
+    QVBoxLayout,
+    QHBoxLayout,
+    QFrame,
+    QPushButton,
+    QDialog,
+    QLabel,
+)
 from PySide6.QtGui import Qt
 import config
 from view.experiment.vectors import VectorsGrid
 from view.experiment.widgets import VectorIssueCheck
+
 
 class ExperimentConfigurationForm(QDialog):
 
@@ -18,12 +28,14 @@ class ExperimentConfigurationForm(QDialog):
         self.vectors_qvbox_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
         # Set up vectors grid, its header, its layout, and its parent layout.
-        
-        vectors_grid_layout = QGridLayout()#self.vectors_grid_frame) # needed as instance var?
+
+        vectors_grid_layout = QGridLayout()  # self.vectors_grid_frame) # needed as instance var?
         self.vectors_grid = VectorsGrid(vectors_grid_layout, self)
-        
+
         header_label = QLabel("Enter four-vectors:")
-        requirements_label1 = QLabel(f"{config.gui_x}, {config.gui_y}, {config.gui_z} in [{config.xyz_min}, {config.xyz_max}]") # Insert header and grid for vectors layout
+        requirements_label1 = QLabel(
+            f"{config.gui_x}, {config.gui_y}, {config.gui_z} in [{config.xyz_min}, {config.xyz_max}]"
+        )  # Insert header and grid for vectors layout
         requirements_label2 = QLabel(f"{config.gui_t} in [0, {config.xyz_max}]")
         requirements_label3 = QLabel(f"{config.xyz_decimal_precision}-decimal precision")
         header_label_layout = QHBoxLayout()
@@ -33,21 +45,25 @@ class ExperimentConfigurationForm(QDialog):
         header_label_layout.addWidget(requirements_label2)
         header_label_layout.addWidget(requirements_label3)
         self.vectors_qvbox_layout.addLayout(header_label_layout)
-        self.insert_vectors_grid_layout(vectors_grid_layout) # Insert the grid layout into its parent.
+        self.insert_vectors_grid_layout(
+            vectors_grid_layout
+        )  # Insert the grid layout into its parent.
 
         self.max_vector_count = max_vector_count
         self.add_row_button = QPushButton(f"Add New Row (max {config.max_num_vectors}:)")
         self.add_row_button.clicked.connect(lambda: self.initialize_grid_rows(True))
 
         self.grid_hbox_layout = QHBoxLayout()
-        self.grid_hbox_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)        
+        self.grid_hbox_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
         # self.qhbox_layout_1.addLayout(self.experiment_type_qhbox_layout)
         # self.qhbox_layout_1.addLayout(self.vectors_qvbox_layout)
         self.grid_hbox_layout.addWidget(self.vectors_grid_frame)
 
         self.refresh_button = QPushButton("Refresh Grid")
         self.refresh_button.setVisible(False)
-        self.refresh_button.setToolTip("Refreshes grid values when graph\nhas been altered manually.")
+        self.refresh_button.setToolTip(
+            "Refreshes grid values when graph\nhas been altered manually."
+        )
         self.refresh_button.clicked.connect(self.refresh_grid)
 
         self.check_button = QPushButton("Check Parameters")
@@ -63,11 +79,15 @@ class ExperimentConfigurationForm(QDialog):
         self.cancel_button.clicked.connect(self.cancel)
 
         self.set_buttons_enabled_state(False)
-        widgets_to_enable_disable = {"ADD_ROW": self.add_row_button, "SAVE": self.save_button, 
-                                     "SUBMIT": self.submit_button, "CHECK": self.check_button}
+        widgets_to_enable_disable = {
+            "ADD_ROW": self.add_row_button,
+            "SAVE": self.save_button,
+            "SUBMIT": self.submit_button,
+            "CHECK": self.check_button,
+        }
         self.vectors_grid.set_widgets_to_enable_disable(widgets_to_enable_disable)
-        
-        self.row_count = 0 # TODO: Refactor into the vectors object itself.
+
+        self.row_count = 0  # TODO: Refactor into the vectors object itself.
         self.initialize_grid_rows(False, vector_data)
 
         self.submit_buttons_layout = QGridLayout()
@@ -93,14 +113,14 @@ class ExperimentConfigurationForm(QDialog):
             if widget:
                 widget.deleteLater()
         self.vectors_qvbox_layout.removeItem(self.vectors_grid_layout)
-        
+
         self.vectors_grid_layout.deleteLater()
         del self.vectors_grid_layout
 
     def insert_vectors_grid_layout(self, vectors_grid_layout, remove_current=False):
         self.vectors_grid_layout = vectors_grid_layout
         self.vectors_qvbox_layout.addLayout(vectors_grid_layout)
-        self.update() # or more immediate repaint()
+        self.update()  # or more immediate repaint()
 
     def updated_vector_validation(self, vector_valid):
         self.set_buttons_enabled_state(vector_valid)
@@ -109,7 +129,7 @@ class ExperimentConfigurationForm(QDialog):
         if enabled:
             if self.vectors_grid.grid_row_count < self.max_vector_count:
                 self.add_row_button.setEnabled(True)
-            else: # Just to be sure
+            else:  # Just to be sure
                 self.add_row_button.setEnabled(False)
             self.submit_button.setEnabled(True)
             self.check_button.setEnabled(True)
@@ -125,36 +145,20 @@ class ExperimentConfigurationForm(QDialog):
             self.vectors_grid.add_vector_rows(grid_data)
             self.vectors_grid.refresh_grid()
         else:
-            self.vectors_grid.add_vector_row(set_focus) # Add empty row
+            self.vectors_grid.add_vector_row(set_focus)  # Add empty row
 
     def _create_payload(self, vectors, **kwargs):
         metadict = {"vectors_header": VectorsGrid.header_row}
         metadict.update(kwargs)
         return {"vectors": vectors, "metadata": metadict}
-    
-    # matrix_view_lookup = {"General Boost": "resources/GeneralBoost.png", "Momentum-Realignment Boost": "resources/LCC-RapidityBoost.png"}
-        
-    # def view_matrix(self):
-    #     msg_box = QMessageBox(self)
-
-    #     selected_matrix_name = self.matrix_type_combo_box.currentText()
-    #     if selected_matrix_name is not None and selected_matrix_name != "":
-    #         msg_box.setWindowTitle(selected_matrix_name + " matrix")
-    #         if selected_matrix_name in self.matrix_view_lookup:
-    #             file = self.matrix_view_lookup[selected_matrix_name]
-    #             pixmap = QPixmap(file)
-    #             pixmap = pixmap.scaled(600, 600, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
-    #             msg_box.setIconPixmap(pixmap)
-    #         else:
-    #             msg_box.setText("Image of " + selected_matrix_name)
-    #         msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
-    #         msg_box.exec()
 
     def refresh_grid(self):
         pass
 
     def check_parameters(self):
-        vector_issues_dialog = VectorIssueCheck(self.experiment_controller, self.vectors_grid.backing_vectors)
+        vector_issues_dialog = VectorIssueCheck(
+            self.experiment_controller, self.vectors_grid.backing_vectors
+        )
         vector_issues_dialog.exec()
 
     def create_experiment(self):
@@ -162,17 +166,19 @@ class ExperimentConfigurationForm(QDialog):
         # Get list of vectors, etc. and create payload dict.
         payload = self._create_payload(self.vectors_grid.backing_vectors)
         self.experiment_controller.configure_and_create_experiment(payload)
-        
+
     def submit(self):
         self.create_experiment()
-        self.done(1) # self.close() instead? See the plot2d form, same question
+        self.done(1)  # self.close() instead? See the plot2d form, same question
 
     def save(self):
         msg = QMessageBox()
         msg.setWindowTitle("Save Experiment")
-        msg.setText("This will save the vectors and delete\n" +\
-                    "any current transformation of them that\n" +\
-                    "you may currently have. Proceed?")
+        msg.setText(
+            "This will save the vectors and delete\n"
+            + "any current transformation of them that\n"
+            + "you may currently have. Proceed?"
+        )
         msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
         msg.setDefaultButton(QMessageBox.Ok)
         result = msg.exec()
@@ -181,4 +187,4 @@ class ExperimentConfigurationForm(QDialog):
             self.experiment_controller.save_current_experiment()
 
     def cancel(self):
-        self.done(0) # TODO: self.close() instead? See the plot2d form, same question
+        self.done(0)  # TODO: self.close() instead? See the plot2d form, same question

@@ -93,9 +93,9 @@ class PlotVectorCanvas(FigureCanvas):
                     self.experiment_controller.plot_current_experiment(extra_circles=self.particle_indices_picked.copy()) # Zero or one picked now.
                 else: # We have two vectors picked. Now we proceed to transformation configuration.
                     self.particle_indices_picked.append(index) # two picked now
-                    indices = self.particle_indices_picked.copy()
-                    self.experiment_controller.plot_current_experiment(extra_circles=indices)
-                    popup = ConfigureTransformationPopup(indices, self.particle_names)
+                    transformation_vector_pair_indices = self.particle_indices_picked.copy()
+                    self.experiment_controller.plot_current_experiment(extra_circles=transformation_vector_pair_indices)
+                    popup = ConfigureTransformationPopup(transformation_vector_pair_indices, self.particle_names)
                     if popup.exec() == QDialog.Accepted:
                         # Check for issues
                         self.particles_names_picked = [popup.transformation_config["V"], popup.transformation_config["Y"]]
@@ -110,8 +110,8 @@ class PlotVectorCanvas(FigureCanvas):
                             msg.exec()
                             self.view.show_experiment_configuration_form(False)
                         else:
-                            self.experiment_controller.plot_current_experiment(extra_circles=indices) # Do not get rid of circles
-                            self.experiment_controller.plot_transformation(indices, V_Y_particle_names, argument_type)
+                            self.experiment_controller.plot_current_experiment(extra_circles=transformation_vector_pair_indices) # Do not get rid of circles
+                            self.experiment_controller.plot_transformation(transformation_vector_pair_indices, V_Y_particle_names, argument_type)
                             self.particles_names_picked.clear()                  
                     else:
                         self.particle_indices_picked.clear()

@@ -1,7 +1,8 @@
 import config
-from PySide6.QtWidgets import QComboBox, QGridLayout, QLabel, QLineEdit, QStyle
+from PySide6.QtWidgets import QGridLayout, QLabel, QLineEdit, QStyle
 from PySide6.QtGui import Qt
 
+from view.common.widgets import create_particle_names_combo_box
 from view.experiment.validation import VectorValidation
 from view.experiment.vector_components import VectorMemberField
 from view.experiment.widgets import DeleteVectorRowButton
@@ -112,17 +113,7 @@ class VectorsGrid:
         x_field = VectorMemberField(self.vector_validation, config.xyz_min, config.xyz_max, set_field_values)
         y_field = VectorMemberField(self.vector_validation, config.xyz_min, config.xyz_max, set_field_values)
         z_field = VectorMemberField(self.vector_validation, config.xyz_min, config.xyz_max, set_field_values)
-        particle_combo_box = QComboBox()
-        particle_combo_box.addItem("k1")
-        particle_combo_box.addItem("k2")
-        particle_combo_box.addItem("k3")
-        particle_combo_box.addItem("k4")
-        particle_combo_box.addItem("k5")
-        particle_combo_box.addItem("k6")
-        particle_combo_box.setEditable(True)
-        particle_combo_box.lineEdit().setReadOnly(True)
-        particle_combo_box.setMinimumContentsLength(6)
-        particle_combo_box.setCurrentIndex(-1)
+        particle_combo_box = create_particle_names_combo_box()
         particle_combo_box.activated.connect(self.refresh_grid)
 
         if set_field_values:

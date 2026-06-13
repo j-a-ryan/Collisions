@@ -3,7 +3,7 @@ from PySide6.QtWidgets import  QDialog, QTextBrowser, QVBoxLayout
 def get_user_manual():
     dialog = QDialog()
     dialog.setWindowTitle("Collisions User Manual")
-    dialog.resize(750, 500)
+    dialog.resize(1150, 600)
 
     browser = QTextBrowser(dialog)
     
@@ -26,7 +26,7 @@ def get_user_manual():
             consider the vectors of particles emerging from accelerator events.
         </p>
         <h2>Quick Start</h2>
-        <p>Usage
+        <p>How to use the application:
         <ol>
             <li>Use buttons to open an experiment file, create a new experiment, edit the currently loaded experiment,
                 save, or close the currently loaded experiment. Configure your vectors in the form. To learn how to do this, click the "new"
@@ -50,7 +50,7 @@ def get_user_manual():
             V and Y, are used to configure the matrix.
         </p>
         <div style="text-align: center;">
-            <img src="resources/LCC-RapidityBoost.png" style="display: block; margin: 0 auto;" alt="Matrix" width="645" height="330">
+            <img src="resources/LCC-RapidityBoost.png" style="display: block; margin: 0 auto;" alt="Matrix" width="968" height="494">
         </div>
         <p>In configuring a transformation of a vector set, the user will select two of its vectors to be V and Y. They will
             be transformed, along with all the vectors in the set. Having been transformed, they may be marked as such as V' and Y' and used again
@@ -75,14 +75,22 @@ def get_user_manual():
         </div>
         </br>
         <p>Sliders are used to change the components of the vectos in the graph, as well as, for graphs of a two-step transformation,
-            a parameter called, for lack of a better term, "A". A is a calculated value, found during the second step of a two-step transformation
-            by solving a set of three equations as seen below.
+            a boost factor parameter dubbed "A". A is a calculated value used in the second step of a two-step transformation:
+        </p>
+        
+        <div style="text-align: center;">
+            <img src="resources/A.png" alt="popup" width="1125" height="75">
+        </div>
+        <p>The values needed to solve for A are found by solving a set of three equations:
         </p>
         <div style="text-align: center;">
-            <img src="resources/equations.png" alt="popup" width="700" height="240">
+            <img src="resources/equations.png" alt="popup" width="853" height="313">
         </div>
-        <p>The exception to this derivation of A is the case in which the user's vector set has only two vectors in it. In that case, a
-            value of 1 is used for A, leaving the user to adjust it with the slider afterwards. 
+        <p>These calculations require a third vector be used. For this purpose the user selects a vector from the vector set when configuring
+            a two-step transformation. It can take the software several seconds (for example, seven) for this set of equations to be solved
+            so that the user's transformation may be completed and graphed. In the event that the vector set has only two vectors, a value 
+            of 1 is used for A, instead of solving a system of equations. After a two-step transformation the user can adjust the value of 
+            A using a slider. 
         </p>
         <h3>Graphs</h3>
         <p>The graphs are made with Python's Matplotlib library. The vector arrow tips are represented by circles in which
@@ -99,9 +107,8 @@ def get_user_manual():
             To learn the structure of these files, the user should simply create a set of vectors in the experiment
             configuration form, save the set, and then inspect the file.
         </p>
-        <p>Currently, the application does not support the persisting of a vector set as it stands after having been 
-            altered by the vector component sliders. A vector set can be altered in a persistable way only by being edited
-            in the experiment configuration form.
+        <p>Currently, the application does not allow the user to update a file with changes to vector components made by
+            the use of the sliders. Only changes made in the experiment configuration form can used to update a file.
         </p>
     </body>
     </html>

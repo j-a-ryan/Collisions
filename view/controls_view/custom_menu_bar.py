@@ -1,10 +1,8 @@
-from PySide6.QtWidgets import  QDialog, QHBoxLayout, QMessageBox, QPushButton, QTextBrowser, QVBoxLayout
+from PySide6.QtWidgets import   QHBoxLayout, QPushButton
 from PySide6.QtGui import Qt
 import qdarktheme
 
 from resources.help_html import get_user_manual
-
-
 
 class MenuButtonPanel(QHBoxLayout):
     def __init__(self, view, app, experiment_controller):

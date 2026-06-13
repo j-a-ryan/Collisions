@@ -1,15 +1,18 @@
 Next Changes: Unordered list of next enhancements and bug fixes to be implemented
 
 Second step of two-step transformation:
-1. A slider for A for the entire group of vectors
+1. Get everything working fine: 
+    1.1 Update the configuration widget for vector selection.
+        DONE 1.1.1 If more than two vectors, the user can select which of the others is the third.
+        1.1.2 If there are only two vectors, A defaults to 1. No selection of third vector.
+    1.2 Test that transformations all work. Should be a delay with no spinner for full multivector 2-step transformation
+    1.3 Add a spinner
+2. A slider for A for the entire group of vectors
     Range of A is 0 to 10
-2. Configuration widget: 
-    If there are only two vectors, A defaults to 1. No selection of third vector.
-    If more than two vectors, the user can select which of the others is the third.
-3. The user must be made to wait while the system of equations is solved: back and forth progress bar.
+3. Do some linting fixes
 
-Exceptions log file.
-Do some linting fixes
+4. Exceptions log file. ExceptHook.pdf
+
 
 
 LATER

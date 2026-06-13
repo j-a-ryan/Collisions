@@ -1,11 +1,9 @@
 import math
 
-import numpy as np
-
-graph_area_color = "#E0FFFF" #"#FCFEE7"
-graph_encasing_area_color = "#D6FFFF" # "#D1FFFF"# "#F2F3EA"
-slider_accent_color = "#42A1FF" # "#4DA6FF" # 
-slider_background_color = graph_area_color # "#D6FFFF" # "#D1FFFF"
+graph_area_color = "#E0FFFF"  # "#FCFEE7"
+graph_encasing_area_color = "#D6FFFF"  # "#D1FFFF"# "#F2F3EA"
+slider_accent_color = "#42A1FF"  # "#4DA6FF" #
+slider_background_color = graph_area_color  # "#D6FFFF" # "#D1FFFF"
 graph_circles_color = "#272EF5"
 graph_extra_circles_color = slider_accent_color
 # Vector configuration, both model- and GUI-side
@@ -24,22 +22,22 @@ lookup_gui_0123_txyz = {"0": gui_t, "1": gui_x, "2": gui_y, "3": gui_z}
 max_num_vectors = 6
 xyz_min = -10
 xyz_max = 10
-t_max = 10 # t/E min is currently hardcoded as 0
+t_max = 10  # t/E min is currently hardcoded as 0
 xyz_decimal_precision = 2
 zero_rounding_tolerance = 1e-5
 zero_rounding_tolerance_string = "1e-5"
 form_field_invalid_color = "#FA0730"
 field_invalid_stylestring = "color: white; background-color: #FF6347;"
 combo_box_invalid_stylesheet = "QComboBox { " + field_invalid_stylestring + " }"
-text_edit_invalid_stylesheet = "QLineEdit { " + field_invalid_stylestring + "; } QLineEdit:focus { color: red; background-color: PaleTurquoise; }"
+text_edit_invalid_stylesheet = (
+    "QLineEdit { "
+    + field_invalid_stylestring
+    + "; } QLineEdit:focus { color: red; background-color: PaleTurquoise; }"
+)
 exp_2yT = 1
 sqrt2 = math.sqrt(2)
 subtitle = "QCD/TMD"
-
-
-
-
-
+particle_names = ["k1", "k2", "k3", "k4", "k5", "k6"]
 
 
 def read_config_file():
