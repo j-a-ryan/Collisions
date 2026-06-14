@@ -1,11 +1,22 @@
-from PySide6.QtWidgets import QComboBox, QDialog, QDialogButtonBox, QGridLayout, QLabel, QMessageBox, QPushButton, QStyle, QTextEdit, QVBoxLayout
+from PySide6.QtWidgets import (
+    QComboBox,
+    QDialogButtonBox,
+    QGridLayout,
+    QLabel,
+    QMessageBox,
+    QPushButton,
+    QStyle,
+    QTextEdit,
+    QVBoxLayout,
+)
 from PySide6.QtGui import QIcon, Qt
 
 import config
 from controller.transformation_controller import TransformationController
 from model import util
 from view.controls_view import slider
-from view.plot_view.widgets import create_argument_type_checkboxes
+from view.transformations_view.widgets import AbstractTransformationPopup
+
 
 class DeleteVectorRowButton(QPushButton):
 
@@ -14,30 +25,33 @@ class DeleteVectorRowButton(QPushButton):
         self.parent_form_style = parent_form_style
         self.setStyleSheet("border: none;")
         self.disabled_icon = QIcon()
-        self.delete_icon = self.parent_form_style.standardIcon(QStyle.StandardPixmap.SP_MessageBoxCritical) #SP_BrowserStop
-    
+        self.delete_icon = self.parent_form_style.standardIcon(
+            QStyle.StandardPixmap.SP_MessageBoxCritical
+        )  # SP_BrowserStop
+
     # Make button visible and enabled.
     def activate(self):
         self.setIcon(self.delete_icon)
         self.setEnabled(True)
-    
+
     # Make butten just a spacer. N.B.: spacer and invisible don't work.
     def deactivate(self):
         self.setIcon(self.disabled_icon)
-        self.setEnabled(False) # In effect, a spacer. Spacer and blank widget didn't work
+        self.setEnabled(False)  # In effect, a spacer. Spacer and blank widget didn't work
 
-    @staticmethod # Currently just activating. May need deactivation in future.
+    @staticmethod  # Currently just activating. May need deactivation in future.
     def check_button_states(grid_layout):
         # Row 0 is header. Get row 1's button, which is in col 7.
-        first_row_delete_button = grid_layout.itemAtPosition(1, 7).widget() # This should never throw exception.
+        first_row_delete_button = grid_layout.itemAtPosition(1, 7).widget()  # This should never throw exception.
         if grid_layout.rowCount() > 2:
-            first_row_delete_button.activate() # We were deactivating her (first row of several). Decided not needed
+            first_row_delete_button.activate()  # We were deactivating her (first row of several). Decided not needed
         else:
             first_row_delete_button.activate()
 
-class VectorIssueCheck(QDialog):
-    
-    def __init__(self, experiment_controller, vectors): # These vectors are the VectorsGrid's backing_vectors member
+
+class VectorIssueCheck(AbstractTransformationPopup):
+
+    def __init__(self, experiment_controller, vectors):  # These vectors are the VectorsGrid's backing_vectors member
         super().__init__()
         self.setWindowTitle("Check Vectors for Issues")
         self.setFixedSize(240, 400)
@@ -53,7 +67,7 @@ class VectorIssueCheck(QDialog):
 
         layout = QVBoxLayout()
         layout.setAlignment(Qt.AlignTop)
-        
+
         vectors_label = QLabel("Select V and Y")
         vectors_label_font = QLabel().font()
         vectors_label_font.setItalic(True)
@@ -74,8 +88,8 @@ class VectorIssueCheck(QDialog):
         layout.addLayout(combobox_grid_layout)
 
         layout.addSpacing(25)
-        
-        create_argument_type_checkboxes(self, layout)
+
+        self.create_argument_type_checkboxes(layout, self.names)  # or self.experiment.get_particle_names()
 
         self.check_button = QPushButton("Run Check")
         self.check_button.setEnabled(False)
@@ -84,13 +98,35 @@ class VectorIssueCheck(QDialog):
 
         self.results_text_area = QTextEdit()
         self.results_text_area.setReadOnly(True)  # Make it look/behave like a label
-        
+
         layout.addWidget(self.results_text_area)
 
         self.submit_cancel_button_box = QDialogButtonBox(QDialogButtonBox.Close)
         self.submit_cancel_button_box.rejected.connect(self.reject)
         layout.addWidget(self.submit_cancel_button_box, alignment=Qt.AlignmentFlag.AlignRight)
         self.setLayout(layout)
+
+    def get_combobox_names(self, candidate_particle_names):
+        return []
+
+    def argument_types_checkboxes_group_clicked(self):
+        self.results_text_area.clear()
+
+    def update_third_vector_combobox(self, V_name, Y_name):
+        if self.post_transformation_checkbox.isChecked():
+            self.particle_names_combo_box.clear()
+            candidate_particle_names = self.experiment.get_particle_names().copy()
+            if V_name in candidate_particle_names:
+                candidate_particle_names.remove(V_name)
+            if Y_name in candidate_particle_names:
+                candidate_particle_names.remove(Y_name)
+
+            for name in candidate_particle_names:
+                self.particle_names_combo_box.addItem(name)
+            if len(candidate_particle_names) > 1:
+                self.particle_names_combo_box.setCurrentIndex(-1)
+            self.particle_names_combo_box.setVisible(True)
+            self.particle_names_combo_box.setEnabled(True)
 
     def _set_up_combo_box(self):
         box = QComboBox()
@@ -104,8 +140,8 @@ class VectorIssueCheck(QDialog):
         return box
 
     def submit(self):
-        self.results_text_area.clear()
 
+        self.results_text_area.clear()
         V_particle_name = self.V_combo_box.currentText()
         Y_particle_name = self.Y_combo_box.currentText()
         vector_V = self.experiment.get_original_four_vector(V_particle_name)
@@ -113,7 +149,9 @@ class VectorIssueCheck(QDialog):
         V_plus_Y = self.V_plus_Y_argument_type_checkbox.isChecked()
         V_minus_Y = self.post_transformation_checkbox.isChecked()
         argument_type = util.get_config_argument(V_plus_Y, V_minus_Y)
-        results, transformation_type = self.transformation_controller.validate_vectors(vector_V, vector_Y, argument_type, V_particle_name, Y_particle_name, self.experiment, self.names)
+        results, transformation_type = self.transformation_controller.validate_vectors(
+            vector_V, vector_Y, argument_type, V_particle_name, Y_particle_name, self.experiment, self.names
+        )
 
         if results:
             self.results_text_area.setAlignment(Qt.AlignLeft)
@@ -125,9 +163,10 @@ class VectorIssueCheck(QDialog):
             self.results_text_area.setAlignment(Qt.AlignCenter)
 
     def combo_box_changed(self):
-
+        self.results_text_area.clear()
         V_text = self.V_combo_box.currentText()
         Y_text = self.Y_combo_box.currentText()
+        self.update_third_vector_combobox(V_text, Y_text)
         valid_selection_pair = False
         if V_text and Y_text:
             if V_text != Y_text:
@@ -146,22 +185,26 @@ class VectorIssueCheck(QDialog):
             self.post_transformation_checkbox.setChecked(False)
             self.post_transformation_checkbox.setEnabled(False)
 
+
 def get_slider_transformation_issue_popup(argument_type, axis=None, value=None):
     msg = QMessageBox()
     msg.setWindowTitle("Transformation Problem")
-    msg.setIcon(QMessageBox.Icon.Warning) 
+    msg.setIcon(QMessageBox.Icon.Warning)
     msg.setText("Transformation error")
-    
+
     if not axis and not value:
-        msg.setInformativeText(f"Transformation of type {argument_type} on this vector set " +\
-                        "will leads to an error, such as division by zero. You can run the " +\
-                        "vector check to address this issue.")
-    else: # Assumes value and axis are not none.
+        msg.setInformativeText(
+            f"Transformation of type {argument_type} on this vector set "
+            + "will leads to an error, such as division by zero. You can run the "
+            + "vector check to address this issue."
+        )
+    else:  # Assumes value and axis are not none.
         axis_name = slider.VectorSlider.dict_0123_txyz[str(axis)]
-        msg.setInformativeText(f"Transformation type {argument_type} with {axis_name} = {value} leads to an error, " +\
-                            "such as division by zero.")
+        msg.setInformativeText(
+            f"Transformation type {argument_type} with {axis_name} = {value} leads to an error, "
+            + "such as division by zero."
+        )
     font = msg.font()
     font.setPointSize(11)
     msg.setFont(font)
     return msg
-        

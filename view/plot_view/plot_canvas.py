@@ -5,7 +5,7 @@ import os
 import config
 from model import util
 from view.experiment import widgets
-from view.plot_view.widgets import ConfigureTransformationPopup
+from view.transformations_view.widgets import ConfigureTransformationPopup
 
 os.environ["QT_API"] = "PySide6" # Doesn't seem to do anything. What is it?
 

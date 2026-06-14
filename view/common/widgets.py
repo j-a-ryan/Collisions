@@ -13,4 +13,6 @@ def create_particle_names_combo_box(names=None):
     particle_combo_box.lineEdit().setReadOnly(True)
     particle_combo_box.setMinimumContentsLength(6)
     particle_combo_box.setCurrentIndex(-1)
+    if len(names) > 1:
+        particle_combo_box.setCurrentIndex(-1)
     return particle_combo_box
