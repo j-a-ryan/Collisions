@@ -2,7 +2,8 @@ from sympy import symbols, sqrt, Eq, solve
 
 from model.util import calculate_m_2, minkowski_dot
 
-class SecondStepTransformationEquationSystem():
+
+class SecondStepTransformationEquationSystem:
 
     def __init__(self, V_prime, Y_prime, q):
 
@@ -12,12 +13,21 @@ class SecondStepTransformationEquationSystem():
         self.p1_dot_q = minkowski_dot(V_prime, q)
         self.p2_dot_q = minkowski_dot(Y_prime, q)
         self.twice_p1_dot_p2 = 2 * minkowski_dot(V_prime, Y_prime)
-        
+
     def define_equations(self, Xi1, Xi2, qHT2):
-        
-        eq1 = Eq(self.p1_dot_q / (self.Q2 + qHT2) + sqrt((self.p1_dot_q / (self.Q2 + qHT2))**2 + self.m2_2/(self.Q2 + qHT2)), Xi1)
-        eq2 = Eq(self.p2_dot_q / (self.Q2 + qHT2) + sqrt((self.p2_dot_q / (self.Q2 + qHT2))**2 + self.m2_2/(self.Q2 + qHT2)), Xi2)
-        eq3 = Eq(((self.Q2 + qHT2) * Xi1 * Xi2) + self.m1_2 * self.m2_2 / ((self.Q2 + qHT2) * Xi1 * Xi2), self.twice_p1_dot_p2)
+
+        eq1 = Eq(
+            self.p1_dot_q / (self.Q2 + qHT2) + sqrt((self.p1_dot_q / (self.Q2 + qHT2)) ** 2 + self.m2_2 / (self.Q2 + qHT2)),
+            Xi1,
+        )
+        eq2 = Eq(
+            self.p2_dot_q / (self.Q2 + qHT2) + sqrt((self.p2_dot_q / (self.Q2 + qHT2)) ** 2 + self.m2_2 / (self.Q2 + qHT2)),
+            Xi2,
+        )
+        eq3 = Eq(
+            ((self.Q2 + qHT2) * Xi1 * Xi2) + self.m1_2 * self.m2_2 / ((self.Q2 + qHT2) * Xi1 * Xi2),
+            self.twice_p1_dot_p2,
+        )
         return [eq1, eq2, eq3]
 
     def solve_for_exp_2yT(self, Xi1_value, Xi2_value, qHT2_value):
@@ -28,26 +38,24 @@ class SecondStepTransformationEquationSystem():
         denominator = Xi2_value + self.m1_2 / bottom_inner_denominator
         exp_2yT = numerator / denominator
         return exp_2yT
-    
+
     def find_exp_2yT(self):
-        
+
+        exp_2yT = None
+
         # Define the unknowns as symbols. Make a tuple of them just for aesthetics below
-        Xi1, Xi2, qHT2 = symbols('Xi1 Xi2 qHT2')
+        Xi1, Xi2, qHT2 = symbols("Xi1 Xi2 qHT2")
         symbols_tuple = (Xi1, Xi2, qHT2)
 
         # Define the equations
         equations = self.define_equations(Xi1, Xi2, qHT2)
 
         # Get the solution(s) and use the zeroth one in the set.
-        solutions = solve(equations, symbols_tuple, dict=True) # Returns list of solutions as dictionaries.
-        soln0 = solutions[0]
-        Xi1_value = soln0[Xi1]
-        Xi2_value = soln0[Xi2]
-        qHT2_value = soln0[qHT2]
-
-        # Solve for exp_2yT
-        exp_2yT = self.solve_for_exp_2yT(Xi1_value, Xi2_value, qHT2_value)
-        print(f"exp_2yT {exp_2yT}")
-        exp_2yT = 1 # TODO: Delete this line
+        solutions = solve(equations, symbols_tuple, dict=True)  # Returns list of solutions as dictionaries.
+        if solutions:
+            soln0 = solutions[0]
+            Xi1_value = soln0[Xi1]
+            Xi2_value = soln0[Xi2]
+            qHT2_value = soln0[qHT2]
+            exp_2yT = self.solve_for_exp_2yT(Xi1_value, Xi2_value, qHT2_value)
         return exp_2yT
-    

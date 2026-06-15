@@ -89,8 +89,8 @@ def configure_lorentz_transformation_matrix(particle):
     return matrix
 
 
-def solve_for_second_step_transformation_exp_2yT():
-    equation_system = SecondStepTransformationEquationSystem(None, None, None)
+def solve_for_second_step_transformation_exp_2yT(vector_V, vector_Y, third_vector):
+    equation_system = SecondStepTransformationEquationSystem(vector_V, vector_Y, third_vector)
     return equation_system.find_exp_2yT()
 
 
@@ -113,7 +113,8 @@ def set_up_config_data(
             matrix_configuration_data.rest_frame_vector = util.add_vectors(vector_V, vector_Y)
         case util.V_MINUS_Y:
             matrix_configuration_data.rest_frame_vector = util.subtract_vectors(vector_V, vector_Y_for_calculated_V)
-            if third_vector is not None:
+            if third_vector is not None:  # Set exp_2yT. Otherwise, leave it at config default value
+                matrix_configuration_data.exp_2yT = None  # We need this to be none as a signal of failure.
                 matrix_configuration_data.exp_2yT = solve_for_second_step_transformation_exp_2yT(
                     matrix_configuration_data.rest_frame_vector, vector_Y, third_vector
                 )
@@ -136,24 +137,22 @@ def handle_transformation(
 ):
 
     original_vectors = experiment.get_original_four_vectors()
-
+    failure_message = None
     match argument_type:
         case util.V:
-            transformed_vectors = transform(vector_V, vector_Y, vector_Y, original_vectors, argument_type)
+            transformed_vectors, _ = transform(vector_V, vector_Y, vector_Y, original_vectors, argument_type)
         case util.V_MINUS_Y:
             # This is a secondary transformation. First we must tranform by (V + Y, Y)
-            initial_transformed_vectors = transform(vector_V, vector_Y, vector_Y, original_vectors, util.V_PLUS_Y)
+            initial_transformed_vectors, _ = transform(vector_V, vector_Y, vector_Y, original_vectors, util.V_PLUS_Y)
 
             # Set the transformed vectors in the experiment only for the convenience of being able to
             # get the V and Y vectors from there using the lookup. This collision will soon be overwritten
-            # with the final one.
-            experiment.set_transformed_four_vectors(
-                initial_transformed_vectors, particle_names
-            )  # Not numpy for this because using the pathway that comes from the GUI to the model.
+            # with the final one. Not numpy for this because using the pathway that comes from the GUI to the model.
+            experiment.set_transformed_four_vectors(initial_transformed_vectors, particle_names)
             vector_V_prime = experiment.get_transformed_four_vector(V_particle_name).copy()  # These are numpy
             vector_Y_prime = experiment.get_transformed_four_vector(Y_particle_name).copy()
             # We use V' and Y for the next pair.
-            transformed_vectors = transform(
+            transformed_vectors, failure_message = transform(
                 vector_V_prime,
                 vector_Y_prime,
                 vector_Y,
@@ -162,38 +161,42 @@ def handle_transformation(
                 third_vector=third_vector,
             )
         case util.V_PLUS_Y:
-            transformed_vectors = transform(vector_V, vector_Y, vector_Y, original_vectors, argument_type)
+            transformed_vectors, _ = transform(vector_V, vector_Y, vector_Y, original_vectors, argument_type)
+    return transformed_vectors, failure_message
 
-    return transformed_vectors
 
-
-def transform_vector_set(vector_V, vector_Y, vectors, argument_type):
-    match argument_type:
-        case util.V:
-            vector_Y_for_calculated_V = vector_Y
-        case util.V_PLUS_Y:
-            vector_Y_for_calculated_V = vector_Y
-        case util.V_MINUS_Y:
-            vector_Y_for_calculated_V = None  # ???
-    return transform(vector_V, vector_Y_for_calculated_V, vector_Y, vectors, argument_type)
+# def transform_vector_set(vector_V, vector_Y, vectors, argument_type):
+#     match argument_type:
+#         case util.V:
+#             vector_Y_for_calculated_V = vector_Y
+#         case util.V_PLUS_Y:
+#             vector_Y_for_calculated_V = vector_Y
+#         case util.V_MINUS_Y:
+#             vector_Y_for_calculated_V = None  # ???
+#     return transform(vector_V, vector_Y_for_calculated_V, vector_Y, vectors, argument_type)
 
 
 def transform(vector_V, vector_Y_for_calculated_V, vector_Y, vectors, argument_type, third_vector=None):
 
-    matrix_configuration_data = set_up_config_data(
-        vector_V, vector_Y_for_calculated_V, vector_Y, argument_type, third_vector=third_vector
-    )
-    matrix = LightConeRapidityMatrix(matrix_configuration_data)
+    transformed_vectors = None
+    failure_message = None
+    matrix_configuration_data = set_up_config_data(vector_V, vector_Y_for_calculated_V, vector_Y, argument_type, third_vector=third_vector)
 
-    transformed_vectors_temp = []
+    if matrix_configuration_data.exp_2yT is not None:
+        matrix = LightConeRapidityMatrix(matrix_configuration_data)
 
-    for i in range(len(vectors)):
-        vec_copy = vectors[i].copy()  # Just to be sure no changes are made to original.
-        transformed_vec = matrix.transform(vec_copy)
-        transformed_vectors_temp.append(transformed_vec.tolist())
+        transformed_vectors_temp = []
 
-    transformed_vectors = np.array(transformed_vectors_temp)
-    return transformed_vectors
+        for i in range(len(vectors)):
+            vec_copy = vectors[i].copy()  # Just to be sure no changes are made to original.
+            transformed_vec = matrix.transform(vec_copy)
+            transformed_vectors_temp.append(transformed_vec.tolist())
+
+        transformed_vectors = np.array(transformed_vectors_temp)
+    else:
+        failure_message = "Failed to find solution to system of equations. Could not calculate boost\nparameter value A."
+
+    return transformed_vectors, failure_message
 
 
 def validate_vectors(
@@ -204,6 +207,7 @@ def validate_vectors(
     Y_particle_name=None,
     experiment=None,
     particle_names=None,
+    third_vector=None,  # No way to pre-check V - Y with third vector known at the moment
 ):
 
     vector_V_to_use = None
@@ -217,22 +221,17 @@ def validate_vectors(
         ret_val = check_for_errors(vector_V_to_use, vector_Y_to_use)
     else:
         vector_V_to_use_1 = util.add_vectors(vector_V, vector_Y)
-        ret_val_1 = check_for_errors(vector_V_to_use_1, vector_Y_to_use)
+        ret_val_errors = check_for_errors(vector_V_to_use_1, vector_Y_to_use)
         # transformation_type = util.V_PLUS_Y Works, but for clarity we moved this down to the two elses below.
-        if not ret_val_1:
+        if not ret_val_errors:
             if argument_type == util.V_MINUS_Y:
                 transformation_type = util.V_MINUS_Y
 
                 # First we must make the V_PLUS_Y transformation; we now know that it won't cause exceptions.
                 original_vectors = experiment.get_original_four_vectors()
                 # Yes, pass in vector_V, not vector_V_to_use. We will redundantly re-add V and Y. No big deal.
-                transformed_vectors = transform(vector_V, vector_Y, vector_Y, original_vectors, util.V_PLUS_Y)
-                experiment.set_transformation(
-                    [V_particle_name, Y_particle_name],
-                    argument_type,
-                    transformed_vectors,
-                    particle_names,
-                )
+                transformed_vectors, _ = transform(vector_V, vector_Y, vector_Y, original_vectors, util.V_PLUS_Y)
+                experiment.set_transformation([V_particle_name, Y_particle_name], argument_type, transformed_vectors, particle_names)
                 vector_V_prime = experiment.get_transformed_four_vector(V_particle_name).copy()
                 vector_Y_prime = experiment.get_transformed_four_vector(Y_particle_name).copy()
                 # Now check the second transformation.
@@ -241,7 +240,7 @@ def validate_vectors(
             else:
                 transformation_type = util.V_PLUS_Y
         else:
-            ret_val = ret_val_1
+            ret_val = ret_val_errors
             transformation_type = util.V_PLUS_Y
 
     return ret_val, transformation_type

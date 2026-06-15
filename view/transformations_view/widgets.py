@@ -13,7 +13,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import Qt
 
 import config
-from PySide6.QtCore import Slot
+from PySide6.QtCore import QThread, Signal, Slot
 
 from view.common.widgets import create_particle_names_combo_box
 
@@ -143,10 +143,9 @@ class ConfigureTransformationPopup(AbstractTransformationPopup):
         self.original_second_particle = all_particle_names[indices_of_v_y_pair[1]]
 
         self.transformation_config = {}
-        self.transformation_config["V"] = (
-            self.original_first_particle
-        )  # TODO: Need static final constants for these terms
+        self.transformation_config["V"] = self.original_first_particle  # TODO: Need static final constants
         self.transformation_config["Y"] = self.original_second_particle
+        self.transformation_config["third vector"] = None
 
         layout = QVBoxLayout()
         layout.setAlignment(Qt.AlignTop)
@@ -204,16 +203,14 @@ class ConfigureTransformationPopup(AbstractTransformationPopup):
             self.transformation_config["Y"] = self.original_first_particle
         else:  # It's not currently base case, so change it to base case.
             self.vector_pair_label.setText(self.pairing_text_base_case)
-            self.transformation_config["V"] = (
-                self.original_first_particle
-            )  # TODO: Need static final constants for these terms
+            self.transformation_config["V"] = self.original_first_particle  # TODO: Need static final constants for these terms
             self.transformation_config["Y"] = self.original_second_particle
 
     def accept(self):
         self.transformation_config["VConfig"] = self.V_Y_argument_type_checkbox.isChecked()
         self.transformation_config["V+YConfig"] = self.V_plus_Y_argument_type_checkbox.isChecked()
         self.transformation_config["ApplyPostTransformationV'-Y'"] = self.post_transformation_checkbox.isChecked()
-
+        self.transformation_config["third_vector"] = self.particle_names_combo_box.currentText()  # "" if none
         super().accept()
 
     def two_step_transformation_check(self):
@@ -224,9 +221,33 @@ class ConfigureTransformationPopup(AbstractTransformationPopup):
             self.post_transformation_checkbox.setEnabled(False)
 
 
+class BackgroundCalculations(QThread):
+
+    finished = Signal()  # Signal emitted when process ends
+
+    def __init__(self, experiment_controller, transformation_vector_pair_indices, V_Y_particle_names, argument_type):
+        super().__init__()
+        self.experiment_controller = experiment_controller
+        self.indices = transformation_vector_pair_indices
+        self.VY_names = V_Y_particle_names
+        self.arg_type = argument_type
+        self._failure_message = None
+
+    def run(self):
+        self._failure_message = self.experiment_controller.plot_transformation(self.indices, self.VY_names, self.arg_type)
+        self.finished.emit()
+
+    @property
+    def failure_message(self):
+        return self._failure_message
+
+
 class WaitingPopup(QDialog):
-    def __init__(self, parent, title="Please Wait", text="Please stand by.", additional_text=None):
+    def __init__(
+        self, parent, background_calculations: BackgroundCalculations, title="Please Wait", text="Please stand by.", additional_text=None
+    ):
         super().__init__(parent)
+        self.background_calculations = background_calculations
         self.setWindowTitle(title)
         self.setFixedSize(400, 150)
         layout = QVBoxLayout()
@@ -257,25 +278,9 @@ class WaitingPopup(QDialog):
         layout.addWidget(self.progress_bar)
         self.setLayout(layout)
 
+        self.background_calculations.finished.connect(self.close_dialog)  # Connect signal to close method
+        self.background_calculations.start()
+
     @Slot()
     def close_dialog(self):
         self.accept()
-
-
-# matrix_view_lookup = {"General Boost": "resources/GeneralBoost.png", "Momentum-Realignment Boost": "resources/LCC-RapidityBoost.png"}
-
-# def view_matrix(self):
-#     msg_box = QMessageBox(self)
-
-#     selected_matrix_name = self.matrix_type_combo_box.currentText()
-#     if selected_matrix_name is not None and selected_matrix_name != "":
-#         msg_box.setWindowTitle(selected_matrix_name + " matrix")
-#         if selected_matrix_name in self.matrix_view_lookup:
-#             file = self.matrix_view_lookup[selected_matrix_name]
-#             pixmap = QPixmap(file)
-#             pixmap = pixmap.scaled(600, 600, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
-#             msg_box.setIconPixmap(pixmap)
-#         else:
-#             msg_box.setText("Image of " + selected_matrix_name)
-#         msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
-#         msg_box.exec()
