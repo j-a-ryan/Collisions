@@ -12,7 +12,7 @@ class TestTransformationSolutions(unittest.TestCase):
         system_of_equations = SecondStepTransformationEquationSystem(V_prime, Y_prime, q_prime)
         result, _ = system_of_equations.find_exp_2yT()
         expected_result = 1
-        self.assertAlmostEqual(result, expected_result)
+        self.assertEqual(result, expected_result)
 
     def test_case_1_proportion_float(self):  # 4/5 proportion of test 1, causing floating point nums
         V_prime = np.array([5, 0, 1, 2]) * 4 / 5
@@ -21,4 +21,4 @@ class TestTransformationSolutions(unittest.TestCase):
         system_of_equations = SecondStepTransformationEquationSystem(V_prime, Y_prime, q_prime)
         result, _ = system_of_equations.find_exp_2yT()
         expected_result = 1
-        self.assertAlmostEqual(result, expected_result)
+        self.assertEqual(result, expected_result)
