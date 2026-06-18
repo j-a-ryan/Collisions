@@ -1,4 +1,5 @@
-from PySide6.QtWidgets import  QDialog, QTextBrowser, QVBoxLayout
+from PySide6.QtWidgets import QDialog, QTextBrowser, QVBoxLayout
+
 
 def get_user_manual():
     dialog = QDialog()
@@ -6,7 +7,7 @@ def get_user_manual():
     dialog.resize(1150, 600)
 
     browser = QTextBrowser(dialog)
-    
+
     html_content = """
     <html>
     <head>
@@ -52,10 +53,12 @@ def get_user_manual():
         <div style="text-align: center;">
             <img src="resources/LCC-RapidityBoost.png" style="display: block; margin: 0 auto;" alt="Matrix" width="968" height="494">
         </div>
-        <p>In configuring a transformation of a vector set, the user will select two of its vectors to be V and Y. They will
-            be transformed, along with all the vectors in the set. Having been transformed, they may be marked as such as V' and Y' and used again
-            for additional transformation as V' and Y'. Below we see that the user has selected two vectors and immediatley been
-            shown a popup that suggests a simple transformation with a pre-checked checkbox.
+        <p>In configuring a transformation of a vector set, the user will select two of its vectors to be V and Y. Simply click on the
+            particles in the graph. After the second one is clicked on, a popup will appear, allowing you to configure your transformation.
+            These two vectors - dubbed V and Y - will then be transformed, along with all of the other vectors in the set. Having been 
+            transformed, they may be marked as such as V' and Y' and used again for additional transformation as V' and Y'. Below we see 
+            that the user has selected two vectors and immediatley been shown a popup that suggests a simple transformation with a 
+            pre-checked checkbox.
         </p>
         </br>
         <div style="text-align: center;">
@@ -77,7 +80,6 @@ def get_user_manual():
         <p>Sliders are used to change the components of the vectos in the graph, as well as, for graphs of a two-step transformation,
             a boost factor parameter dubbed "A". A is a calculated value used in the second step of a two-step transformation:
         </p>
-        
         <div style="text-align: center;">
             <img src="resources/A.png" alt="popup" width="1125" height="75">
         </div>
@@ -91,6 +93,9 @@ def get_user_manual():
             so that the user's transformation may be completed and graphed. In the event that the vector set has only two vectors, a value 
             of 1 is used for A, instead of solving a system of equations. After a two-step transformation the user can adjust the value of 
             A using a slider. 
+        </p>
+        <p>A fresh transformation can be made when both the original graph and the transformation graph are showing. Simply click
+            on one of the selected particles in the original graph and begin the process again.
         </p>
         <h3>Graphs</h3>
         <p>The graphs are made with Python's Matplotlib library. The vector arrow tips are represented by circles in which
