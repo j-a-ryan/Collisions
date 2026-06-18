@@ -1,11 +1,11 @@
 # Collisions
-#### Current status, May 30, 2026:
-- Have just added slider for calculated vector value: the square of the mass (m^2 = t^2 -x^2 - y^2 - z^2) so that user can think in terms of that value, rather than time (t), when adjusting the vectors in a collision. These variable names I also changed to E, px, py, pz in GUI, instead of t, x, y, z.
-- Next: refine the calculation  performed in the second step of the two-step transformation option that the user is offered. Currently that step is a kludge that only gets the gist of the calculation.
+#### Current status, June 18, 2026:
+Collisions v0.3.0 has sliders for each vectors m^2 value, allowing the user to change this value, as well as t, x, y, and z. It also has a slider for a boost parameter for the entire vector set, allowing the user to vary the overall transformation of the set. The user manual in the Help menu is quite elaborate now and explains almost all that the user needs to know.
 - Lots of TODOs for later, such as
+  - Create a hook for logging unhandled exceptions to file.
   - Fix little issues raised by the linter
   - Refactor style strings for maintainability
-  - Assorted OOP/MVC refactoring is needed
+  - Assorted OOP/MVC refactoring is needed. Experiment objects needs to have Transformation objects. Currently transformations are shattered and need a class.
 ## Introduction
 An application in Python (PyQt-PySide6, Matplotlib) for particle accelerator physicists and theoretical physicists working in particle physics, QCD, or nuclear physics. The purpose of the application is to allow physicists to see, rather than having to imagine, the vectors of particle just after particle collisions both in (a.) the laboratory (collider) reference frame and in (b.) a frame obtained by transformation of the vector set with a transformation matrix stipulated by the physicist. The application allows the physicist to enter a set of four-vectors, see them graphed, and vary the vectors on the fly by using sliders, so as to show the results of "what-if" scenarios of interest.
 
