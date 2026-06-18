@@ -1,4 +1,9 @@
 # Collisions
+
+Python devs keen on particle physics and on the possibility of contributing, please reach out.
+
+Physicists desiring an app for visualizing particle accelerator experiments, please download <a href="https://github.com/j-a-ryan/Collisions/releases">the latest version</a> and play with it. Click on the Help button to read the manaul. After getting the hang of what it does, if you would like a similar application be built, please tell me about your ideas at j dot a dot ryan at protonmail. I am a former software developer headed to the physics graduate program at ODU in the fall of 2026. I have just been given an at odu.edu address: jryan017. Use either.
+
 #### Current status, June 18, 2026:
 Collisions v0.3.0 has sliders for each vectors m^2 value, allowing the user to change this value, as well as t, x, y, and z. It also has a slider for a boost parameter for the entire vector set, allowing the user to vary the overall transformation of the set. The user manual in the Help menu is quite elaborate now and explains almost all that the user needs to know.
 - Lots of TODOs for later, such as
@@ -6,16 +11,17 @@ Collisions v0.3.0 has sliders for each vectors m^2 value, allowing the user to c
   - Fix little issues raised by the linter
   - Refactor style strings for maintainability
   - Assorted OOP/MVC refactoring is needed. Experiment objects needs to have Transformation objects. Currently transformations are shattered and need a class.
+
+We are reaching the end of the alpha versions. A physicist is currently testing v0.3.0-alpha. Next, any bugs he flushes out will be fixed and we will have a first beta version.
 ## Introduction
 An application in Python (PyQt-PySide6, Matplotlib) for particle accelerator physicists and theoretical physicists working in particle physics, QCD, or nuclear physics. The purpose of the application is to allow physicists to see, rather than having to imagine, the vectors of particle just after particle collisions both in (a.) the laboratory (collider) reference frame and in (b.) a frame obtained by transformation of the vector set with a transformation matrix stipulated by the physicist. The application allows the physicist to enter a set of four-vectors, see them graphed, and vary the vectors on the fly by using sliders, so as to show the results of "what-if" scenarios of interest.
 
-Now (May 30, 2026) the application is available. It is called Collisions-QCD/TMD, and it is in <a href="https://github.com/j-a-ryan/Collisions/releases/tag/v0.2.3-alpha">pre-release version v0.2.4-alpha</a> for Windows and MacOS. More updates will be coming in June. I plan to release a beta version in early summer.
+The application is currently available. It is called Collisions-QCD/TMD, and it is in <a href="[https://github.com/j-a-ryan/Collisions/releases/tag/v0.2.3-alpha](https://github.com/j-a-ryan/Collisions/releases/tag/v0.3.0-alpha)">pre-release version v0.3.0-alpha</a> for Windows and MacOS. More updates will be coming in June. I plan to release a beta version in early summer.
 
-Physicists interested in this software are encouraged to download it and use it. Physicists who would like a similar application be built are invited to tell me about their ideas at j dot a dot ryan at protonmail. I am a former software developer headed to the physics graduate program at ODU in the fall of 2026.
 #### Notes for Software Developers:
 The application design is regular, old-fashioned MVC but not PyQt/PySide's native form of MVC which is model-view and has the controller coupled to (embodied in/blurred with) the view. So, the application has controller classes, as in regular MVC. (I looked at PyQt's innate MV pattern but I couldn't see its superiority for a complicated application like Collisions. For small applications I suppose it might be nice. I am no design pattern master, however.)
 
-I am trying to make an application for the specific use-case of a QCD team while keeping reusable components available to be used as a platform for any particle collider physicist who wants to analyze collision vectors of particles in a collider. I am probably failing at this, such that a sizeable refactoring task (for platform creation) will remain after this application is deployed in a stable beta version. As usual, platformability falls by the wayside when there aren't enough man hours to do it.
+I am trying to make an application for the specific use-case of a QCD team while keeping reusable components available to be used as a platform for any particle collider physicist who wants to analyze collision vectors of particles in a collider. I am probably failing at this, such that a sizeable refactoring task (for platform creation) will remain after this application is deployed in a stable beta version. As usual, platformability falls by the wayside when there aren't enough man hours to do it. This summer is for refactoring. By September 2026, the code should be in fairly good shape, OOP-wise. With this, a platform may begin to be abstracted.
 
 ## GUI
 Below you see a set of vectors in the laboratory (particle collider) reference frame representing the paths of particles emerging from a collision at the origin (left) and their transformation into a different frame (right). One of the six possible 2D representations of these graphs is seen as a popup. Sliders at the left under "CONTROLS" allow the user to vary the vectors and observe the effects on both the 3D graph on the left and the transformation on the right simultaneously. Other controls will eventually be implemented. The application represents the tips of the vectors with circles containing the names of the particles, rather than arrowheads. This may change.
