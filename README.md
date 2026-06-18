@@ -1,8 +1,12 @@
 # Collisions
 
-Python devs keen on particle physics and on the possibility of contributing, please reach out.
+This software is explained below. First, some salient notes:
 
-Physicists desiring an app for visualizing particle accelerator experiments, please download <a href="https://github.com/j-a-ryan/Collisions/releases">the latest version</a> and play with it. Click on the Help button to read the manaul. After getting the hang of what it does, if you would like a similar application be built, please tell me about your ideas at j dot a dot ryan at protonmail. I am a former software developer headed to the physics graduate program at ODU in the fall of 2026. I have just been given an at odu.edu address: jryan017. Use either.
+## Some Salient Notes
+
+<b>Python devs</b> keen on particle physics and on the possibility of contributing, please reach out.
+
+<b>Physicists</b> desiring an app for visualizing particle accelerator experiments, please download <a href="https://github.com/j-a-ryan/Collisions/releases">the latest version</a> and play with it. Click on the Help button to read the manaul. After getting the hang of what it does, if you would like a similar application be built, please tell me about your ideas at j dot a dot ryan at protonmail. I am a former software developer headed to the physics graduate program at ODU in the fall of 2026. I have just been given an at odu.edu address: jryan017. Use either.
 
 #### Current status, June 18, 2026:
 Collisions v0.3.0 has sliders for each vectors m^2 value, allowing the user to change this value, as well as t, x, y, and z. It also has a slider for a boost parameter for the entire vector set, allowing the user to vary the overall transformation of the set. The user manual in the Help menu is quite elaborate now and explains almost all that the user needs to know.
@@ -19,9 +23,11 @@ An application in Python (PyQt-PySide6, Matplotlib) for particle accelerator phy
 The application is currently available. It is called Collisions-QCD/TMD, and it is in <a href="[https://github.com/j-a-ryan/Collisions/releases/tag/v0.2.3-alpha](https://github.com/j-a-ryan/Collisions/releases/tag/v0.3.0-alpha)">pre-release version v0.3.0-alpha</a> for Windows and MacOS. More updates will be coming in June. I plan to release a beta version in early summer.
 
 #### Notes for Software Developers:
-The application design is regular, old-fashioned MVC but not PyQt/PySide's native form of MVC which is model-view and has the controller coupled to (embodied in/blurred with) the view. So, the application has controller classes, as in regular MVC. (I looked at PyQt's innate MV pattern but I couldn't see its superiority for a complicated application like Collisions. For small applications I suppose it might be nice. I am no design pattern master, however.)
+The application design is regular, old-fashioned MVC but not PyQt/PySide's native form of MVC which is model-view and has the controller coupled to (embodied in/blurred with) the view. So, the application has controller classes, as in regular MVC. (I looked at PyQt's innate MV pattern but I couldn't see its superiority for a complicated application like Collisions. For small applications I suppose it might be nice.)
 
 I am trying to make an application for the specific use-case of a QCD team while keeping reusable components available to be used as a platform for any particle collider physicist who wants to analyze collision vectors of particles in a collider. I am probably failing at this, such that a sizeable refactoring task (for platform creation) will remain after this application is deployed in a stable beta version. As usual, platformability falls by the wayside when there aren't enough man hours to do it. This summer is for refactoring. By September 2026, the code should be in fairly good shape, OOP-wise. With this, a platform may begin to be abstracted.
+
+I am a veteran Java developer with experience in Java for robotics and many other areas. I am also a Python developer, but not a master. I realize that some of my code is not Pythonic. If this application takes off while I am busy in graudate school, I will desire a collaborator. A Python guru with an interest in particle physics and who wished to collaborate with me on Collisions would fit the bill. Give me a holler.
 
 ## GUI
 Below you see a set of vectors in the laboratory (particle collider) reference frame representing the paths of particles emerging from a collision at the origin (left) and their transformation into a different frame (right). One of the six possible 2D representations of these graphs is seen as a popup. Sliders at the left under "CONTROLS" allow the user to vary the vectors and observe the effects on both the 3D graph on the left and the transformation on the right simultaneously. Other controls will eventually be implemented. The application represents the tips of the vectors with circles containing the names of the particles, rather than arrowheads. This may change.
