@@ -67,7 +67,7 @@ class ExperimentController:
         vector_V = self.get_vector(V_particle_name).copy()  # These are numpy
         vector_Y = self.get_vector(Y_particle_name).copy()
         names = self.experiment.get_particle_names()
-        third_vector_name = V_Y_particle_names[2]
+        third_vector_name = None if len(V_Y_particle_names) < 3 else V_Y_particle_names[2]
         third_vector = None if not third_vector_name else self.get_vector(third_vector_name).copy()
         return V_particle_name, Y_particle_name, vector_V, vector_Y, names, third_vector
 
@@ -77,37 +77,48 @@ class ExperimentController:
     def get_current_transformation_arguments(self):
         V_Y_particle_names = self.experiment.get_transformation_particle_pair_names()
         argument_type = self.experiment.get_transformation_type()  # TODO: Pick one or the other of these names
-        return V_Y_particle_names, argument_type, self.particle_indices_picked_for_transformation
+        boost_parameter_A = self.experiment.get_boost_parameter_A()
+        return V_Y_particle_names, argument_type, self.particle_indices_picked_for_transformation, boost_parameter_A
 
     def pre_check_transformation_update(self):
-        V_Y_particle_names, argument_type, _ = self.get_current_transformation_arguments()
+        V_Y_particle_names, argument_type, _, _ = self.get_current_transformation_arguments()
         return self.pre_check_transformation(V_Y_particle_names, argument_type)
 
     def pre_check_transformation(self, V_Y_particle_names, argument_type):
-        V_particle_name, Y_particle_name, vector_V, vector_Y, names, third_vector = self.unpack_vector_arguments(
-            V_Y_particle_names
-        )
+        V_particle_name, Y_particle_name, vector_V, vector_Y, names, third_vector = self.unpack_vector_arguments(V_Y_particle_names)
         results, transformation_type = self.transformation_controller.validate_vectors(
             vector_V, vector_Y, argument_type, V_particle_name, Y_particle_name, self.experiment, names, third_vector
         )
         return results, transformation_type
 
-    def plot_transformation(self, extra_circles, V_Y_particle_names, argument_type):
-        V_particle_name, Y_particle_name, vector_V, vector_Y, names, third_vector = self.unpack_vector_arguments(
-            V_Y_particle_names
+    def plot_transformed_experiment_vectors(self, extra_circles):
+        self.view.plot_transformed_experiment_vectors(
+            self.experiment.get_transformed_collision(), self.experiment.get_collision(), extra_circles
         )
-        failure_message = self.transformation_controller.handle_transformation(
-            vector_V, vector_Y, V_particle_name, Y_particle_name, names, self.experiment, argument_type, third_vector
+
+    def plot_transformation(  # TODO: Refactor into preparation method and plot method
+        self, extra_circles, V_Y_particle_names, argument_type, boost_parameter_A=None, background_thread_preparation=False
+    ):
+        V_particle_name, Y_particle_name, vector_V, vector_Y, names, third_vector = self.unpack_vector_arguments(V_Y_particle_names)
+        boost_parameter_A_used, failure_message = self.transformation_controller.handle_transformation(
+            vector_V, vector_Y, V_particle_name, Y_particle_name, names, self.experiment, argument_type, third_vector, boost_parameter_A
         )
-        if not failure_message:
-            self.view.plot_transformed_experiment_vectors(
-                self.experiment.get_transformed_collision(), self.experiment.get_collision(), extra_circles
-            )
+        if not failure_message and not background_thread_preparation:
+            self.plot_transformed_experiment_vectors(extra_circles)
+        return boost_parameter_A_used, failure_message
+
+    def create_initial_transformation(
+        self, extra_circles, V_Y_particle_names, argument_type, boost_parameter_A=None, background_thread_preparation=False
+    ):
+        boost_parameter_A_used, failure_message = self.plot_transformation(
+            extra_circles, V_Y_particle_names, argument_type, boost_parameter_A, background_thread_preparation
+        )
+        self.view.set_controls_for_transformation_plot(boost_parameter_A_initial_value=boost_parameter_A_used)
         return failure_message
 
-    def refresh_transformation(self):  # TODO needs updated for 2nd step?
-        V_Y_particle_names, argument_type, extra_circles = self.get_current_transformation_arguments()
-        self.plot_transformation(extra_circles, V_Y_particle_names, argument_type)
+    def redo_transformation(self):  # TODO needs updated for 2nd step?
+        V_Y_particle_names, argument_type, extra_circles, boost_parameter_A = self.get_current_transformation_arguments()
+        self.plot_transformation(extra_circles, V_Y_particle_names, argument_type, boost_parameter_A)
 
     def close_current_experiment(self):
         self._particle_indices_picked_for_transformation.clear()
@@ -117,5 +128,14 @@ class ExperimentController:
         del self.experiment
         self.experiment = None
 
+    def clear_transformation(self):
+        self.experiment.clear_transformation()
+
     def get_vector(self, vector_name):
         return self.experiment.get_original_four_vector(vector_name)
+
+    def update_vector_component(self, vector_name, axis, new_value):
+        self.get_vector(vector_name)[axis] = new_value
+
+    def update_boost_parameter_A(self, new_value):
+        self.experiment.set_boost_parameter_A(new_value)

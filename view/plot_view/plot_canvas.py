@@ -117,12 +117,14 @@ class PlotVectorCanvas(FigureCanvas):
                 # Clear out the current indices picked and add this new one.
                 # If there is a transformation graph (as there should be), clear it away.
                 # Graph collision with the single, new circle pick.
+                self.experiment_controller.clear_transformation()
+                self.view.reset_transformation_controls()
                 self.view.clear_experiment_plot(True)
                 self.particle_indices_picked.clear()
                 self.particle_indices_picked.append(index)
                 self.experiment_controller.plot_current_experiment(extra_circles=self.particle_indices_picked.copy())
 
-            if len(self.particle_indices_picked) == 0:
+            elif len(self.particle_indices_picked) == 0:
                 self.particle_indices_picked.append(index)
                 self.experiment_controller.plot_current_experiment(
                     extra_circles=self.particle_indices_picked.copy()
@@ -156,10 +158,7 @@ class PlotVectorCanvas(FigureCanvas):
                             msg.exec()
                             self.view.show_experiment_configuration_form(False)
                         else:
-                            self.experiment_controller.plot_current_experiment(
-                                extra_circles=transformation_vector_pair_indices
-                            )  # Do not get rid of circles
-
+                            self.experiment_controller.plot_current_experiment(extra_circles=transformation_vector_pair_indices)
                             failure_message = None
                             if argument_type == util.V_MINUS_Y:
                                 background_transformation = BackgroundCalculations(
@@ -168,15 +167,15 @@ class PlotVectorCanvas(FigureCanvas):
                                 dlg = WaitingPopup(self, background_calculations=background_transformation)
                                 if dlg.exec() == QDialog.Accepted:
                                     failure_message = background_transformation.failure_message
+                                    self.experiment_controller.plot_transformed_experiment_vectors(transformation_vector_pair_indices)
                             else:
-                                failure_message = self.experiment_controller.plot_transformation(
+                                failure_message = self.experiment_controller.create_initial_transformation(
                                     transformation_vector_pair_indices, V_Y_particle_names, argument_type
                                 )
                             self.particles_names_picked.clear()
                             if failure_message:
                                 msg = widgets.transformation_issue_popup(argument_type, failure_message=failure_message)
                                 msg.exec()
-                                self.view.show_experiment_configuration_form(False)
                     else:
                         self.particle_indices_picked.clear()
                         self.experiment_controller.plot_current_experiment()

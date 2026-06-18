@@ -45,9 +45,7 @@ class ExperimentConfigurationForm(QDialog):
         header_label_layout.addWidget(requirements_label2)
         header_label_layout.addWidget(requirements_label3)
         self.vectors_qvbox_layout.addLayout(header_label_layout)
-        self.insert_vectors_grid_layout(
-            vectors_grid_layout
-        )  # Insert the grid layout into its parent.
+        self.insert_vectors_grid_layout(vectors_grid_layout)  # Insert the grid layout into its parent.
 
         self.max_vector_count = max_vector_count
         self.add_row_button = QPushButton(f"Add New Row (max {config.max_num_vectors}:)")
@@ -61,9 +59,7 @@ class ExperimentConfigurationForm(QDialog):
 
         self.refresh_button = QPushButton("Refresh Grid")
         self.refresh_button.setVisible(False)
-        self.refresh_button.setToolTip(
-            "Refreshes grid values when graph\nhas been altered manually."
-        )
+        self.refresh_button.setToolTip("Refreshes grid values when graph\nhas been altered manually.")
         self.refresh_button.clicked.connect(self.refresh_grid)
 
         self.check_button = QPushButton("Check Parameters")
@@ -156,9 +152,7 @@ class ExperimentConfigurationForm(QDialog):
         pass
 
     def check_parameters(self):
-        vector_issues_dialog = VectorIssueCheck(
-            self.experiment_controller, self.vectors_grid.backing_vectors
-        )
+        vector_issues_dialog = VectorIssueCheck(self.experiment_controller, self.vectors_grid.backing_vectors)
         vector_issues_dialog.exec()
 
     def create_experiment(self):
@@ -172,19 +166,19 @@ class ExperimentConfigurationForm(QDialog):
         self.done(1)  # self.close() instead? See the plot2d form, same question
 
     def save(self):
-        msg = QMessageBox()
-        msg.setWindowTitle("Save Experiment")
-        msg.setText(
-            "This will save the vectors and delete\n"
-            + "any current transformation of them that\n"
-            + "you may currently have. Proceed?"
-        )
-        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-        msg.setDefaultButton(QMessageBox.Ok)
-        result = msg.exec()
-        if result == QMessageBox.Ok:
-            self.create_experiment()
-            self.experiment_controller.save_current_experiment()
+        # msg = QMessageBox()
+        # msg.setWindowTitle("Save Experiment")
+        # msg.setText(
+        #     "This will save the vectors and delete\n"
+        #     + "any current transformation of them that\n"
+        #     + "you may currently have. Proceed?"
+        # )
+        # msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        # msg.setDefaultButton(QMessageBox.Ok)
+        # result = msg.exec()
+        # if result == QMessageBox.Ok:
+        self.create_experiment()
+        self.experiment_controller.save_current_experiment()
 
     def cancel(self):
         self.done(0)  # TODO: self.close() instead? See the plot2d form, same question

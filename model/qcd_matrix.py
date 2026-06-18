@@ -76,8 +76,8 @@ class LightConeRapidityMatrixConfigurationData(MatrixConfigurationData):
         self.vector_posttreatment_function = convert_light_cone_coordinates_to_minkowski_form
 
         """
-        This is the boost value, a.k.a "A". It is set by fiat, for instance to 10, not calculated as an 
-        exponential of 2yT. The boost value, such that V+ = AV−.
+        This is the boost value, a.k.a "A". It is set by fiat, for instance to 10, or calculated in the 
+        second step of the two-step transformation. The boost value, such that V+ = AV−.
         """
         self.exp_2yT = None
         

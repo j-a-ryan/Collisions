@@ -16,22 +16,16 @@ class TransformationController:
         experiment,
         argument_type,
         third_vector=None,
+        boost_parameter_A=None,
     ):
-        transformed_vectors, failure_message = transformation.handle_transformation(
-            vector_V,
-            vector_Y,
-            V_particle_name,
-            Y_particle_name,
-            particle_names,
-            experiment,
-            argument_type,
-            third_vector,
+        transformed_vectors, boost_parameter_A_used, failure_message = transformation.handle_transformation(
+            vector_V, vector_Y, V_particle_name, Y_particle_name, particle_names, experiment, argument_type, third_vector, boost_parameter_A
         )
         if not failure_message:
             experiment.set_transformation(
                 [V_particle_name, Y_particle_name], argument_type, transformed_vectors, particle_names
             )  # Not numpy for this because using the pathway that comes from the GUI to the model.
-        return failure_message
+        return boost_parameter_A_used, failure_message
 
     def validate_vectors(
         self,
@@ -51,13 +45,13 @@ class TransformationController:
     def transformation_exists(self, experiment):
         return experiment.has_transformation()
 
-    """
-    Assumes transformation exists. Call transformation_exists() first.
-    """
+    # """
+    # Assumes transformation exists. Call transformation_exists() first.
+    # """
 
-    def retransform_experiment_vectors(self, vector_V, vector_Y, V_particle_name, Y_particle_name, names, experiment):
-        transformation_type = experiment.get_transformation_type()
-        failure_mesage = self.handle_transformation(
-            vector_V, vector_Y, V_particle_name, Y_particle_name, names, experiment, transformation_type
-        )
-        return failure_mesage
+    # def retransform_experiment_vectors(self, vector_V, vector_Y, V_particle_name, Y_particle_name, names, experiment):
+    #     transformation_type = experiment.get_transformation_type()
+    #     failure_message = self.handle_transformation(
+    #         vector_V, vector_Y, V_particle_name, Y_particle_name, names, experiment, transformation_type
+    #     )
+    #     return failure_message

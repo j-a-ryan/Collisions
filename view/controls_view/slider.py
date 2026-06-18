@@ -1,17 +1,19 @@
 from abc import ABC, abstractmethod
 import math
 
-from pyqt_advanced_slider import Slider 
+from pyqt_advanced_slider import Slider
 import time
 import threading
-from PySide6.QtWidgets import  QGridLayout, QLabel, QVBoxLayout, QFrame
+from PySide6.QtWidgets import QGridLayout, QLabel, QVBoxLayout, QFrame
 from PySide6.QtGui import QColor, Qt
 
 import config
+from controller.controls_controller import ControlsController
 from view.common.details import Heading
 
+
 class SliderUpdateHandler(ABC):
-    def __init__(self, use_threading, initial_value):
+    def __init__(self, initial_value, use_threading=False):
         super().__init__()
         self.post_mediator = None
         self.update_problem = False
@@ -25,7 +27,7 @@ class SliderUpdateHandler(ABC):
         pass
 
     def handle_slide_event(self, value):
-        self.previous_value = self.latest_value # If we want to revert after issue with value, we can go back to previous.
+        self.previous_value = self.latest_value  # If we want to revert after issue with value, we can go back to previous.
         self.latest_value = value
         problem = False
         if self.use_threading:
@@ -35,16 +37,27 @@ class SliderUpdateHandler(ABC):
                 self.post_mediator.set_value(value)
                 self.post_mediator.post_threaded()
         else:
-            problem = self.post_value(value) # TODO: use this boolean?
+            problem = self.post_value(value)  # TODO: use this boolean?
+        return problem
 
     def signal_post_stream_end(self):
         del self.post_mediator
         self.post_mediator = None
 
-class SliderCoordinationUpdateHandler(SliderUpdateHandler): # m2 slider uses this one
 
-    def __init__(self, use_threading, initial_value, slider_value_name, sliders_coordination):
-        super().__init__(use_threading, initial_value)
+class BoostParameterASliderUpdateHandler(SliderUpdateHandler):
+    def __init__(self, controller: ControlsController, initial_value, use_threading=False):
+        super().__init__(initial_value, use_threading)
+        self.controller = controller
+
+    def post_value(self, value):
+        self.controller.update_boost_parameter_A(value)
+
+
+class SliderCoordinationUpdateHandler(SliderUpdateHandler):  # m2 slider uses this one
+
+    def __init__(self, slider_value_name, initial_value, sliders_coordination, use_threading=False):
+        super().__init__(initial_value, use_threading)
         self.slider_value_name = slider_value_name
         self.sliders_coordination = sliders_coordination
 
@@ -58,12 +71,13 @@ class SliderCoordinationUpdateHandler(SliderUpdateHandler): # m2 slider uses thi
         self.update_coordinator(value)
         return True
 
-class FourVectorSliderUpdateHandler(SliderCoordinationUpdateHandler): # t, x, y, z sliders use this one
 
-    def __init__(self, use_threading, initial_value, axis_name, sliders_coordination):
-        super().__init__(use_threading, initial_value, axis_name, sliders_coordination)
-        
-    def prepare_to_use_controller(self, controller, vector_name, axis_num): # The m2 slider does not need this. Only the others do.
+class FourVectorSliderUpdateHandler(SliderCoordinationUpdateHandler):  # t, x, y, z sliders use this one
+
+    def __init__(self, axis_name, initial_value, sliders_coordination, use_threading=False):
+        super().__init__(axis_name, initial_value, sliders_coordination, use_threading)
+
+    def prepare_to_use_controller(self, controller, vector_name, axis_num):  # The m2 slider does not need this. Only the others do.
         self.controller = controller
         self.vector_name = vector_name
         self.axis_num = axis_num
@@ -78,33 +92,34 @@ class FourVectorSliderUpdateHandler(SliderCoordinationUpdateHandler): # t, x, y,
         #     msg.exec()
         # self.update_problem = False
         return success
-    
-'''
+
+
+"""
 Extends Niklas Henning's slider.
-'''
-class VectorSlider(Slider):
+"""
 
-    dict_txyz_0123 = config.lookup_gui_txyz_0123
-    dict_0123_txyz = config.lookup_gui_0123_txyz
-    component = [config.gui_t, config.gui_x, config.gui_y, config.gui_z]
 
+class CollisionsSlider(Slider):
     def __init__(self, initial_value, range_min, range_max, parent=None):
         super().__init__(parent)
         self.handler = None
-        
-        self.setRange(range_min, range_max)  # Set min and max
-        self.setValue(initial_value)  # Set valued
+
+        self._set_min_max_initial(range_min, range_max, initial_value)
         self.setFixedWidth(150)
         self.setFixedHeight(18)
         self.setFloat(True)
         self.setDecimals(2)
         self.setSingleStep(0.01)
-        self.setBackgroundColor(QColor(config.slider_background_color))          # Default: #D6D6D6
+        self.setBackgroundColor(QColor(config.slider_background_color))  # Default: #D6D6D6
         self.setAccentColor(QColor(config.slider_accent_color))  # Default: #0078D7
         self.setBorderRadius(3)
         self.update_problem = False
         self.valueChanged.connect(self.slider_value_changed)
-    
+
+    def _set_min_max_initial(self, range_min, range_max, initial_value):
+        self.setRange(range_min, range_max)
+        self.setValue(initial_value)
+
     def set_handler(self, handler):
         self.handler = handler
 
@@ -113,9 +128,25 @@ class VectorSlider(Slider):
             if self.handler is not None:
                 self.handler.handle_slide_event(value)
 
-class PostMediator():
+
+class VectorSlider(CollisionsSlider):
+    def __init__(self, initial_value, range_min, range_max, parent=None):
+        super().__init__(initial_value, range_min, range_max, parent)
+
+
+class BoostParameterASlider(CollisionsSlider):
+    def __init__(self, initial_value, range_min, range_max, parent=None):
+        super().__init__(initial_value, range_min, range_max, parent)
+
+    def _set_min_max_initial(self, range_min, range_max, initial_value):
+        range_max = range_max if initial_value <= range_max else initial_value
+        self.setRange(range_min, range_max)
+        self.setValue(initial_value)
+
+
+class PostMediator:
     def __init__(self, handler):
-        self.wait_limit = 5 # Wait five seconds, then give up on further updates
+        self.wait_limit = 5  # Wait five seconds, then give up on further updates
         self.handler = handler
         self.latest_value = None
         self.lock = threading.Lock()
@@ -127,7 +158,7 @@ class PostMediator():
         elapsed = 0
         current = True
         while current:
-            
+
             # Sleep for 200ms (0.2 seconds)
             time.sleep(1)
 
@@ -144,61 +175,66 @@ class PostMediator():
                         self.handler.signal_post_stream_end()
 
     def start_thread(self):
-        thread = threading.Thread(target=self.post_threaded, args = (10, ))
+        thread = threading.Thread(target=self.post_threaded, args=(10,))
         thread.start()
         thread.join()
 
+
 class SliderGroupFrame(QFrame):
-    def __init__(self, controller, vector_name, initial_vector): # TODO: default value for testing. Delete
+
+    dict_txyz_0123 = config.lookup_gui_txyz_0123
+    dict_0123_txyz = config.lookup_gui_0123_txyz
+    component = [config.gui_t, config.gui_x, config.gui_y, config.gui_z]
+
+    def __init__(self, controller, vector_name, initial_vector):  # TODO: default value for testing. Delete
         super().__init__()
         self.controller = controller
         self.setFrameShape(QFrame.StyledPanel)
         self.setFixedWidth(200)
-        self.setContentsMargins(0, 0, 10, 0) 
+        self.setContentsMargins(0, 0, 10, 0)
         self.inner_layout = QVBoxLayout(self)
 
         heading = Heading(vector_name, "Tahoma", False)
         self.inner_layout.addWidget(heading, alignment=Qt.AlignmentFlag.AlignCenter)
+
         self.sliders_grid = QGridLayout()
         sliders_coordination = TimeM2SlidersCoordinator()
 
         # Add the m2 slider
         slider_label = QLabel(config.gui_m2)
         self.sliders_grid.addWidget(slider_label, 0, 0, alignment=(Qt.AlignLeft | Qt.AlignTop))
-        slider_m2 = sliders_coordination.create_m2_slider(initial_vector, sliders_coordination) # This also adds the slider to the coordinator's collection
+        # This also adds the slider to the coordinator's collection
+        slider_m2 = sliders_coordination.create_m2_slider(initial_vector, sliders_coordination)
         self.sliders_grid.addWidget(slider_m2, 0, 1, alignment=(Qt.AlignLeft | Qt.AlignTop))
-        line = QFrame()
-        line.setFrameShape(QFrame.Shape.HLine)
-        line.setFrameShadow(QFrame.Shadow.Sunken)
-        line.setFixedWidth(90)
+        line = QFrame(frameShape=QFrame.Shape.HLine, frameShadow=QFrame.Shadow.Sunken, lineWidth=90)
         self.sliders_grid.addWidget(line, 1, 1, Qt.AlignCenter)
 
-        for i in range(len(VectorSlider.component)): # Add the vectors, starting on the third row of the grid (index 2)
-            axis_name = VectorSlider.component[i] # Axis is simply the vector name string, e.g. "y"
+        for i in range(len(SliderGroupFrame.component)):  # Add the vectors, starting on the third row of the grid (index 2)
+            axis_name = SliderGroupFrame.component[i]  # Axis is simply the vector name string, e.g. "y"
             initial_value = initial_vector[i]
             axis_label = QLabel(axis_name)
             rownum = i + 2
             self.sliders_grid.addWidget(axis_label, rownum, 0, alignment=(Qt.AlignLeft | Qt.AlignTop))
-            axis_num = VectorSlider.dict_txyz_0123[axis_name]
-            handler = FourVectorSliderUpdateHandler(False, initial_value, axis_name, sliders_coordination)
+            axis_num = SliderGroupFrame.dict_txyz_0123[axis_name]
+            handler = FourVectorSliderUpdateHandler(axis_name, initial_value, sliders_coordination)
             handler.prepare_to_use_controller(controller, vector_name, axis_num)
             min_val = 0 if axis_name == config.gui_t else config.xyz_min
             max_val = config.t_max if axis_name == config.gui_t else config.xyz_max
             slider = VectorSlider(initial_value, min_val, max_val)
             slider.set_handler(handler)
             sliders_coordination.add_slider(axis_name, slider)
-            self.sliders_grid.addWidget(slider, rownum, 1, alignment=(Qt.AlignLeft | Qt.AlignTop))        
-            sliders_coordination.add_slider(axis_label, slider)
+            self.sliders_grid.addWidget(slider, rownum, 1, alignment=(Qt.AlignLeft | Qt.AlignTop))
+            # sliders_coordination.add_slider(axis_label, slider)
 
         self.inner_layout.addLayout(self.sliders_grid)
 
 
-class TimeM2SlidersCoordinator():
+class TimeM2SlidersCoordinator:
 
-    def __init__(self): # Construct the object using vector initial values.
-        
+    def __init__(self):  # Construct the object using vector initial values.
+
         self.sliders = dict()
-        self._user_sliding_now = False # Like a thread lock, but there is only one thread.
+        self._user_sliding_now = False  # Like a thread lock, but there is only one thread.
 
     def add_slider(self, slider_name, slider):
         self.sliders[slider_name] = slider
@@ -206,7 +242,7 @@ class TimeM2SlidersCoordinator():
     @property
     def user_sliding_now(self):
         return self._user_sliding_now
-    
+
     @user_sliding_now.setter
     def user_sliding_now(self, sliding_now):
         self._user_sliding_now = sliding_now
@@ -220,7 +256,7 @@ class TimeM2SlidersCoordinator():
         x2 = x**2
         y2 = y**2
         z2 = z**2
-        m2 = t2 - x2 - y2 - z2 # Calculate m2 as a difference.
+        m2 = t2 - x2 - y2 - z2  # Calculate m2 as a difference.
         return m2
 
     def update_m2(self):
@@ -248,7 +284,7 @@ class TimeM2SlidersCoordinator():
     def submit_user_selected_value(self, axis_name, value):
         if axis_name == config.gui_m2:
             self.update_t()
-        else: # It's t, x, y, or z
+        else:  # It's t, x, y, or z
             self.update_m2()
             if axis_name != config.gui_t:
                 self.update_m2_slider_limits()
@@ -257,23 +293,24 @@ class TimeM2SlidersCoordinator():
         self.calculate_and_set_m2_slider_limits(vector[1], vector[2], vector[3])
 
     def update_m2_slider_limits(self):
-        self.calculate_and_set_m2_slider_limits(self.sliders[config.gui_x].getValue(), self.sliders[config.gui_y].getValue(), self.sliders[config.gui_z].getValue())
+        self.calculate_and_set_m2_slider_limits(
+            self.sliders[config.gui_x].getValue(), self.sliders[config.gui_y].getValue(), self.sliders[config.gui_z].getValue()
+        )
 
     def calculate_and_set_m2_slider_limits(self, x, y, z):
         x2 = x**2
         y2 = y**2
         z2 = z**2
-        m2_min = math.ceil(-(x2 + y2 + z2)) # Using ceil because rounding errors were causing t2 < 0 issue at calculate_t t = math.sqrt(t2)
-        m2_max = config.t_max**2 + m2_min # This is t_max^2 -(x^2 + y^2 + z^2)
+        m2_min = math.ceil(-(x2 + y2 + z2))  # Using ceil because rounding errors were causing t2 < 0 issue at calculate_t t = math.sqrt(t2)
+        m2_max = config.t_max**2 + m2_min  # This is t_max^2 -(x^2 + y^2 + z^2)
         self.sliders[config.gui_m2].setRange(m2_min, m2_max)
         # print(f"RESET M2 range {m2_min} {m2_max}, current m2: {self.sliders[config.gui_m2].getValue()} now")
 
     def create_m2_slider(self, initial_vector, sliders_coordination):
         initial_value = self.calculate_initial_m2(initial_vector)
-        handler = SliderCoordinationUpdateHandler(False, initial_value, config.gui_m2, sliders_coordination)
-        slider_m2 = VectorSlider(initial_value, initial_value - 10, initial_value + 10) # temp limits reset in the next line of code.
+        handler = SliderCoordinationUpdateHandler(config.gui_m2, initial_value, sliders_coordination)
+        slider_m2 = VectorSlider(initial_value, initial_value - 10, initial_value + 10)  # temp limits reset in the next line of code.
         self.add_slider(config.gui_m2, slider_m2)
         self.initialize_m2_slider_limits(initial_vector)
-        slider_m2.set_handler(handler) # Now set handler only after slider fully set up, otherwise trouble from setRange -> sets value
+        slider_m2.set_handler(handler)  # Now set handler only after slider fully set up, otherwise trouble from setRange -> sets value
         return slider_m2
-    

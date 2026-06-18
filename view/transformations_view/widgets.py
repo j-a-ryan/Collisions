@@ -234,7 +234,9 @@ class BackgroundCalculations(QThread):
         self._failure_message = None
 
     def run(self):
-        self._failure_message = self.experiment_controller.plot_transformation(self.indices, self.VY_names, self.arg_type)
+        self._failure_message = self.experiment_controller.create_initial_transformation(
+            self.indices, self.VY_names, self.arg_type, boost_parameter_A=None, background_thread_preparation=True
+        )
         self.finished.emit()
 
     @property
@@ -244,7 +246,12 @@ class BackgroundCalculations(QThread):
 
 class WaitingPopup(QDialog):
     def __init__(
-        self, parent, background_calculations: BackgroundCalculations, title="Please Wait", text="Please stand by.", additional_text=None
+        self,
+        parent,
+        background_calculations: BackgroundCalculations,
+        title="Please Wait",
+        text="Please stand by. Solving system of equations....",
+        additional_text=None,
     ):
         super().__init__(parent)
         self.background_calculations = background_calculations

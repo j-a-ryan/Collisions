@@ -20,6 +20,7 @@ gui_vector_name = gui_vectors_header[4]
 lookup_gui_txyz_0123 = {gui_t: 0, gui_x: 1, gui_y: 2, gui_z: 3}
 lookup_gui_0123_txyz = {"0": gui_t, "1": gui_x, "2": gui_y, "3": gui_z}
 max_num_vectors = 6
+boost_A_max = 10
 xyz_min = -10
 xyz_max = 10
 t_max = 10  # t/E min is currently hardcoded as 0
@@ -30,9 +31,7 @@ form_field_invalid_color = "#FA0730"
 field_invalid_stylestring = "color: white; background-color: #FF6347;"
 combo_box_invalid_stylesheet = "QComboBox { " + field_invalid_stylestring + " }"
 text_edit_invalid_stylesheet = (
-    "QLineEdit { "
-    + field_invalid_stylestring
-    + "; } QLineEdit:focus { color: red; background-color: PaleTurquoise; }"
+    "QLineEdit { " + field_invalid_stylestring + "; } QLineEdit:focus { color: red; background-color: PaleTurquoise; }"
 )
 exp_2yT = 1
 sqrt2 = math.sqrt(2)
