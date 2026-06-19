@@ -26,9 +26,12 @@ def get_user_manual():
             momentup distribution research. However, much of the code offers itself as a platform for other research programs that similarly
             consider the vectors of particles emerging from accelerator events.
         </p>
+        <p>For more information, <a href="https://github.com/j-a-ryan/Collisions/tree/main">right-click on this link, copy it, and then paste it
+            into your Web browser</a>. This will take you to the README of the code repository.
         <h2>Quick Start</h2>
         <p>How to use the application:
         <ol>
+            <li>Click "New" and enter a vector set. Then, click Submit to graph the set.</li>
             <li>Use buttons to open an experiment file, create a new experiment, edit the currently loaded experiment,
                 save, or close the currently loaded experiment. Configure your vectors in the form. To learn how to do this, click the "new"
                 button to open the experiment configuration form. Type your vectors' components into the form fields and press the "submit" button.</li>
@@ -38,15 +41,17 @@ def get_user_manual():
                     <li>Check for transformation issues</li>
                     <li>Save the vector set as a file.</li>
                 </ol>
+            </li>
             <li>After submitting the experiment and seeing the graph, you can use the sliders to adjust adjust vectors. You can
                 also transform the collision by clicking on two particles in the graph and then selecting the transformation type and proceeding.
                 After transformation, you will see the resulting graph next to the untransformed graph. Use sliders to adjust both graphs simultaneously.</li>
+            </li>
         </ol>
         </p>
         <h2>Details</h2>
         <h3>Core Usage</h3>
         <p>There are three transformation types. All of them use the same 4x4 transformation matrix. The matrix, along with
-            some explanatory remarks, is seen below in an image of an excert from a current work-in-progress by Ted C. Rogers's group at ODU.
+            some explanatory remarks, is seen below in an image of an excerpt from a current work-in-progress by Ted C. Rogers's group at ODU.
             (The images that follow are meant only to be suggestive. Please consult the article for the full details.) Note that two vectors, 
             V and Y, are used to configure the matrix.
         </p>
@@ -81,7 +86,7 @@ def get_user_manual():
             a boost factor parameter dubbed "A". A is a calculated value used in the second step of a two-step transformation:
         </p>
         <div style="text-align: center;">
-            <img src="resources/A.png" alt="popup" width="1125" height="75">
+            <img src="resources/A.png" alt="popup" width="1125" height="155">
         </div>
         <p>The values needed to solve for A are found by solving a set of three equations:
         </p>
