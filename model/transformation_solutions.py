@@ -19,18 +19,10 @@ class SecondStepTransformationEquationSystem:
 
     def define_equations(self, Xi1, Xi2, qHT2):
 
-        eq1 = Eq(
-            self.p1_dot_q / (self.Q2 + qHT2) + sqrt((self.p1_dot_q / (self.Q2 + qHT2)) ** 2 - (self.m2_2 / (self.Q2 + qHT2))),
-            Xi1,
-        )
-        eq2 = Eq(
-            self.p2_dot_q / (self.Q2 + qHT2) + sqrt((self.p2_dot_q / (self.Q2 + qHT2)) ** 2 - (self.m2_2 / (self.Q2 + qHT2))),
-            Xi2,
-        )
-        eq3 = Eq(
-            ((self.Q2 + qHT2) * Xi1 * Xi2) + self.m1_2 * self.m2_2 / ((self.Q2 + qHT2) * Xi1 * Xi2),
-            self.twice_p1_dot_p2,
-        )
+        eq1 = Eq(self.p1_dot_q / (self.Q2 + qHT2) + sqrt((self.p1_dot_q / (self.Q2 + qHT2)) ** 2 - (self.m1_2 / (self.Q2 + qHT2))), Xi1)
+        eq2 = Eq(self.p2_dot_q / (self.Q2 + qHT2) + sqrt((self.p2_dot_q / (self.Q2 + qHT2)) ** 2 - (self.m2_2 / (self.Q2 + qHT2))), Xi2)
+
+        eq3 = Eq(((self.Q2 + qHT2) * Xi1 * Xi2) + self.m1_2 * self.m2_2 / ((self.Q2 + qHT2) * Xi1 * Xi2), self.twice_p1_dot_p2)
         return [eq1, eq2, eq3]
 
     def solve_for_exp_2yT(self, Xi1_value, Xi2_value, qHT2_value):
@@ -39,9 +31,9 @@ class SecondStepTransformationEquationSystem:
         print("qHT2 " + str(qHT2_value))
         sum_in_denominators = self.Q2 + qHT2_value
         top_inner_denominator = Xi2_value * sum_in_denominators
-        numerator = Xi1_value + self.m2_2 / top_inner_denominator
+        numerator = Xi1_value - self.m2_2 / top_inner_denominator
         bottom_inner_denominator = Xi1_value * sum_in_denominators
-        denominator = Xi2_value + self.m1_2 / bottom_inner_denominator
+        denominator = Xi2_value - self.m1_2 / bottom_inner_denominator
         exp_2yT = numerator / denominator
         return exp_2yT
 
