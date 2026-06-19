@@ -16,7 +16,7 @@ Collisions v0.3.1-alpha has sliders for each vectors m<sup>2</sup> value, allowi
   - Refactor style strings for maintainability
   - Assorted OOP/MVC refactoring is needed. Experiment objects needs to have Transformation objects. Currently transformations are shattered and need a class.
 
-We are reaching the end of the alpha versions. A physicist is currently testing v0.3.0-alpha. Next, any bugs he flushes out will be fixed and we will have a first beta version.
+We are reaching the end of the alpha versions. A physicist is currently testing v0.3.1-alpha. Next, any bugs he flushes out will be fixed and we will have a first beta version. The second step of the two-step transformation which the user can select to do is available in this release, but it is a work in progress and probably has issues. It requires that the software solve a set of three complex transcendental equations. There may be software bugs and there may be lingering mathematical shortcomings in the requirements.
 ## Introduction
 An application in Python (PyQt-PySide6, Matplotlib) for particle accelerator physicists and theoretical physicists working in particle physics, QCD, or nuclear physics. The purpose of the application is to allow physicists to see, rather than having to imagine, the vectors of particle just after particle collisions both in (a.) the laboratory (collider) reference frame and in (b.) a frame obtained by transformation of the vector set with a transformation matrix stipulated by the physicist. The application allows the physicist to enter a set of four-vectors, see them graphed, and vary the vectors on the fly by using sliders, so as to show the results of "what-if" scenarios of interest.
 
@@ -32,17 +32,26 @@ I am a veteran Java developer with experience in Java for robotics and many othe
 ## GUI
 Below you see a set of vectors in the laboratory (particle collider) reference frame representing the paths of particles emerging from a collision at the origin (left) and their transformation into a different frame (right). One of the six possible 2D representations of these graphs is seen as a popup. Sliders at the left under "CONTROLS" allow the user to vary the vectors and observe the effects on both the 3D graph on the left and the transformation on the right simultaneously. Other controls will eventually be implemented. The application represents the tips of the vectors with circles containing the names of the particles, rather than arrowheads. This may change.
 
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/693bbe61-667f-4b56-ae0f-ed02dd244357" />
+<img width="1915" height="1020" alt="image" src="https://github.com/user-attachments/assets/f25fc4d8-c467-4905-8881-294e07084171" />
+<p><i><sub>Figure 1. The GUI. At the far left are sliders for vector components, m<sup>2</sup>, and a boost parameter. The graph on the left is the original vector set, presumably based in the lab (collider) frame. The graph on the right is the transformed set. A popup shows one of the six possible 2D projections (three each for the two 3D graphs.) The light blue circles around two of the particles indicate that those are the two selected by the user for the purpose of configuring the transformation matrix in this instance.</sub></i></p>
 
 Various 4x4 transformation matrices can be used on the four-vectors entered by the user. The vector entry form is shown below:
 
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/202a78b2-1214-42f3-9718-02d07bb7a98b" />
+<p><i><sub>Figure 2. Vector set entry form.</sub></i></p>
+
+The user selects and configures a transformation as seen below.
+
+<p align="center"><img width="500" alt="image" src="https://github.com/user-attachments/assets/e5c02e2c-bf5c-452c-a6f7-4e2657e9210f" /></p>
+<p><i><sub>Figure 3. The transformation configuration form has popped up. The three checkboxes indicated three types of transformation.The user has selected a two-step transformation. Hovering the mouse over a dropdown menu has caused a tooltip to pop up ("Second step of...").</sub></i></p>
 
 ## Transformation Matrices
-The application currently applies a transformation matrix described by T.C. Rogers' 2025 work-in-progress, "A system for analyzing hadron kinematics," as shown below. 
+The application currently applies a transformation matrix described by T.C. Rogers' 2025, "A system for analyzing hadron kinematics" (work-in-progress) as shown below. 
 
 <img width="921" height="765" alt="image" src="https://github.com/user-attachments/assets/8147aeae-9730-4813-b34b-848ead15f22b" />
 </br>
+<p><i><sub>Figure 4. Image excerpt from T.C. Rogers' 2025, "A system for analyzing hadron kinematics" (work-in-progress) showing the transformation matrix used by Collisions-QCD/TMD.</sub></i></p>
+
 However, Collisions could apply any matrix of interest to physicists. The application could offer a list of matrices for the user to choose from or allow the user to submit a custom matrix. Etc.
 
 ## Dependencies
