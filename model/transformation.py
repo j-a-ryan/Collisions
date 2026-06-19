@@ -79,8 +79,9 @@ def handle_transformation(
             )
         case util.V_MINUS_Y:
             # This is a secondary transformation. First we must tranform by (V + Y, Y)
-            initial_transformed_vectors, boost_parameter_A_used, _ = transform(
-                vector_V, vector_Y, vector_Y, original_vectors, util.V_PLUS_Y, boost_parameter_A=boost_parameter_A
+            boost_parameter_A_for_first_step_of_two = config.exp_2yT  # We need this to be 1, not what the slider may be sliding to.
+            initial_transformed_vectors, _, _ = transform(  # Do not catch boost_parameter_A_used return! That would confound below.
+                vector_V, vector_Y, vector_Y, original_vectors, util.V_PLUS_Y, boost_parameter_A=boost_parameter_A_for_first_step_of_two
             )
 
             # Set the transformed vectors in the experiment only for the convenience of being able to
@@ -90,8 +91,14 @@ def handle_transformation(
             vector_V_prime = experiment.get_transformed_four_vector(V_particle_name).copy()  # These are numpy
             vector_Y_prime = experiment.get_transformed_four_vector(Y_particle_name).copy()
             # We use V' and Y for the next pair.
-            transformed_vectors, boost_parameter_A_used, failure_message = transform(
-                vector_V_prime, vector_Y_prime, vector_Y, initial_transformed_vectors, argument_type, third_vector=third_vector
+            transformed_vectors, boost_parameter_A_used, failure_message = transform(  # Now catch boost_parameter_A_used return.
+                vector_V_prime,
+                vector_Y_prime,
+                vector_Y,
+                initial_transformed_vectors,
+                argument_type,
+                third_vector=third_vector,
+                boost_parameter_A=boost_parameter_A,
             )
         case util.V_PLUS_Y:
             transformed_vectors, boost_parameter_A_used, _ = transform(
