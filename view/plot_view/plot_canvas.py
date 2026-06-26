@@ -160,7 +160,7 @@ class PlotVectorCanvas(FigureCanvas):
                         else:
                             self.experiment_controller.plot_current_experiment(extra_circles=transformation_vector_pair_indices)
                             failure_message = None
-                            if argument_type == util.V_MINUS_Y:
+                            if argument_type == util.V_MINUS_Y and config.step_2_uses_system_of_equations:
                                 background_transformation = BackgroundCalculations(
                                     self.experiment_controller, transformation_vector_pair_indices, V_Y_particle_names, argument_type
                                 )

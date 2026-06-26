@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QFrame, QLabel, QVBoxLayout
+from PySide6.QtWidgets import QFrame, QLabel, QSizePolicy, QVBoxLayout
 
 import config
 from controller.controls_controller import ControlsController
@@ -13,6 +13,7 @@ class ControlsLayout(QFrame):
         super().__init__()
         self.setFrameShape(QFrame.StyledPanel)  # Optional: sets a default styled panel look
         self.setFixedWidth(220)
+        # self.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
 
         self.controls_controller = ControlsController(experiment_controller)
         # self.setLineWidth(2) doesn't seem to do anything

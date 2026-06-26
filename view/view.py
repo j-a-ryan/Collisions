@@ -1,6 +1,6 @@
 import csv
 
-from PySide6.QtWidgets import QFileDialog, QMessageBox, QWidget, QHBoxLayout, QVBoxLayout, QSplitter
+from PySide6.QtWidgets import QFileDialog, QMessageBox, QScrollArea, QWidget, QHBoxLayout, QVBoxLayout, QSplitter
 from PySide6.QtCore import Qt
 
 import config
@@ -60,12 +60,18 @@ class View(QWidget):
         self.layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.layout.setContentsMargins(0, 0, 0, 0)
 
-        self.controls_layout = ControlsLayout(self.experiment_controller)
-        control_panel = QVBoxLayout()
-        control_panel.setAlignment(Qt.AlignmentFlag.AlignTop)
-        control_panel.addWidget(self.controls_layout)
+        self.control_panel = QVBoxLayout()
+        self.control_panel.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.set_up_control_panel()
+        # self.controls_layout = ControlsLayout(self.experiment_controller)  # QFrame
+        # self.scroll_area = QScrollArea()
+        # self.scroll_area.setFixedWidth(230)
+        # self.scroll_area.setWidgetResizable(True)  # Allows frame/content to resize
+        # self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        # self.scroll_area.setWidget(self.controls_layout)
+        # self.control_panel.addWidget(self.scroll_area)
 
-        self.layout.addLayout(control_panel)
+        self.layout.addLayout(self.control_panel)
         self.plot_qframe = PlotQFrame(self, self.experiment_controller)
         self.set_plot_tab_widget(self.plot_qframe)
 
@@ -177,8 +183,27 @@ class View(QWidget):
             del self.experiment_configuration_form
             self.experiment_configuration_form = None
 
+    def set_up_control_panel(self):
+        self.controls_layout = ControlsLayout(self.experiment_controller)  # QFrame
+        self.scroll_area = QScrollArea()
+        self.scroll_area.setFixedWidth(230)
+        self.scroll_area.setWidgetResizable(True)  # Allows frame/content to resize
+        self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.scroll_area.setWidget(self.controls_layout)
+        self.control_panel.addWidget(self.scroll_area)
+
     def clear_controls_layout(self):
-        self.controls_layout.clear_controls()
+
+        self.control_panel.removeWidget(self.scroll_area)
+        self.scroll_area.setParent(None)
+        self.controls_layout.deleteLater()
+        self.scroll_area.deleteLater()
+        del self.controls_layout
+        del self.scroll_area
+        self.controls_layout = None
+        self.scroll_area = None
+
+        self.set_up_control_panel()
 
     def reset_transformation_controls(self):
         self.controls_layout.reset_transformation_controls()

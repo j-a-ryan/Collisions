@@ -20,6 +20,7 @@ gui_vector_name = gui_vectors_header[4]
 lookup_gui_txyz_0123 = {gui_t: 0, gui_x: 1, gui_y: 2, gui_z: 3}
 lookup_gui_0123_txyz = {"0": gui_t, "1": gui_x, "2": gui_y, "3": gui_z}
 max_num_vectors = 6
+step_2_uses_system_of_equations = False
 boost_A_max = 10
 xyz_min = -10
 xyz_max = 10

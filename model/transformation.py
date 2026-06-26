@@ -1,6 +1,5 @@
 import config
 from model import util
-from model.transformation_solutions import SecondStepTransformationEquationSystem
 from model import qcd_matrix
 from model.particle import Particle
 import numpy as np
@@ -19,7 +18,7 @@ class Transformation:
 
 
 def solve_for_second_step_transformation_exp_2yT(vector_V, vector_Y, third_vector):
-    equation_system = SecondStepTransformationEquationSystem(vector_V, vector_Y, third_vector)
+    equation_system = TransformationEquationSystem(vector_V, vector_Y, third_vector)
     return equation_system.find_exp_2yT_numerical()
 
 
@@ -44,13 +43,16 @@ def set_up_config_data(
             matrix_configuration_data.rest_frame_vector = util.add_vectors(vector_V, vector_Y)
         case util.V_MINUS_Y:
             matrix_configuration_data.rest_frame_vector = util.subtract_vectors(vector_V, vector_Y_for_calculated_V)
-            if boost_parameter_A is None and third_vector is not None:  # Otherwise, leave exp_2yT at config default value.
-                # Set exp_2yT.
-                matrix_configuration_data.exp_2yT = None  # We need this to be none as a signal of failure.
-                exp_2yT_found, boost_default_set_message = solve_for_second_step_transformation_exp_2yT(
-                    matrix_configuration_data.rest_frame_vector, vector_Y, third_vector
-                )
-                matrix_configuration_data.exp_2yT = exp_2yT_found
+            if boost_parameter_A is None:
+                if third_vector is not None:  # Otherwise, leave exp_2yT at config default value. Not configured to use system of equations.
+                    # Set exp_2yT.
+                    matrix_configuration_data.exp_2yT = None  # We need this to be none as a signal of failure.
+                    exp_2yT_found, boost_default_set_message = solve_for_second_step_transformation_exp_2yT(
+                        matrix_configuration_data.rest_frame_vector, vector_Y, third_vector
+                    )
+                    matrix_configuration_data.exp_2yT = exp_2yT_found
+                else:  # Use default value
+                    matrix_configuration_data.exp_2yT = config.exp_2yT
 
     matrix_configuration_data.vector_to_be_transformed = vector_Y
     matrix_configuration_data.convert_incoming_vector_to_lcc = convert_incoming_vector_to_lcc

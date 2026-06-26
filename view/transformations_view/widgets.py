@@ -33,31 +33,32 @@ class AbstractTransformationPopup(QDialog):
         pass
 
     def post_transformation_check(self):
-        if self.post_transformation_checkbox.isChecked():
-            if self.particle_names_combo_box.count() == 0:
-                pass
-            else:
-                # Enable third-vector selection dropdown
-                self.particle_names_combo_box.setVisible(True)
-                self.particle_names_combo_box.setEnabled(True)
-                if self.particle_names_combo_box.count() > 1:
-                    self.particle_names_combo_box.setCurrentIndex(-1)
-                    self.update_submit_buttons_state(False)
+        if config.step_2_uses_system_of_equations:
+            if self.post_transformation_checkbox.isChecked():
+                if self.particle_names_combo_box.count() == 0:
+                    pass
                 else:
-                    self.particle_names_combo_box.setCurrentIndex(0)
-                    self.update_submit_buttons_state(True)
-                self.third_vector_label.setVisible(True)
-                # Disable Submit button
+                    # Enable third-vector selection dropdown
+                    self.particle_names_combo_box.setVisible(True)
+                    self.particle_names_combo_box.setEnabled(True)
+                    if self.particle_names_combo_box.count() > 1:
+                        self.particle_names_combo_box.setCurrentIndex(-1)
+                        self.update_submit_buttons_state(False)
+                    else:
+                        self.particle_names_combo_box.setCurrentIndex(0)
+                        self.update_submit_buttons_state(True)
+                    self.third_vector_label.setVisible(True)
+                    # Disable Submit button
 
-        else:
-            # Enable submit button
-            self.update_submit_buttons_state(True)
-            # set combo box to -1
-            self.particle_names_combo_box.setCurrentIndex(-1)
-            # Disable combo box and ensure set to -1
-            self.particle_names_combo_box.setEnabled(False)
-            self.particle_names_combo_box.setVisible(False)
-            self.third_vector_label.setVisible(False)
+            else:
+                # Enable submit button
+                self.update_submit_buttons_state(True)
+                # set combo box to -1
+                self.particle_names_combo_box.setCurrentIndex(-1)
+                # Disable combo box and ensure set to -1
+                self.particle_names_combo_box.setEnabled(False)
+                self.particle_names_combo_box.setVisible(False)
+                self.third_vector_label.setVisible(False)
 
     def particle_names_combo_box_activated(self):
         if self.particle_names_combo_box.isEnabled():
@@ -117,18 +118,19 @@ class AbstractTransformationPopup(QDialog):
         self.particle_names_combo_box.setVisible(False)
         self.particle_names_combo_box.activated.connect(self.particle_names_combo_box_activated)
 
-        self.third_vector_label = QLabel("Select a third vector:")
-        size_policy.setRetainSizeWhenHidden(True)
-        self.third_vector_label.setVisible(False)
-        # hbox_third_vector.setContentsMargins(0, 0, 0, 0)
-        # hbox_third_vector.setSpacing(2)
-        # parent_form.third_vector_label.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        hbox_third_vector.addStretch(1)
-        hbox_third_vector.addWidget(self.third_vector_label, alignment=Qt.AlignmentFlag.AlignRight)
-        hbox_third_vector.addWidget(self.particle_names_combo_box, alignment=Qt.AlignmentFlag.AlignRight)
-        ttt = "Second step of two-step transformation requires a third vector."
-        self.particle_names_combo_box.setToolTip(ttt)
-        self.third_vector_label.setToolTip(ttt)
+        if config.step_2_uses_system_of_equations:
+            self.third_vector_label = QLabel("Select a third vector:")
+            size_policy.setRetainSizeWhenHidden(True)
+            self.third_vector_label.setVisible(False)
+            # hbox_third_vector.setContentsMargins(0, 0, 0, 0)
+            # hbox_third_vector.setSpacing(2)
+            # parent_form.third_vector_label.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+            hbox_third_vector.addStretch(1)
+            hbox_third_vector.addWidget(self.third_vector_label, alignment=Qt.AlignmentFlag.AlignRight)
+            hbox_third_vector.addWidget(self.particle_names_combo_box, alignment=Qt.AlignmentFlag.AlignRight)
+            ttt = "Second step of two-step transformation requires a third vector."
+            self.particle_names_combo_box.setToolTip(ttt)
+            self.third_vector_label.setToolTip(ttt)
         vbox_layout.addLayout(hbox_third_vector)
 
 

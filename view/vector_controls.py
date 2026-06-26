@@ -4,6 +4,8 @@ import config
 from view.common.details import Heading
 from pyqt_advanced_slider import Slider
 
+
+# TODO: delete this file
 class ExperimentControls(QFrame):
     def __init__(self, particle_id, particle_type, new_slider=False):
         super().__init__()
@@ -25,7 +27,7 @@ class ExperimentControls(QFrame):
             self.slider1.setSingleStep(0.01)
             # self.slider1.setPageStep(25)
             # self.slider1.setTextColor(QColor('#0F0F0F'))                # Default: #000000
-            self.slider1.setBackgroundColor(QColor(config.slider_background_color))          # Default: #D6D6D6
+            self.slider1.setBackgroundColor(QColor(config.slider_background_color))  # Default: #D6D6D6
             self.slider1.setAccentColor(QColor(config.slider_accent_color))  # Default: #0078D7
             # self.slider.setBorderColor(QColor.fromRgb(0, 0, 0))        # Default: #D1CFD3
             self.slider1.setBorderRadius(3)  # Default: 0
@@ -34,7 +36,7 @@ class ExperimentControls(QFrame):
             # font.setPointSize(10)
             # font.setBold(True)
             # slider.setFont(font)
-            
+
             self.inner_layout.addWidget(self.slider1)
 
             self.slider2 = Slider(self)  # Add slider
@@ -47,7 +49,7 @@ class ExperimentControls(QFrame):
             self.slider1.setDecimals(2)
             self.slider1.setSingleStep(0.01)
             # self.slider2.setTextColor(QColor('#0F0F0F'))                # Default: #000000
-            self.slider2.setBackgroundColor(QColor(config.slider_background_color))          # Default: #D6D6D6
+            self.slider2.setBackgroundColor(QColor(config.slider_background_color))  # Default: #D6D6D6
             self.slider2.setAccentColor(QColor(config.slider_accent_color))  # Default: #0078D7
             # self.slider.setBorderColor(QColor.fromRgb(0, 0, 0))        # Default: #D1CFD3
             self.slider2.setBorderRadius(3)  # Default: 0
@@ -56,7 +58,7 @@ class ExperimentControls(QFrame):
             # font.setPointSize(10)
             # font.setBold(True)
             # slider.setFont(font)
-            
+
             self.inner_layout.addWidget(self.slider2)
         else:
             self.slider1 = QSlider(Qt.Horizontal)  # Or Qt.Vertical for a vertical slider
@@ -100,7 +102,7 @@ class ExperimentControls(QFrame):
 
             self.inner_layout.addWidget(self.slider2)
             self.inner_layout.addWidget(self.value_label2)
-            
+
     def slider_value_changed(self, value):
         # print(value)
         pass
@@ -108,7 +110,7 @@ class ExperimentControls(QFrame):
     def update_label1(self, value):
         """Updates the label with the current slider value."""
         self.value_label1.setText(f"V: {value}")
-    
+
     def update_label2(self, value):
         """Updates the label with the current slider value."""
         self.value_label2.setText(f"V: {value}")
