@@ -8,19 +8,19 @@ This software is explained below. First, some salient notes:
 
 <b>Physicists</b> desiring an app for visualizing particle accelerator experiments, please download <a href="https://github.com/j-a-ryan/Collisions/releases">the latest version</a> and play with it. Click on the Help button to read the manaul. After getting the hang of what it does, if you would like a similar application be built, please tell me about your ideas at j dot a dot ryan at protonmail. I am a former software developer headed to the physics graduate program at ODU in the fall of 2026. I have just been given an at odu.edu address: jryan017. Use either.
 
-#### Current status, June 18, 2026:
-Collisions v0.3.2-alpha has sliders for each vectors m<sup>2</sup> value, allowing the user to change this value, as well as t, x, y, and z. It also has a slider for a boost parameter for the entire vector set, allowing the user to vary the overall transformation of the set. The user manual in the Help menu is quite elaborate now and explains almost all that the user needs to know.
+#### Current status, June 29, 2026:
+Collisions v0.3.4-alpha has sliders for each vectors m<sup>2</sup> value, allowing the user to change this value, as well as t, x, y, and z. It also has a slider for a boost parameter for the entire vector set, allowing the user to vary the overall transformation of the set. The user manual in the Help menu is quite elaborate now and explains almost all that the user needs to know.
 - Lots of TODOs for later, such as
   - Create a hook for logging unhandled exceptions to file.
   - Fix little issues raised by the linter
   - Refactor style strings for maintainability
   - Assorted OOP/MVC refactoring is needed. Experiment objects needs to have Transformation objects. Currently transformations are shattered and need a class.
 
-We are reaching the end of the alpha versions. A physicist is currently testing v0.3.2-alpha. Next, any bugs he flushes out will be fixed and we will have a first beta version. The second step of the two-step transformation which the user can select to do is available in this release, but it is a work in progress and probably has issues. It requires that the software solve a set of three complex transcendental equations. There may be software bugs and there may be lingering mathematical shortcomings in the requirements.
+We are reaching the end of the alpha versions. A physicist is currently testing v0.3.4-alpha. Next, any bugs he flushes out will be fixed and we will have a first beta version. The second step of the two-step transformation which the user can select to do is available in this release, but it is a work in progress and probably has issues. It requires that the software solve a set of three complex transcendental equations. There may be software bugs and there may be lingering mathematical shortcomings in the requirements.
 ## Introduction
 An application in Python (PyQt-PySide6, Matplotlib) for particle accelerator physicists and theoretical physicists working in particle physics, QCD, or nuclear physics. The purpose of the application is to allow physicists to see, rather than having to imagine, the vectors of particle just after particle collisions both in (a.) the laboratory (collider) reference frame and in (b.) a frame obtained by transformation of the vector set with a transformation matrix stipulated by the physicist. The application allows the physicist to enter a set of four-vectors, see them graphed, and vary the vectors on the fly by using sliders, so as to show the results of "what-if" scenarios of interest.
 
-The application is currently available. It is called Collisions-QCD/TMD, and it is in <a href="https://github.com/j-a-ryan/Collisions/releases/tag/v0.3.2-alpha">pre-release version v0.3.2-alpha</a> for Windows and MacOS. More updates will be coming in June. I plan to release a beta version in early summer.
+The application is currently available. It is called Collisions-QCD/TMD, and it is in <a href="https://github.com/j-a-ryan/Collisions/releases/tag/v0.3.4-alpha">pre-release version v0.3.4-alpha</a> for Windows and MacOS. More updates will be coming in June. I plan to release a beta version in early summer.
 
 #### Notes for Software Developers:
 The application design is regular, old-fashioned MVC but not PyQt/PySide's native form of MVC which is model-view and has the controller coupled to (embodied in/blurred with) the view. So, the application has controller classes, as in regular MVC. (I looked at PyQt's innate MV pattern but I couldn't see its superiority for a complicated application like Collisions. For small applications I suppose it might be nice.)
