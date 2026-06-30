@@ -12,6 +12,7 @@ This software is explained below. First, some salient notes:
 Collisions v0.3.4-alpha has sliders for each vectors m<sup>2</sup> value, allowing the user to change this value, as well as t, x, y, and z. It also has a slider for a boost parameter for the entire vector set, allowing the user to vary the overall transformation of the set. The user manual in the Help menu is quite elaborate now and explains almost all that the user needs to know.
 - Lots of TODOs for later, such as
   - Create a hook for logging unhandled exceptions to file.
+  - Show the user the values of the components of the transformed vectors (by right click or hover over each vector or by some other method).
   - Fix little issues raised by the linter
   - Refactor style strings for maintainability
   - Assorted OOP/MVC refactoring is needed. Experiment objects needs to have Transformation objects. Currently transformations are shattered and need a class.
