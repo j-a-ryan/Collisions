@@ -4,7 +4,7 @@ This software is explained below. First, some salient notes:
 
 ## Some Salient Notes
 
-<b>Python devs</b> keen on particle physics and on the possibility of contributing, please reach out.
+<b>Python devs</b> keen on particle physics and on the possibility of contributing, please reach out. There are more notes for you below, too.
 
 <b>Physicists</b> desiring an app for visualizing particle accelerator experiments, please download <a href="https://github.com/j-a-ryan/Collisions/releases">the latest version</a> and play with it. Click on the Help button to read the manaul. After getting the hang of what it does, if you would like a similar application be built, please tell me about your ideas at j dot a dot ryan at protonmail. I am a former software developer headed to the physics graduate program at ODU in the fall of 2026. I have just been given an at odu.edu address: jryan017. Use either.
 
@@ -22,7 +22,7 @@ An application in Python (PyQt-PySide6, Matplotlib) for particle accelerator phy
 
 The application is currently available. It is called Collisions-QCD/TMD, and it is in <a href="https://github.com/j-a-ryan/Collisions/releases/tag/v0.3.4-alpha">pre-release version v0.3.4-alpha</a> for Windows and MacOS. More updates will be coming in June. I plan to release a beta version in early summer.
 
-#### Notes for Software Developers:
+#### More Notes for Software Developers:
 The application design is regular, old-fashioned MVC but not PyQt/PySide's native form of MVC which is model-view and has the controller coupled to (embodied in/blurred with) the view. So, the application has controller classes, as in regular MVC. (I looked at PyQt's innate MV pattern but I couldn't see its superiority for a complicated application like Collisions. For small applications I suppose it might be nice.)
 
 I am trying to make an application for the specific use-case of a QCD team while keeping reusable components available to be used as a platform for any particle collider physicist who wants to analyze collision vectors of particles in a collider. I am probably failing at this, such that a sizeable refactoring task (for platform creation) will remain after this application is deployed in a stable beta version. As usual, platformability falls by the wayside when there aren't enough man hours to do it. This summer is for refactoring. By September 2026, the code should be in fairly good shape, OOP-wise. With this, a platform may begin to be abstracted.
