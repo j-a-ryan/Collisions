@@ -1,6 +1,6 @@
 # Collisions
 
-This software is explained below. First, some salient notes ande a note on current status:
+This software is introduced below, after some salient notes and a note on current status.
 
 ## Some Salient Notes
 
