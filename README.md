@@ -1,14 +1,18 @@
 # Collisions
 
-This software is introduced below, after some salient notes and a note on current status.
+You can <a href="https://github.com/j-a-ryan/Collisions/releases">download the application, launch it, and try it</a>. Once it's running, you can click on Help to get a quick start about how to use it. The software is introduced below, after some salient notes and a note on current status.
 
 ## Some Salient Notes
+
+Many thanks to physicists Ted Rogers and Kazuki Makino for working with me on this.
 
 <b>Python devs</b> keen on particle physics and on the possibility of contributing, please reach out. There are more notes for you below, too.
 
 <b>Physicists</b> desiring an app for visualizing particle accelerator experiments, please download <a href="https://github.com/j-a-ryan/Collisions/releases">the latest version</a> and play with it. Click on the Help button to read the manaul. After getting the hang of what it does, if you would like a similar application be built, please tell me about your ideas at j dot a dot ryan at protonmail. I am a former software developer headed to the physics graduate program at ODU in the fall of 2026. I have just been given an at odu.edu address: jryan017. Use either.
 
-## Current status, June 29, 2026:
+## Current status, July 20, 2026:
+Coming to an end of the alpha phase, I'll have one more alpha release (0.4.0) in August and a beta release on October 1st. I'm getting very busy with physics now, such that progress will be slower now.
+
 Collisions v0.3.4-alpha has sliders for each vectors m<sup>2</sup> value, allowing the user to change this value, as well as t, x, y, and z. It also has a slider for a boost parameter for the entire vector set, allowing the user to vary the overall transformation of the set. The user manual in the Help menu is quite elaborate now and explains almost all that the user needs to know.
 - Lots of TODOs for later, such as
   - Create a hook for logging unhandled exceptions to file.
