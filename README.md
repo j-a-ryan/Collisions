@@ -48,9 +48,9 @@ Various 4x4 transformation matrices can be used on the four-vectors entered by t
 <p><i><sub>Figure 2. Vector set entry form.</sub></i></p>
 
 The user selects and configures a transformation as seen below.
+<p align="center"><img width="500" alt="image" src="https://github.com/user-attachments/assets/ae62d7f2-200c-4053-9627-f694985c4a69" /></p>
 
-<p align="center"><img width="500" alt="image" src="https://github.com/user-attachments/assets/e5c02e2c-bf5c-452c-a6f7-4e2657e9210f" /></p>
-<p><i><sub>Figure 3. The transformation configuration form has popped up. The three checkboxes indicated three types of transformation.The user has selected a two-step transformation. Hovering the mouse over a dropdown menu has caused a tooltip to pop up ("Second step of...").</sub></i></p>
+<p><i><sub>Figure 3. The transformation configuration form has popped up. The three checkboxes indicated three types of transformation.The user has selected a two-step transformation.</sub></i></p>
 
 ## Transformation Matrices
 The application currently applies a transformation matrix described by T.C. Rogers' 2025, "A system for analyzing hadron kinematics" (work-in-progress) as shown below. 
@@ -69,7 +69,7 @@ Uses <a href="https://github.com/niklashenning/pyqt-advanced-slider">PyQt Advanc
 Uses <a href="https://github.com/5yutan5/PyQtDarkTheme">PyQtDarkTheme</a>
 
 ## Current Status: alpha
-Very rough prototype, offering only a use case or two, currently being built for physicist to evaluate. I hope to have a working app that will allow the visualization of three particles emerging from a collision, as stipulated by user data entry, along with slider bars for user to manipulate the data on the fly to see how it effects the visualization. Transformation matrix is currently working, allowing the reference frame of any particle to be used in the graph and displayed next to a graph of the collision in the lab refrence frame.
+August, 2026: What I believe to be the last alpha version has been released. If it doesn't crash during usage, the first beta version will be released, probably in late August or September.
 
 ## License
 This software is licensed under the MIT license.
