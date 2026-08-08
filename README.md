@@ -62,7 +62,7 @@ The application currently applies a transformation matrix described by T.C. Roge
 However, Collisions could apply any matrix of interest to physicists. The application could offer a list of matrices for the user to choose from or allow the user to submit a custom matrix. Etc.
 
 ## Dependencies
-I gratefully use these third-party libraries:
+I gratefully use these third-party libraries. I hope I am adhering to their licensing requirements properly. If I am not, kindly let me know.
 
 Uses <a href="https://github.com/niklashenning/pyqt-advanced-slider">PyQt Advanced Slider</a>
 
