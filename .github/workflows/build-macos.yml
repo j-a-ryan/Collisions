@@ -46,7 +46,7 @@ jobs:
           # Choose ONE of these options:
 
           # Option 1: Simple one-file executable (recommended for most apps)
-          pyinstaller --onefile --windowed main.py
+          pyinstaller --onefile --windowed --add-data "resources:resources" main.py
           # pyinstaller --onefile --windowed main.py
           # (remove --windowed if it's a console app)
 
