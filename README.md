@@ -1,14 +1,18 @@
 # Collisions
 
-This software is introduced below, after some salient notes and a note on current status.
+You can <a href="https://github.com/j-a-ryan/Collisions/releases">download the application, launch it, and try it</a>. Once it's running, you can click on Help to get a quick start about how to use it. The software is introduced below, after some salient notes and a note on current status.
 
 ## Some Salient Notes
+
+Many thanks to physicists Ted Rogers and Kazuki Makino for working with me on this.
 
 <b>Python devs</b> keen on particle physics and on the possibility of contributing, please reach out. There are more notes for you below, too.
 
 <b>Physicists</b> desiring an app for visualizing particle accelerator experiments, please download <a href="https://github.com/j-a-ryan/Collisions/releases">the latest version</a> and play with it. Click on the Help button to read the manaul. After getting the hang of what it does, if you would like a similar application be built, please tell me about your ideas at j dot a dot ryan at protonmail. I am a former software developer headed to the physics graduate program at ODU in the fall of 2026. I have just been given an at odu.edu address: jryan017. Use either.
 
-## Current status, June 29, 2026:
+## Current status, July 20, 2026:
+Coming to an end of the alpha phase, I'll have one more alpha release (0.4.0) in August and a beta release on October 1st. I'm getting very busy with physics now, such that progress will be slower now.
+
 Collisions v0.3.4-alpha has sliders for each vectors m<sup>2</sup> value, allowing the user to change this value, as well as t, x, y, and z. It also has a slider for a boost parameter for the entire vector set, allowing the user to vary the overall transformation of the set. The user manual in the Help menu is quite elaborate now and explains almost all that the user needs to know.
 - Lots of TODOs for later, such as
   - Create a hook for logging unhandled exceptions to file.
@@ -44,9 +48,9 @@ Various 4x4 transformation matrices can be used on the four-vectors entered by t
 <p><i><sub>Figure 2. Vector set entry form.</sub></i></p>
 
 The user selects and configures a transformation as seen below.
+<p align="center"><img width="500" alt="image" src="https://github.com/user-attachments/assets/ae62d7f2-200c-4053-9627-f694985c4a69" /></p>
 
-<p align="center"><img width="500" alt="image" src="https://github.com/user-attachments/assets/e5c02e2c-bf5c-452c-a6f7-4e2657e9210f" /></p>
-<p><i><sub>Figure 3. The transformation configuration form has popped up. The three checkboxes indicated three types of transformation.The user has selected a two-step transformation. Hovering the mouse over a dropdown menu has caused a tooltip to pop up ("Second step of...").</sub></i></p>
+<p><i><sub>Figure 3. The transformation configuration form has popped up. The three checkboxes indicated three types of transformation.The user has selected a two-step transformation.</sub></i></p>
 
 ## Transformation Matrices
 The application currently applies a transformation matrix described by T.C. Rogers' 2025, "A system for analyzing hadron kinematics" (work-in-progress) as shown below. 
@@ -65,7 +69,7 @@ Uses <a href="https://github.com/niklashenning/pyqt-advanced-slider">PyQt Advanc
 Uses <a href="https://github.com/5yutan5/PyQtDarkTheme">PyQtDarkTheme</a>
 
 ## Current Status: alpha
-Very rough prototype, offering only a use case or two, currently being built for physicist to evaluate. I hope to have a working app that will allow the visualization of three particles emerging from a collision, as stipulated by user data entry, along with slider bars for user to manipulate the data on the fly to see how it effects the visualization. Transformation matrix is currently working, allowing the reference frame of any particle to be used in the graph and displayed next to a graph of the collision in the lab refrence frame.
+August, 2026: What I believe to be the last alpha version has been released. If it doesn't crash during usage, the first beta version will be released, probably in late August or September.
 
 ## License
 This software is licensed under the MIT license.
