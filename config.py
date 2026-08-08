@@ -6,6 +6,7 @@ slider_accent_color = "#42A1FF"  # "#4DA6FF" #
 slider_background_color = graph_area_color  # "#D6FFFF" # "#D1FFFF"
 graph_circles_color = "#272EF5"
 graph_extra_circles_color = slider_accent_color
+graph_tooltip_background_color = "#ffffe1"
 # Vector configuration, both model- and GUI-side
 # We use user-facing strings and simpler string for code-only usage.
 # At some points there is a use of the former as keys in code-only usage, however.

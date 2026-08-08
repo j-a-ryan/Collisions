@@ -49,6 +49,12 @@ def get_user_manual():
         </ol>
         </p>
         <h2>Details</h2>
+        <h3>Test Crash Logging</h3>
+        <p>Please click the "Do not click this" button and follow the instructions in the popup you will see, expect for the part
+            about sending the software developer the log. This is simply a test that crash logging works on your computer. If you
+            are sure that the file was not created, let the software developer know. Afterwards, if you do get an unexpected crash, 
+            send him the file.
+        </p> 
         <h3>Core Usage</h3>
         <p>There are three transformation types. All of them use the same 4x4 transformation matrix. The matrix, along with
             some explanatory remarks, is seen below in an image of an excerpt from a current work-in-progress by Ted C. Rogers's group at ODU.
@@ -73,7 +79,7 @@ def get_user_manual():
         <p>More complicated transformations may be selected. Below we see that there are two more checkboxes below the first.
             The one on the left uses the sum of the two user-selected vectors as "V" in configuring the matrix, Y still being 
             used as before. The user has checked it, causing the checkbox on the right to become enabled. The latter offers 
-            an additional after the transformation that the user has selected is done, so that we have a two-step transformation. 
+            an additional after the transformation already selected is done, so that we have a two-step transformation. 
             In the second step, V and Y have been transformed and are V' and Y'. Their difference is used as "V" to configure 
             the matrix, while Y' is used as "Y".
         </p>
@@ -83,8 +89,10 @@ def get_user_manual():
         </div>
         </br>
         <p>Sliders are used to change the components of the vectos in the graph, as well as, for graphs of a two-step transformation,
-            a boost factor parameter dubbed "A". A is a calculated value used in the second step of a two-step transformation:
+            a boost factor parameter dubbed "A".
         </p>
+        <!-- Will we ever need this? The calculations proved difficult and were postponed.
+        <p>A is a calculated value used in the second step of a two-step transformation:
         <div style="text-align: center;">
             <img src="resources/A.png" alt="popup" width="1125" height="155">
         </div>
@@ -99,6 +107,7 @@ def get_user_manual():
             of 1 is used for A, instead of solving a system of equations. After a two-step transformation the user can adjust the value of 
             A using a slider. 
         </p>
+        -->
         <p>A fresh transformation can be made when both the original graph and the transformation graph are showing. Simply click
             on one of the selected particles in the original graph and begin the process again.
         </p>
@@ -110,7 +119,7 @@ def get_user_manual():
             may be created and might be included in Collisions in the future.
         </p>
         <p>2D projections of the 3D graphs may be seen by clicking on the appropriate tabs or buttons. The buttons offer
-            floating graphs that may be moved around by the a user by dragging.
+            floating graphs that may be moved around by the a user by dragging. Right-click on a particle to see its coordinates.
         </p>
         <h3>CSV Files for Storing Vector Sets</h3>
         <p>Simple CSV files are used to store vector sets. These are not meant to be created by hand, though they may be.

@@ -9,6 +9,7 @@ from view.controls import ControlsLayout
 from view.experiment.experiment_configuration import ExperimentConfigurationForm
 from view.plot import PlotQFrame
 from view.plot_view.plot_tabs_widget import PlotTabsWidget
+from view.util import blank, experiment, transformed
 
 """
 
@@ -101,7 +102,7 @@ class View(QWidget):
             frame_to_delete = self.plot_qframe
             self.layout.removeWidget(self.plot_qframe)
             frame_to_delete.deleteLater()
-        self.plot_qframe = PlotQFrame(self, self.experiment_controller, plot_status=PlotQFrame.experiment)
+        self.plot_qframe = PlotQFrame(self, self.experiment_controller, plot_status=experiment)
         self.plot_qframe.plot(collision, extra_circles)
         self.set_plot_tab_widget(self.plot_qframe, experiment_vectors=collision)
 
@@ -114,9 +115,9 @@ class View(QWidget):
             self.layout.removeWidget(self.plot_qframe)
             frame_to_delete.deleteLater()
 
-        self.plot_qframe = PlotQFrame(self, self.experiment_controller, plot_status=PlotQFrame.experiment)
+        self.plot_qframe = PlotQFrame(self, self.experiment_controller, plot_status=experiment)
         self.plot_qframe.plot(experiment_vectors, extra_circles)
-        self.plot_qframe_transformed = PlotQFrame(self, self.experiment_controller, plot_status=PlotQFrame.transformed)
+        self.plot_qframe_transformed = PlotQFrame(self, self.experiment_controller, plot_status=transformed)
         self.plot_qframe_transformed.plot(vectors_transformed, extra_circles)
 
         self.add_transformation_splitter(experiment_vectors=experiment_vectors, transformed_vectors=vectors_transformed)

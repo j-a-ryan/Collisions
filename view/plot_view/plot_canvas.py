@@ -1,19 +1,22 @@
+from matplotlib.backend_bases import MouseButton
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qtagg import FigureCanvas
-from PySide6.QtWidgets import QDialog
+from PySide6.QtWidgets import QDialog, QLabel
 import os
 import config
 from model import util
 from view.experiment import widgets
 from view.transformations_view.widgets import BackgroundCalculations, ConfigureTransformationPopup, WaitingPopup
+from view.util import experiment
 
 os.environ["QT_API"] = "PySide6"  # Doesn't seem to do anything. What is it?
 
 
 class PlotVectorCanvas(FigureCanvas):
-    def __init__(self, view, experiment_controller, parent=None, width=7, height=7, dpi=100):
+    def __init__(self, view, experiment_controller, plot_status, parent=None, width=7, height=7, dpi=100):
         fig = Figure(figsize=(width, height), dpi=dpi)
         self.ax = fig.add_subplot(111, projection="3d")
+        self.plot_status = plot_status
         fig.set_facecolor(config.graph_encasing_area_color)
         self.ax.set_facecolor(config.graph_area_color)
         self.ax.xaxis._axinfo["grid"].update({"linewidth": 0.5})
@@ -26,6 +29,15 @@ class PlotVectorCanvas(FigureCanvas):
         self.experiment_controller = experiment_controller
         self.particles_names_picked = []
 
+        # Persistent coordinate readout shown on right-click; QToolTip can't stay open like this,
+        # so it's a plain styled label positioned manually.
+        self.coord_tooltip = QLabel(self)
+        self.coord_tooltip.setStyleSheet(
+            f"background-color: {config.graph_tooltip_background_color}; color: #000000; border: 1px solid black; padding: 3px;"
+        )
+        self.coord_tooltip.hide()
+        self.coord_tooltip_index = None
+
     @property
     def particle_indices_picked(self):
         return self.experiment_controller.particle_indices_picked_for_transformation
@@ -34,6 +46,7 @@ class PlotVectorCanvas(FigureCanvas):
 
         vectors = collision.get_spatial_vectors_xyz()
         vectors_columns = collision.get_vectors_spatial_columns()
+        self.vectors_columns = vectors_columns
         self.particle_names = collision.get_vectors_name_column()
         edgecolors = [config.graph_circles_color] * len(vectors)
         # facecolorscolors = ['lightcyan', 'tomato', 'aquamarine'] # TODO: add more
@@ -105,77 +118,104 @@ class PlotVectorCanvas(FigureCanvas):
         # self.ax.set_ylim([-1, 6]) Low and high for each axis. Add 10% either side.
         # self.ax.set_zlim([-1, 6])
         self.fig.canvas.mpl_connect("pick_event", self.onpick_circles)
-        # cursor = mplcursors.cursor(self.ax, hover=mplcursors.HoverMode.Transient)
-        # cursor.connect("add", lambda sel: sel.annotation.set_text("Click to apply rest frame"))
+        self.fig.canvas.mpl_connect("button_press_event", self.on_canvas_click)
+
+    def on_canvas_click(self, event):
+        # Handles the persistent coordinate tooltip for every click on the canvas. Kept separate
+        # from onpick_circles/pick_event: Figure wires its own button_press_event -> pick_event
+        # dispatch ahead of any handler we connect in plot(), so pick_event always fires before
+        # this one on the same click and can't be used to coordinate ordering with it.
+        if event.button == MouseButton.RIGHT:
+            contains, info = self.scatter.contains(event)
+            if contains:
+                i = info["ind"][0]
+                if i == self.coord_tooltip_index:  # Right-clicked the same point again: toggle off.
+                    self.coord_tooltip.hide()
+                    self.coord_tooltip_index = None
+                else:
+                    x = self.vectors_columns["x"][i]
+                    y = self.vectors_columns["y"][i]
+                    z = self.vectors_columns["z"][i]
+                    self.coord_tooltip.setText(f"({x:.3f}, {y:.3f}, {z:.3f})")
+                    self.coord_tooltip.adjustSize()
+                    local_position = self.mapFromGlobal(event.guiEvent.globalPosition().toPoint())
+                    self.coord_tooltip.move(local_position)
+                    self.coord_tooltip.show()
+                    self.coord_tooltip_index = i
+                return
+        if self.coord_tooltip_index is not None:
+            self.coord_tooltip.hide()
+            self.coord_tooltip_index = None
 
     def onpick_circles(self, event):
-        if event.artist == self.scatter:  # Ensure the event is from our scatter plot
-            ind = event.ind  # Indices of the clicked points
-            index = ind[0]
+        if event.artist == self.scatter and event.mouseevent.button == MouseButton.LEFT:
+            if self.plot_status == experiment:
+                ind = event.ind  # Indices of the clicked points
+                index = ind[0]
 
-            if len(self.particle_indices_picked) == 2:  # User is picking new pair of vectors V, Y
-                # Clear out the current indices picked and add this new one.
-                # If there is a transformation graph (as there should be), clear it away.
-                # Graph collision with the single, new circle pick.
-                self.experiment_controller.clear_transformation()
-                self.view.reset_transformation_controls()
-                self.view.clear_experiment_plot(True)
-                self.particle_indices_picked.clear()
-                self.particle_indices_picked.append(index)
-                self.experiment_controller.plot_current_experiment(extra_circles=self.particle_indices_picked.copy())
+                if len(self.particle_indices_picked) == 2:  # User is picking new pair of vectors V, Y
+                    # Clear out the current indices picked and add this new one.
+                    # If there is a transformation graph (as there should be), clear it away.
+                    # Graph collision with the single, new circle pick.
+                    self.experiment_controller.clear_transformation()
+                    self.view.reset_transformation_controls()
+                    self.view.clear_experiment_plot(True)
+                    self.particle_indices_picked.clear()
+                    self.particle_indices_picked.append(index)
+                    self.experiment_controller.plot_current_experiment(extra_circles=self.particle_indices_picked.copy())
 
-            elif len(self.particle_indices_picked) == 0:
-                self.particle_indices_picked.append(index)
-                self.experiment_controller.plot_current_experiment(
-                    extra_circles=self.particle_indices_picked.copy()
-                )  # Zero or one picked now.
-            else:  # len(self.particles_indices_picked) == 1 or 2
-                if index in self.particle_indices_picked:
-                    self.particle_indices_picked.remove(index)
+                elif len(self.particle_indices_picked) == 0:
+                    self.particle_indices_picked.append(index)
                     self.experiment_controller.plot_current_experiment(
                         extra_circles=self.particle_indices_picked.copy()
                     )  # Zero or one picked now.
-                else:  # We have two vectors picked. Now we proceed to transformation configuration.
-                    self.particle_indices_picked.append(index)  # two picked now
-                    transformation_vector_pair_indices = self.particle_indices_picked.copy()
-                    self.experiment_controller.plot_current_experiment(extra_circles=transformation_vector_pair_indices)
-                    popup = ConfigureTransformationPopup(transformation_vector_pair_indices, self.particle_names)
-                    if popup.exec() == QDialog.Accepted:
-                        # Check for issues
-                        self.particles_names_picked = [
-                            popup.transformation_config["V"],
-                            popup.transformation_config["Y"],
-                            popup.transformation_config["third_vector"],
-                        ]
-                        V_plus_Y = popup.transformation_config["V+YConfig"]
-                        V_minus_Y = popup.transformation_config["ApplyPostTransformationV'-Y'"]
-                        argument_type = util.get_config_argument(V_plus_Y, V_minus_Y)
-                        V_Y_particle_names = self.particles_names_picked.copy()
-                        results, _ = self.experiment_controller.pre_check_transformation(V_Y_particle_names, argument_type)
+                else:  # len(self.particles_indices_picked) == 1 or 2
+                    if index in self.particle_indices_picked:
+                        self.particle_indices_picked.remove(index)
+                        self.experiment_controller.plot_current_experiment(
+                            extra_circles=self.particle_indices_picked.copy()
+                        )  # Zero or one picked now.
+                    else:  # We have two vectors picked. Now we proceed to transformation configuration.
+                        self.particle_indices_picked.append(index)  # two picked now
+                        transformation_vector_pair_indices = self.particle_indices_picked.copy()
+                        self.experiment_controller.plot_current_experiment(extra_circles=transformation_vector_pair_indices)
+                        popup = ConfigureTransformationPopup(transformation_vector_pair_indices, self.particle_names)
+                        if popup.exec() == QDialog.Accepted:
+                            # Check for issues
+                            self.particles_names_picked = [
+                                popup.transformation_config["V"],
+                                popup.transformation_config["Y"],
+                                popup.transformation_config["third_vector"],
+                            ]
+                            V_plus_Y = popup.transformation_config["V+YConfig"]
+                            V_minus_Y = popup.transformation_config["ApplyPostTransformationV'-Y'"]
+                            argument_type = util.get_config_argument(V_plus_Y, V_minus_Y)
+                            V_Y_particle_names = self.particles_names_picked.copy()
+                            results, _ = self.experiment_controller.pre_check_transformation(V_Y_particle_names, argument_type)
 
-                        if results:
-                            msg = widgets.transformation_issue_popup(argument_type)
-                            msg.exec()
-                            self.view.show_experiment_configuration_form(False)
-                        else:
-                            self.experiment_controller.plot_current_experiment(extra_circles=transformation_vector_pair_indices)
-                            failure_message = None
-                            if argument_type == util.V_MINUS_Y and config.step_2_uses_system_of_equations:
-                                background_transformation = BackgroundCalculations(
-                                    self.experiment_controller, transformation_vector_pair_indices, V_Y_particle_names, argument_type
-                                )
-                                dlg = WaitingPopup(self, background_calculations=background_transformation)
-                                if dlg.exec() == QDialog.Accepted:
-                                    failure_message = background_transformation.failure_message
-                                    self.experiment_controller.plot_transformed_experiment_vectors(transformation_vector_pair_indices)
-                            else:
-                                failure_message = self.experiment_controller.create_initial_transformation(
-                                    transformation_vector_pair_indices, V_Y_particle_names, argument_type
-                                )
-                            self.particles_names_picked.clear()
-                            if failure_message:
-                                msg = widgets.transformation_issue_popup(argument_type, failure_message=failure_message)
+                            if results:
+                                msg = widgets.transformation_issue_popup(argument_type)
                                 msg.exec()
-                    else:
-                        self.particle_indices_picked.clear()
-                        self.experiment_controller.plot_current_experiment()
+                                self.view.show_experiment_configuration_form(False)
+                            else:
+                                self.experiment_controller.plot_current_experiment(extra_circles=transformation_vector_pair_indices)
+                                failure_message = None
+                                if argument_type == util.V_MINUS_Y and config.step_2_uses_system_of_equations:
+                                    background_transformation = BackgroundCalculations(
+                                        self.experiment_controller, transformation_vector_pair_indices, V_Y_particle_names, argument_type
+                                    )
+                                    dlg = WaitingPopup(self, background_calculations=background_transformation)
+                                    if dlg.exec() == QDialog.Accepted:
+                                        failure_message = background_transformation.failure_message
+                                        self.experiment_controller.plot_transformed_experiment_vectors(transformation_vector_pair_indices)
+                                else:
+                                    failure_message = self.experiment_controller.create_initial_transformation(
+                                        transformation_vector_pair_indices, V_Y_particle_names, argument_type
+                                    )
+                                self.particles_names_picked.clear()
+                                if failure_message:
+                                    msg = widgets.transformation_issue_popup(argument_type, failure_message=failure_message)
+                                    msg.exec()
+                        else:
+                            self.particle_indices_picked.clear()
+                            self.experiment_controller.plot_current_experiment()

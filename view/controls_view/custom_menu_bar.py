@@ -1,8 +1,9 @@
-from PySide6.QtWidgets import   QHBoxLayout, QPushButton
+from PySide6.QtWidgets import QHBoxLayout, QPushButton
 from PySide6.QtGui import Qt
 import qdarktheme
 
 from resources.help_html import get_user_manual
+
 
 class MenuButtonPanel(QHBoxLayout):
     def __init__(self, view, app, experiment_controller):
@@ -11,7 +12,7 @@ class MenuButtonPanel(QHBoxLayout):
         self.app = app
         self.experiment_controller = experiment_controller
         self.setContentsMargins(0, 2, 0, 2)
-        
+
         file_button = QPushButton("File")
         file_button.clicked.connect(self.load_experiment_file)
         new_button = QPushButton("New")
@@ -40,7 +41,7 @@ class MenuButtonPanel(QHBoxLayout):
         dark_button.setFixedWidth(100)
         light_button.setFixedWidth(100)
         quit_button.setFixedWidth(100)
-        
+
         experiment_buttons_layout = QHBoxLayout()
         experiment_buttons_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
         experiment_buttons_layout.addWidget(file_button)
@@ -49,6 +50,14 @@ class MenuButtonPanel(QHBoxLayout):
         experiment_buttons_layout.addWidget(save_button)
         experiment_buttons_layout.addWidget(close_button)
         self.addLayout(experiment_buttons_layout)
+
+        crash_button = QPushButton("Do not click this")
+        crash_button.clicked.connect(self.test_crash_log)
+        crash_button_layout = QHBoxLayout()
+        crash_button_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        crash_button_layout.addWidget(crash_button)
+        self.addLayout(crash_button_layout)
+
         app_buttons_layout = QHBoxLayout()
         app_buttons_layout.setAlignment(Qt.AlignmentFlag.AlignRight)
         app_buttons_layout.addWidget(how_button)
@@ -72,7 +81,7 @@ class MenuButtonPanel(QHBoxLayout):
 
     def show_loaded_experiment_configuration_form(self):
         self.show_experiment_configuration_form(False)
-    
+
     def show_experiment_configuration_form(self, create_new=True):
         self.view.show_experiment_configuration_form(create_new)
 
@@ -81,6 +90,11 @@ class MenuButtonPanel(QHBoxLayout):
 
     def save_experiment(self):
         self.experiment_controller.save_current_experiment()
+
+    def test_crash_log(self):
+        a = None
+        j = 27 / a  # crash
+        print(j)  # to silence linter
 
     def show_manual(self):
         manual = get_user_manual()
