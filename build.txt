@@ -1,7 +1,7 @@
 Build
 
 To build Windows version:
-python -m PyInstaller --name="collisions-v0.3.0-alpha-windows-intel-x86_64.exe" --exclude-module=PyQt5 --onefile --windowed main.py
+python -m PyInstaller --name="collisions-v0.3.0-alpha-windows-intel-x86_64.exe" --add-data "resources;resources" --exclude-module=PyQt5 --onefile --windowed main.py
 Rename the result to suit. The exclude is needed now, probably because
 SymPy makes reference to PyQt5 in sympy.plotting. GitHub's build action for
 MacOS is able to see that it needs to exclude PyQt5.

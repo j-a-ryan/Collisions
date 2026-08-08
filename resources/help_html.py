@@ -1,5 +1,18 @@
 from PySide6.QtWidgets import QDialog, QTextBrowser, QVBoxLayout
 
+import sys
+from pathlib import Path
+from PySide6.QtCore import QUrl
+
+
+def resource_path(relative_path):
+    if getattr(sys, "frozen", False):
+        base_path = Path(sys._MEIPASS)
+    else:
+        base_path = Path(__file__).resolve().parent
+
+    return base_path / relative_path
+
 
 def get_user_manual():
     dialog = QDialog()
@@ -132,6 +145,9 @@ def get_user_manual():
     </body>
     </html>
     """
+    # browser.setHtml(html_content)
+    base_url = QUrl.fromLocalFile(str(resource_path("")) + "/")
+    browser.document().setBaseUrl(base_url)
     browser.setHtml(html_content)
 
     # Layout for the dialog
