@@ -1,4 +1,11 @@
-from PySide6.QtWidgets import QFrame, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy, QPushButton
+from PySide6.QtWidgets import (
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QSizePolicy,
+    QVBoxLayout,
+)
 
 from view.plot_view.plot_2D import Plot2DPopup
 from view.plot_view.plot_canvas import PlotVectorCanvas

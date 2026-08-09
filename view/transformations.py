@@ -1,8 +1,13 @@
-from PySide6.QtWidgets import QWidget, QFrame, QFontComboBox, QVBoxLayout, QLabel, QSizePolicy, QComboBox, QPushButton
+from PySide6.QtGui import Qt
+from PySide6.QtWidgets import (
+    QFrame,
+    QLabel,
+    QPushButton,
+    QSizePolicy,
+    QVBoxLayout,
+)
 
 from view.common.details import Heading, HorizontalDivider
-
-from PySide6.QtGui import Qt
 
 
 class TransformationsLayout(QFrame):

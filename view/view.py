@@ -1,7 +1,15 @@
 import csv
 
-from PySide6.QtWidgets import QFileDialog, QMessageBox, QScrollArea, QWidget, QHBoxLayout, QVBoxLayout, QSplitter
 from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (
+    QFileDialog,
+    QHBoxLayout,
+    QMessageBox,
+    QScrollArea,
+    QSplitter,
+    QVBoxLayout,
+    QWidget,
+)
 
 import config
 from controller.experiment_controller import ExperimentController
@@ -9,7 +17,7 @@ from view.controls import ControlsLayout
 from view.experiment.experiment_configuration import ExperimentConfigurationForm
 from view.plot import PlotQFrame
 from view.plot_view.plot_tabs_widget import PlotTabsWidget
-from view.util import blank, experiment, transformed
+from view.util import experiment, transformed
 
 """
 
@@ -64,13 +72,6 @@ class View(QWidget):
         self.control_panel = QVBoxLayout()
         self.control_panel.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.set_up_control_panel()
-        # self.controls_layout = ControlsLayout(self.experiment_controller)  # QFrame
-        # self.scroll_area = QScrollArea()
-        # self.scroll_area.setFixedWidth(230)
-        # self.scroll_area.setWidgetResizable(True)  # Allows frame/content to resize
-        # self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        # self.scroll_area.setWidget(self.controls_layout)
-        # self.control_panel.addWidget(self.scroll_area)
 
         self.layout.addLayout(self.control_panel)
         self.plot_qframe = PlotQFrame(self, self.experiment_controller)

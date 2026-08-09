@@ -1,6 +1,6 @@
-from PySide6.QtWidgets import QHBoxLayout, QPushButton
-from PySide6.QtGui import Qt
 import qdarktheme
+from PySide6.QtGui import Qt
+from PySide6.QtWidgets import QHBoxLayout, QPushButton
 
 from resources.help_html import get_user_manual
 

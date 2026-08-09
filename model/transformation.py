@@ -1,10 +1,13 @@
-import config
-from model import util
-from model import qcd_matrix
-from model.particle import Particle
 import numpy as np
 
-from model.qcd_matrix import LightConeRapidityMatrix, LightConeRapidityMatrixConfigurationData
+import config
+from model import qcd_matrix, util
+from model.particle import Particle
+from model.qcd_matrix import (
+    LightConeRapidityMatrix,
+    LightConeRapidityMatrixConfigurationData,
+)
+from model.transformations import TransformationEquationSystem
 
 
 class Transformation:

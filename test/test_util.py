@@ -1,13 +1,17 @@
 import math
 import unittest
+
 import numpy as np
 import numpy.testing as npt
 
-from model.util import convert_minkowski_to_light_cone_coordinates, convert_light_cone_coordinates_to_minkowski_form
+from model.util import (
+    convert_light_cone_coordinates_to_minkowski_form,
+    convert_minkowski_to_light_cone_coordinates,
+)
+
 
 class TestMinkowskiLCC(unittest.TestCase):
 
-        
     def test_lcc_to_minkowski(self):
         lcc_vector = [math.sqrt(82), math.sqrt(20.5), 0, 0]
         mink_vector = convert_light_cone_coordinates_to_minkowski_form(lcc_vector)
@@ -25,7 +29,7 @@ class TestMinkowskiLCC(unittest.TestCase):
         direct_from_func = convert_minkowski_to_light_cone_coordinates(mink_vec)
         lcc_vec = [7.7781745930520225, 6.363961030678928, 1, 4]
         npt.assert_allclose(np.array(direct_from_func), np.array(lcc_vec))
-    
+
     def test_minkowski_to_lcc_np_array(self):
         mink_vec = np.array([10, 1, 4, 1])
         direct_from_func = convert_minkowski_to_light_cone_coordinates(mink_vec)

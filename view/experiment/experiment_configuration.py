@@ -166,17 +166,6 @@ class ExperimentConfigurationForm(QDialog):
         self.done(1)  # self.close() instead? See the plot2d form, same question
 
     def save(self):
-        # msg = QMessageBox()
-        # msg.setWindowTitle("Save Experiment")
-        # msg.setText(
-        #     "This will save the vectors and delete\n"
-        #     + "any current transformation of them that\n"
-        #     + "you may currently have. Proceed?"
-        # )
-        # msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-        # msg.setDefaultButton(QMessageBox.Ok)
-        # result = msg.exec()
-        # if result == QMessageBox.Ok:
         self.create_experiment()
         self.experiment_controller.save_current_experiment()
 

@@ -1,3 +1,5 @@
+from PySide6.QtCore import QThread, Signal, Slot
+from PySide6.QtGui import Qt
 from PySide6.QtWidgets import (
     QButtonGroup,
     QCheckBox,
@@ -10,11 +12,8 @@ from PySide6.QtWidgets import (
     QPushButton,
     QVBoxLayout,
 )
-from PySide6.QtGui import Qt
 
 import config
-from PySide6.QtCore import QThread, Signal, Slot
-
 from view.common.widgets import create_particle_names_combo_box
 
 

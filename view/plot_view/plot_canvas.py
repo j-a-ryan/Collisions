@@ -1,15 +1,17 @@
 from matplotlib.backend_bases import MouseButton
-from matplotlib.figure import Figure
 from matplotlib.backends.backend_qtagg import FigureCanvas
+from matplotlib.figure import Figure
 from PySide6.QtWidgets import QDialog, QLabel
-import os
+
 import config
 from model import util
 from view.experiment import widgets
-from view.transformations_view.widgets import BackgroundCalculations, ConfigureTransformationPopup, WaitingPopup
+from view.transformations_view.widgets import (
+    BackgroundCalculations,
+    ConfigureTransformationPopup,
+    WaitingPopup,
+)
 from view.util import experiment
-
-os.environ["QT_API"] = "PySide6"  # Doesn't seem to do anything. What is it?
 
 
 class PlotVectorCanvas(FigureCanvas):

@@ -3,6 +3,8 @@ from typing import Optional, Tuple
 import numpy as np
 from scipy.optimize import fsolve
 
+import config
+
 
 def calculate_m_2(vector):  # return minkowski_dot(vector, vector)
     return minkowski_dot(vector, vector)
@@ -82,5 +84,3 @@ class TransformationEquationSystem:
             exp_2yT = 10
 
         return exp_2yT, boost_default_set_message
-
-

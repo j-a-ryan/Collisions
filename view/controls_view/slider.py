@@ -1,11 +1,11 @@
-from abc import ABC, abstractmethod
 import math
+import threading
+import time
+from abc import ABC, abstractmethod
 
 from pyqt_advanced_slider import Slider
-import time
-import threading
-from PySide6.QtWidgets import QGridLayout, QLabel, QVBoxLayout, QFrame
 from PySide6.QtGui import QColor, Qt
+from PySide6.QtWidgets import QFrame, QGridLayout, QLabel, QVBoxLayout
 
 import config
 from controller.controls_controller import ControlsController

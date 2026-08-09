@@ -1,9 +1,13 @@
-
 import math
-from model.four_vector_matrix import FourVectorTransformationMatrix, MatrixConfigurationData
+
+from model.four_vector_matrix import (
+    FourVectorTransformationMatrix,
+    MatrixConfigurationData,
+)
 
 # Three matrices: 1. General (Jackson 11.98) 2. Four velocity transformation
 # 3. Four momentum transformation
+
 
 class GeneralTransformationMatrix(FourVectorTransformationMatrix):
     def __init__(self, matrix_configuration_data: MatrixConfigurationData):
@@ -18,7 +22,7 @@ class GeneralTransformationMatrix(FourVectorTransformationMatrix):
         self.beta_z = rest_frame_vector[3] / rest_frame_vector[0]
         self.beta_squared = math.pow(self.beta_x, 2) + math.pow(self.beta_y, 2) + math.pow(self.beta_z, 2)
         print("beta2 " + str(self.beta_squared))
-        self.beta = math.sqrt(self.beta_squared) # Not used
+        self.beta = math.sqrt(self.beta_squared)  # Not used
         print("beta " + str(self.beta))
         # Calculate gamma
         self.gamma = 1 / math.sqrt(1 - self.beta_squared)
@@ -40,7 +44,8 @@ class GeneralTransformationMatrix(FourVectorTransformationMatrix):
         self.m31 = 1 + (self.gamma - 1) * self.beta_x * self.beta_z / self.beta_squared
         self.m32 = 1 + (self.gamma - 1) * self.beta_y * self.beta_z / self.beta_squared
         self.m33 = 1 + (self.gamma - 1) * math.pow(self.beta_z, 2) / self.beta_squared
-    
+
+
 # Four velocity Lorentz transformation matrix
 class FourVelocityMatrix(FourVectorTransformationMatrix):
     def __init__(self):

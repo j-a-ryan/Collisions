@@ -1,8 +1,8 @@
 from typing import Optional, Tuple
 
-from sympy import solve, symbols, sqrt, Eq
 import numpy as np
 from scipy.optimize import fsolve, root_scalar
+from sympy import Eq, solve, sqrt, symbols
 
 import config
 from model.util import calculate_m_2, minkowski_dot
@@ -110,8 +110,7 @@ class SecondStepTransformationEquationSystem:
         try:
             qHT2_solns = fsolve(residual, initial_guess)
         except Exception as error:
-            boost_default_set_message = "Exception solving system of equations"
-            # print(error)
+            boost_default_set_message = f"Exception solving system of equations {error}"
 
         if qHT2_solns:
             qHT2_soln = qHT2_solns[0]

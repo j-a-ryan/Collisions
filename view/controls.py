@@ -1,11 +1,14 @@
-from PySide6.QtWidgets import QFrame, QLabel, QSizePolicy, QVBoxLayout
+from PySide6.QtGui import Qt
+from PySide6.QtWidgets import QFrame, QLabel, QVBoxLayout
 
 import config
 from controller.controls_controller import ControlsController
 from view.common.details import Heading
-from PySide6.QtGui import Qt
-
-from view.controls_view.slider import BoostParameterASlider, BoostParameterASliderUpdateHandler, SliderGroupFrame
+from view.controls_view.slider import (
+    BoostParameterASlider,
+    BoostParameterASliderUpdateHandler,
+    SliderGroupFrame,
+)
 
 
 class ControlsLayout(QFrame):

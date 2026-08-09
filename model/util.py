@@ -1,7 +1,9 @@
 # TODO: Make configurable to use any VT of the three possible
 # VT values. Currently VT = (Vx, Vy)
 import math
+
 import numpy as np
+
 import config
 
 V = "(V, Y)"

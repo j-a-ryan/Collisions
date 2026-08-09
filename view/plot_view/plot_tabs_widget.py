@@ -1,13 +1,22 @@
-from PySide6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QTabWidget, QSizePolicy, QLabel, QLineEdit, QSpacerItem
 from PySide6.QtGui import Qt
+from PySide6.QtWidgets import (
+    QHBoxLayout,
+    QLabel,
+    QSizePolicy,
+    QTabWidget,
+    QVBoxLayout,
+    QWidget,
+)
+
 from view.plot_view.plot_2D import PlotVectorCanvas2D
+
 
 class PlotTabsWidget(QTabWidget):
 
-    plot_2d_types = ['x-y', 'x-z', 'y-z']
+    plot_2d_types = ["x-y", "x-z", "y-z"]
 
     # plot_qframe(s) already plotted. plot_widget_3d could be one or a splitter of two. Vectors to plot the 2D plots
-    def __init__(self, parent, plot_widget_3d, experiment_vectors=None, transformed_vectors=None): 
+    def __init__(self, parent, plot_widget_3d, experiment_vectors=None, transformed_vectors=None):
         super().__init__(parent=parent)
         self.widget_plots_2d_exp = None
         self.widget_plots_2d_transf = None
@@ -45,7 +54,7 @@ class PlotTabsWidget(QTabWidget):
         self.plot_2d_widget_all_three = QHBoxLayout()
         for plot_2d_type in self.plot_2d_types:
             self.plot_widget_2d = QWidget()
-            canvas = PlotVectorCanvas2D(None, self, 3, 3)#self.experiment_controller, self, 3, 3)
+            canvas = PlotVectorCanvas2D(None, self, 3, 3)  # self.experiment_controller, self, 3, 3)
             if vectors is not None:
                 canvas.plot(vectors, self.plot_2d_types[0])
             plot_layout = QVBoxLayout()
@@ -76,6 +85,7 @@ class PlotTabsWidget(QTabWidget):
             self.removeTab(3)
             self.widget_plots_2d_transf.deleteLater()
             self.widget_plots_2d_transf = None
+
 
 class ProjectionPlotsTab(QWidget):
     def __init__(self, plot_qframe):

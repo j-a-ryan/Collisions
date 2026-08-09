@@ -1,3 +1,4 @@
+from PySide6.QtGui import QIcon, Qt
 from PySide6.QtWidgets import (
     QComboBox,
     QDialogButtonBox,
@@ -9,7 +10,6 @@ from PySide6.QtWidgets import (
     QTextEdit,
     QVBoxLayout,
 )
-from PySide6.QtGui import QIcon, Qt
 
 import config
 from controller.transformation_controller import TransformationController

@@ -1,4 +1,5 @@
 from typing import Optional, Tuple
+
 import numpy as np
 from scipy.optimize import least_squares, minimize
 
@@ -125,20 +126,3 @@ class TransformationEquationSystem:
             return 1.0
         ratio = num / den
         return max(0.01, ratio)  # avoid unphysical negative values
-
-
-# V_prime = np.array([5.0, 0.0, 1.0, 2.0])
-# Y_prime = np.array([5.0, 0.0, -1.0, -2.0])
-# q_prime = np.array([3.0, 1.0, 0.0, 0.0])
-# system_of_equations = TransformationEquationSystem(V_prime, Y_prime, q_prime)
-# exp_2yT, failure_message = system_of_equations.find_exp_2yT_numerical()
-# print(failure_message)
-# print(f"result {exp_2yT}")
-
-# V_prime = np.array([4.86664, -3.14190, 0, -5.27377])
-# Y_prime = np.array([8, 6, 6, 1])
-# q_prime = np.array([8, 3, 4, 5])
-# system_of_equations = TransformationEquationSystem(V_prime, Y_prime, q_prime)
-# exp_2yT, failure_message = system_of_equations.find_exp_2yT_numerical()
-# print(failure_message)
-# print(f"result {exp_2yT}")
