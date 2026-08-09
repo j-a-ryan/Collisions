@@ -1,11 +1,8 @@
-import config
-
-from PySide6.QtWidgets import QMainWindow, QMenu, QMenuBar, QVBoxLayout, QWidget
-from PySide6.QtGui import QAction
-from PySide6.QtCore import Qt, QEvent
-import sys
 import qdarktheme
+from PySide6.QtCore import QEvent, Qt
+from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget
 
+import config
 from app.custom_title_bar import CustomTitleBar
 from view.common.details import HorizontalDivider
 from view.controls_view.custom_menu_bar import MenuButtonPanel
@@ -17,22 +14,12 @@ class MainWindow(QMainWindow):
     def __init__(self, app):
         super().__init__()
         self.initial_pos = None
-        
-        # Moderately large size, otherwise maximize (at end of __init__())
-        # self.resize(1200, 700)
 
-# FCFFE5 FAFCD4 FCFFD9
-        # qdarktheme.setup_theme(custom_colors={
-        #     "[light]": {
-        #         "background": "#FAFCD4",
-        #     }
-        # })
         qdarktheme.setup_theme()
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.title_bar = CustomTitleBar(self, "Collisions-" + config.subtitle, 14, appstyle=app.style())
-        self.app = app # TODO: needed?
+        self.app = app  # TODO: needed?
 
-        
         centra_widget_layout = QVBoxLayout()
         centra_widget_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         centra_widget_layout.addWidget(self.title_bar)
@@ -42,7 +29,7 @@ class MainWindow(QMainWindow):
         self.menu_buttons = MenuButtonPanel(view, app, view.experiment_controller)
         centra_widget_layout.addLayout(self.menu_buttons)
         centra_widget_layout.addWidget(view)
-        
+
         central_widget = QWidget()
         # This container holds the window contents, so we can style it.
         central_widget.setObjectName("Container")
@@ -51,7 +38,7 @@ class MainWindow(QMainWindow):
 
         # This call to maximize at launch has to happen after set up, else crash.
         self.showMaximized()
-    
+
     def changeEvent(self, event):
         if event.type() == QEvent.Type.WindowStateChange:
             self.title_bar.window_state_changed(self.windowState())

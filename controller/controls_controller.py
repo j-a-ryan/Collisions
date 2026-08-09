@@ -1,6 +1,7 @@
 """
-Unfortunately but accurately named, serves the GUI's controls widgets,
-the widgets that manipulate the graphed vectors.
+Unfortunately but accurately named, ControlsController
+serves the GUI's controls widgets, the widgets that
+manipulate the graphed vectors.
 """
 
 

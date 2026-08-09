@@ -36,7 +36,7 @@ class TransformationController:
         Y_particle_name=None,
         experiment=None,
         particle_names=None,
-        third_vector=None,
+        third_vector=None,  # TODO: Decide whether this needs to go or will be used.
     ):
         return transformation.validate_vectors(
             vector_V, vector_Y, argument_type, V_particle_name, Y_particle_name, experiment, particle_names

@@ -120,12 +120,8 @@ class FourVectorTransformationMatrix(ABC):
     # which is the public method.
     def transform(self, four_vector):
         four_vector_for_matrix_to_operate_on = self.vector_pretreatment_function(four_vector)  # Pre-treatment
-        # print("pretreat: " + str(four_vector))
-        # print("...result: " + str(four_vector_for_matrix_to_operate_on))
         transformed_vector = self.matrix @ four_vector_for_matrix_to_operate_on  # Transformation
         transformed_vector_after_posttreatment = self.vector_posttreatment_function(transformed_vector)  # Post-treatment
-        # print("transformed " + str(transformed_vector))
-        # print("transformed posttreatment " + str(transformed_vector_after_posttreatment))
         return transformed_vector_after_posttreatment
 
 

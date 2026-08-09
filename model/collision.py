@@ -1,17 +1,20 @@
-import config
-
 import numpy as np
+
+import config
 from model.particle import Particle
 
-class Collision():
+
+class Collision:
 
     tolerance = config.zero_rounding_tolerance
 
-    def __init__(self, vectors, names): # Vector includes name element [t, x, y, z, name]
-        self.particles = {} # We keep the particles but...
+    def __init__(self, vectors, names):  # Vector includes name element [t, x, y, z, name]
+        self.particles = {}  # We keep the particles but...
         self.vectors = np.array(vectors)
         self.names = names
-        for i in range(len(vectors)): # TODO: We need a dictionary or similar to be promoted from here to Vectors itself, so that we don't depend on order of names corresponding to order of vectors.
+        for i in range(
+            len(vectors)
+        ):  # TODO: We need a dictionary or similar to be promoted from here to Vectors itself, so that we don't depend on order of names corresponding to order of vectors.
             self.create_particle(i, self.names[i], self.vectors[i])
 
     def create_particle(self, index, name, vector):
@@ -26,16 +29,16 @@ class Collision():
 
     def get_four_vectors(self):
         return self.vectors
-    
+
     def get_four_vector(self, name):
         return self.particles[name].four_vector
-    
-    def get_vectors_column(self, col_num, round_near_zeros_to_zero=True): # Matplotlib needs the xs, the ys and the zs separately
-        arr = np.array(self.vectors[:,col_num]) # copy array
+
+    def get_vectors_column(self, col_num, round_near_zeros_to_zero=True):  # Matplotlib needs the xs, the ys and the zs separately
+        arr = np.array(self.vectors[:, col_num])  # copy array
         if round_near_zeros_to_zero:
             arr[np.abs(arr) < self.tolerance] = 0
         return arr
-    
+
     def get_vectors_spatial_columns(self):
         xyz = {}
         xyz["x"] = self.get_vectors_column(1)
@@ -45,7 +48,7 @@ class Collision():
 
     def get_vectors_name_column(self):
         return self.names
-    
+
     def get_spatial_vectors_xyz(self, round_near_zeros_to_zero=True):
         """
         Copy the x, y, z values into fresh array. Presumed to be for
@@ -54,18 +57,15 @@ class Collision():
         """
         np_arr = self.vectors
         spatial_vectors_to_return = spatial_vectors = np_arr[:, 1:].tolist()
+
         if round_near_zeros_to_zero:
-            tolerance = 1e-5 # Could be made a parameter of the method
-            
+            tolerance = 1e-5  # Could be made a parameter of the method
             np_arr = np.array(spatial_vectors)
             np_arr[np.abs(np_arr) < tolerance] = 0
             spatial_vectors_to_return = np_arr
-            # This needs debugging, or just keep using the np way:
-            # for i in range(len(spatial_vectors)):
-            # rounded_spatial_vectors = [0 if abs(x) < tolerance else x for x in spatial_vectors]
-            # spatial_vectors_to_return = rounded_spatial_vectors
+
         return spatial_vectors_to_return
-    
+
     def get_particles(self):
         return self.particles
 
