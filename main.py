@@ -3,7 +3,8 @@
 # from app.application import MainWindow
 ##############################################
 import sys
-from crash_handler import redirect_streams, install_excepthook, log_environment
+
+from crash_handler import install_excepthook, log_environment, redirect_streams
 
 
 # Comment out this function when application is deemed stable enough.
@@ -15,8 +16,8 @@ def bootstrap():
     # Importing here, rather than at top of file, out an abundance of caution
     # and as stylistic reminder that application is instantiated only after logging
     # is set up.
-    from app.crash_application import ExceptionCatchingApplication
     from app.application import MainWindow
+    from app.crash_application import ExceptionCatchingApplication
 
     app = ExceptionCatchingApplication(sys.argv)
     window = MainWindow(app)
