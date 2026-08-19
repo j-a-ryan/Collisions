@@ -4,6 +4,9 @@ pyqt_advanced_slider==1.1.1
 pyside6==6.11.0
 pyside6_addons==6.11.0
 pyside6_essentials==6.11.0
-pyqtdarktheme==2.1.0
+# On Python 3.14, PyPI metadata caps this package at <3.14 even though it installs and
+# runs fine (pure-Python wheel). If installing on 3.14, use:
+#   pip install --ignore-requires-python -r requirements.txt
+pyqtdarktheme2==2.1.2
 sympy==1.14.0
-scipy==1.16.0
+scipy==1.18.0
