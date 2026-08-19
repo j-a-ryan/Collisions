@@ -33,7 +33,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5.4.0
         with:
-          python-version: '3.11'   # ← change to your Python version pyqtdarktheme needs <3.12
+          python-version: '3.13'   # pyqtdarktheme2 requires >=3.12,<3.14
 
       - name: Install dependencies
         run: |
