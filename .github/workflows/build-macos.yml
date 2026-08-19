@@ -33,12 +33,14 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5.4.0
         with:
-          python-version: '3.13'   # pyqtdarktheme2 requires >=3.12,<3.14
+          python-version: '3.14'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          # pyqtdarktheme2's metadata declares Requires-Python <3.14, though it installs
+          # and runs fine on 3.14 (pure-Python wheel) — see requirements.txt comment.
+          if [ -f requirements.txt ]; then pip install --ignore-requires-python -r requirements.txt; fi
           pip install pyinstaller
 
       - name: Build with PyInstaller
