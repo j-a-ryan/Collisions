@@ -1,0 +1,16 @@
+Currently we have venv for Python 3.13 and venv314 for 3.14.
+
+Run in VS Code with venv
+Open .venv in terminal by clicking on Python icon in left vertical toolbar, Environment Managers,
+then Powershell icon for the .venv of your choice.
+Make sure your .vscode\settings.json says:
+{
+    "python.defaultInterpreterPath": "${workspaceFolder}\\.venv314\\Scripts\\python.exe",
+    "python.terminal.activateEnvironment": true,
+    "python-envs.terminal.autoActivationType": "command"
+}
+Save it.
+
+Ctrl+Shift+P → Developer: Reload Window
+
+You don't necessarily need to completely restart VS Code; Reload Window is enough.
