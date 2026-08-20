@@ -48,9 +48,8 @@ class VectorValidation:
         if not valid:
             all_valid = False  # all_valid might already be false here but we needed to update combobox's colors.
 
-        if all_valid:
-            if backing_grid_update_prudent:
-                self.vectors_grid.update_backing_grid()
+        if all_valid and backing_grid_update_prudent:
+            self.vectors_grid.update_backing_grid()
         self.vectors_grid.set_widgets_enabled_states(all_valid)
 
     def check_name_combo_boxes(self):

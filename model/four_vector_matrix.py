@@ -21,9 +21,13 @@ class MatrixConfigurationData:
     """
 
     def __init__(self):
-        self.rest_frame_vector: np.ndarray | list | None = None  # TODO: Nomenclature issue. This name works in at most the basic 2-vector system case
+        self.rest_frame_vector: np.ndarray | list | None = (
+            None  # TODO: Nomenclature issue. This name works in at most the basic 2-vector system case
+        )
         self.velocity_of_rest_frame: np.ndarray | list | None = None
-        self.vector_to_be_transformed: np.ndarray | list | None = None  # TODO: Nomenclature issue. This name works in at most the basic 2-vector system case
+        self.vector_to_be_transformed: np.ndarray | list | None = (
+            None  # TODO: Nomenclature issue. This name works in at most the basic 2-vector system case
+        )
         self.vector_pretreatment_function = lambda vector: vector
         self.vector_posttreatment_function = lambda vector: vector
 
@@ -37,7 +41,6 @@ class MatrixConfigurationData:
         TODO: There may be some calculations that can occur here, such that
         the @abstractmethod flag may be removed.
         """
-        pass
 
 
 class FourVectorTransformationMatrix(ABC):

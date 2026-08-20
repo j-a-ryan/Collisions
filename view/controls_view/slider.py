@@ -131,7 +131,7 @@ class BoostParameterASlider(CollisionsSlider):
         super().__init__(initial_value, range_min, range_max, parent)
 
     def _set_min_max_initial(self, range_min, range_max, initial_value):
-        range_max = range_max if initial_value <= range_max else initial_value
+        range_max = max(range_max, initial_value)
         self.setRange(range_min, range_max)
         self.setValue(initial_value)
 
@@ -180,7 +180,7 @@ class SliderGroupFrame(QFrame):
 
     dict_txyz_0123 = config.lookup_gui_txyz_0123
     dict_0123_txyz = config.lookup_gui_0123_txyz
-    component = [config.gui_t, config.gui_x, config.gui_y, config.gui_z]
+    component = (config.gui_t, config.gui_x, config.gui_y, config.gui_z)
 
     def __init__(self, controller, vector_name, initial_vector):  # TODO: default value for testing. Delete
         super().__init__()
@@ -229,7 +229,7 @@ class TimeM2SlidersCoordinator:
 
     def __init__(self):  # Construct the object using vector initial values.
 
-        self.sliders = dict()
+        self.sliders = {}
         self._user_sliding_now = False  # Like a thread lock, but there is only one thread.
 
     def add_slider(self, slider_name, slider):

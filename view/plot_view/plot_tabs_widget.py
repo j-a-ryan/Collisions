@@ -13,7 +13,7 @@ from view.plot_view.plot_2D import PlotVectorCanvas2D
 
 class PlotTabsWidget(QTabWidget):
 
-    plot_2d_types = ["x-y", "x-z", "y-z"]
+    plot_2d_types = ("x-y", "x-z", "y-z")
 
     # plot_qframe(s) already plotted. plot_widget_3d could be one or a splitter of two. Vectors to plot the 2D plots
     def __init__(self, parent, plot_widget_3d, experiment_vectors=None, transformed_vectors=None):
