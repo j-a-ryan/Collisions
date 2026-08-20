@@ -170,4 +170,7 @@ class ExperimentConfigurationForm(QDialog):
         self.experiment_controller.save_current_experiment()
 
     def cancel(self):
-        self.done(0)  # TODO: self.close() instead? See the plot2d form, same question
+        if self.experiment_controller.experiment_exists():
+            self.done(1)
+        else:
+            self.done(0)  # TODO: self.close() instead? See the plot2d form, same question

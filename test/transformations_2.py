@@ -1,5 +1,3 @@
-from typing import Optional, Tuple
-
 import numpy as np
 from scipy.optimize import least_squares, minimize
 
@@ -60,7 +58,7 @@ class TransformationEquationSystem:
             penalty = 1e8
         return np.sum(res**2) + penalty
 
-    def find_exp_2yT_numerical(self, initial_guess: Optional[np.ndarray] = None) -> Tuple[float, Optional[str]]:
+    def find_exp_2yT_numerical(self, initial_guess: np.ndarray | None) -> tuple[float, str | None]:
         """
         Robust solver for exp(2yT).
         Returns (exp_2yT, message)

@@ -43,7 +43,7 @@ class PlotVectorCanvas(FigureCanvas):
 class ApplicationLayout(QWidget):
 
     def __init__(self, parent=None):
-        super(ApplicationLayout, self).__init__(parent)
+        super().__init__(parent)
 
         # Set properties of the window
         # self.resize(600, 490)

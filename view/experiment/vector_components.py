@@ -6,7 +6,7 @@ import config
 
 class VectorMemberField(QLineEdit):
     def __init__(self, form_validation, min_val, max_val, already_validated=False, *args, **kwargs):
-        super(VectorMemberField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.setFixedHeight(16)  # default was too tall
         current_font = self.font()
         current_font.setPointSize(11)  # Sets the font size to 16 points

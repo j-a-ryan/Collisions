@@ -23,7 +23,7 @@ from test.util import check_vectors_equal
 
 class TestIdentityMatrix(unittest.TestCase):
     def test_basic_case(self):
-        matrix = IdentityMatrix(None)
+        matrix = IdentityMatrix()
         vector = [7, 3, 6, 11]
         transformed_vector = matrix.transform(vector)
         self.assertTrue(check_vectors_equal(vector, transformed_vector))

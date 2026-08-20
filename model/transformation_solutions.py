@@ -1,5 +1,3 @@
-from typing import Optional
-
 import numpy as np
 from scipy.optimize import fsolve, root_scalar
 from sympy import Eq, solve, sqrt, symbols
@@ -308,7 +306,7 @@ class SecondStepTransformationEquationSystem:
 
         return np.array([r1, r2, r3])
 
-    def find_exp_2yT_numerical_3(self, initial_guess: Optional[np.ndarray] = None) -> tuple[float, Optional[str]]:
+    def find_exp_2yT_numerical_3(self, initial_guess: np.ndarray | None) -> tuple[float, str | None]:
         """
         Numerically solve for exp(2yT).
         Returns (exp_2yT, warning_message)
@@ -317,7 +315,7 @@ class SecondStepTransformationEquationSystem:
             initial_guess = np.array([1.0, 1.0, 0.0])  # reasonable starting point
 
         # Solve the system
-        sol, info, ier, msg = fsolve(
+        sol, _info, ier, msg = fsolve(
             self._residuals, initial_guess, args=(initial_guess[2],), full_output=True, xtol=1e-10  # not really used but kept for signature
         )
 

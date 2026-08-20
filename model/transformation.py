@@ -21,7 +21,7 @@ class Transformation:
 
 def solve_for_second_step_transformation_exp_2yT(vector_V, vector_Y, third_vector):
     equation_system = TransformationEquationSystem(vector_V, vector_Y, third_vector)
-    return equation_system.find_exp_2yT_numerical_3()
+    return equation_system.find_exp_2yT_numerical_3(None)
 
 
 def set_up_config_data(

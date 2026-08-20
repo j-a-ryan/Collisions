@@ -50,6 +50,9 @@ class ExperimentController:
     def create_experiment(self, experiment_vectors, names, experiment_metadata=None):
         return Experiment(experiment_vectors, names, experiment_metadata)
 
+    def experiment_exists(self):
+        return self.experiment is not None
+
     def plot_current_experiment(self, extra_circles=None, initial_plot=False):
         assert self.experiment is not None
         self.view.plot_experiment_vectors(self.experiment.get_collision(), extra_circles)

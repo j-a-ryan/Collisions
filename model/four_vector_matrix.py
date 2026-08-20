@@ -129,7 +129,7 @@ class FourVectorTransformationMatrix(ABC):
 
 
 class IdentityMatrix(FourVectorTransformationMatrix):
-    def __init__(self, matrix_configuration_data: MatrixConfigurationData):
+    def __init__(self):
         super().__init__(matrix_configuration_data=MatrixConfigurationData())  # Pass in dummy/skeletal config data.
 
     def _set_member_values(self, matrix_configuration_data: MatrixConfigurationData):
