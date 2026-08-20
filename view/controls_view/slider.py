@@ -16,14 +16,13 @@ class SliderUpdateHandler(ABC):
     def __init__(self, initial_value, use_threading=False):
         super().__init__()
         self.post_mediator = None
-        self.update_problem = False
         self.latest_value = initial_value
         self.use_threading = use_threading
         if use_threading:
             self.lock = threading.Lock()
 
     @abstractmethod
-    def post_value(self, value):
+    def post_value(self, value) -> bool:
         pass
 
     def handle_slide_event(self, value):
@@ -51,7 +50,8 @@ class BoostParameterASliderUpdateHandler(SliderUpdateHandler):
         self.controller = controller
 
     def post_value(self, value):
-        self.controller.update_boost_parameter_A(value)
+        success, _ = self.controller.update_boost_parameter_A(value)
+        return success
 
 
 class SliderCoordinationUpdateHandler(SliderUpdateHandler):  # m2 slider uses this one
@@ -84,13 +84,7 @@ class FourVectorSliderUpdateHandler(SliderCoordinationUpdateHandler):  # t, x, y
 
     def post_value(self, value):
         self.update_coordinator(value)
-        # if not self.update_problem: # TODO: Probably does nothing if there is only one thread. Does slider have its own thread under the hood? Work on this. Does this var do anything to shut down updates? If not fix or delete.
-        success, transformation_type = self.controller.change_vector_member_value(self.vector_name, self.axis_num, value)
-        # if not success:
-        #     self.update_problem = True
-        #     msg = widgets.get_slider_transformation_issue_popup(transformation_type, self.axis_num, value)
-        #     msg.exec()
-        # self.update_problem = False
+        success, _ = self.controller.change_vector_member_value(self.vector_name, self.axis_num, value)
         return success
 
 
@@ -113,7 +107,6 @@ class CollisionsSlider(Slider):
         self.setBackgroundColor(QColor(config.slider_background_color))  # Default: #D6D6D6
         self.setAccentColor(QColor(config.slider_accent_color))  # Default: #0078D7
         self.setBorderRadius(3)
-        self.update_problem = False
         self.valueChanged.connect(self.slider_value_changed)
 
     def _set_min_max_initial(self, range_min, range_max, initial_value):
@@ -124,9 +117,8 @@ class CollisionsSlider(Slider):
         self.handler = handler
 
     def slider_value_changed(self, value):
-        if not self.update_problem:
-            if self.handler is not None:
-                self.handler.handle_slide_event(value)
+        if self.handler is not None:
+            self.handler.handle_slide_event(value)
 
 
 class VectorSlider(CollisionsSlider):
@@ -189,7 +181,7 @@ class SliderGroupFrame(QFrame):
     def __init__(self, controller, vector_name, initial_vector):  # TODO: default value for testing. Delete
         super().__init__()
         self.controller = controller
-        self.setFrameShape(QFrame.StyledPanel)
+        self.setFrameShape(QFrame.Shape.StyledPanel)
         self.setFixedWidth(200)
         self.setContentsMargins(0, 0, 10, 0)
         self.inner_layout = QVBoxLayout(self)
@@ -202,19 +194,19 @@ class SliderGroupFrame(QFrame):
 
         # Add the m2 slider
         slider_label = QLabel(config.gui_m2)
-        self.sliders_grid.addWidget(slider_label, 0, 0, alignment=(Qt.AlignLeft | Qt.AlignTop))
+        self.sliders_grid.addWidget(slider_label, 0, 0, alignment=(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop))
         # This also adds the slider to the coordinator's collection
         slider_m2 = sliders_coordination.create_m2_slider(initial_vector, sliders_coordination)
-        self.sliders_grid.addWidget(slider_m2, 0, 1, alignment=(Qt.AlignLeft | Qt.AlignTop))
+        self.sliders_grid.addWidget(slider_m2, 0, 1, alignment=(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop))
         line = QFrame(frameShape=QFrame.Shape.HLine, frameShadow=QFrame.Shadow.Sunken, lineWidth=90)
-        self.sliders_grid.addWidget(line, 1, 1, Qt.AlignCenter)
+        self.sliders_grid.addWidget(line, 1, 1, Qt.AlignmentFlag.AlignCenter)
 
         for i in range(len(SliderGroupFrame.component)):  # Add the vectors, starting on the third row of the grid (index 2)
             axis_name = SliderGroupFrame.component[i]  # Axis is simply the vector name string, e.g. "y"
             initial_value = initial_vector[i]
             axis_label = QLabel(axis_name)
             rownum = i + 2
-            self.sliders_grid.addWidget(axis_label, rownum, 0, alignment=(Qt.AlignLeft | Qt.AlignTop))
+            self.sliders_grid.addWidget(axis_label, rownum, 0, alignment=(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop))
             axis_num = SliderGroupFrame.dict_txyz_0123[axis_name]
             handler = FourVectorSliderUpdateHandler(axis_name, initial_value, sliders_coordination)
             handler.prepare_to_use_controller(controller, vector_name, axis_num)
@@ -223,7 +215,7 @@ class SliderGroupFrame(QFrame):
             slider = VectorSlider(initial_value, min_val, max_val)
             slider.set_handler(handler)
             sliders_coordination.add_slider(axis_name, slider)
-            self.sliders_grid.addWidget(slider, rownum, 1, alignment=(Qt.AlignLeft | Qt.AlignTop))
+            self.sliders_grid.addWidget(slider, rownum, 1, alignment=(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop))
             # sliders_coordination.add_slider(axis_label, slider)
 
         self.inner_layout.addLayout(self.sliders_grid)

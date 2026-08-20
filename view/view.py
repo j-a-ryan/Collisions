@@ -17,7 +17,7 @@ from view.controls import ControlsLayout
 from view.experiment.experiment_configuration import ExperimentConfigurationForm
 from view.plot import PlotQFrame
 from view.plot_view.plot_tabs_widget import PlotTabsWidget
-from view.util import experiment, transformed
+from view.util import PlotStatus
 
 """
 
@@ -65,19 +65,19 @@ class View(QWidget):
         self.plot_qframe_transformed = None
         self.splitter = None
         self.plot_tabs = None
-        self.layout = QHBoxLayout()
-        self.layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.main_layout = QHBoxLayout()
+        self.main_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
 
         self.control_panel = QVBoxLayout()
         self.control_panel.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.set_up_control_panel()
 
-        self.layout.addLayout(self.control_panel)
+        self.main_layout.addLayout(self.control_panel)
         self.plot_qframe = PlotQFrame(self, self.experiment_controller)
         self.set_plot_tab_widget(self.plot_qframe)
 
-        self.setLayout(self.layout)
+        self.setLayout(self.main_layout)
 
     def show_experiment_configuration_form(self, create_new, vector_data=None):
         if self.experiment_configuration_form is not None:
@@ -101,9 +101,9 @@ class View(QWidget):
 
         if self.plot_qframe is not None:  # TODO: This seems to be false always
             frame_to_delete = self.plot_qframe
-            self.layout.removeWidget(self.plot_qframe)
+            self.main_layout.removeWidget(self.plot_qframe)
             frame_to_delete.deleteLater()
-        self.plot_qframe = PlotQFrame(self, self.experiment_controller, plot_status=experiment)
+        self.plot_qframe = PlotQFrame(self, self.experiment_controller, plot_status=PlotStatus.EXPERIMENT)
         self.plot_qframe.plot(collision, extra_circles)
         self.set_plot_tab_widget(self.plot_qframe, experiment_vectors=collision)
 
@@ -113,12 +113,12 @@ class View(QWidget):
 
         if self.plot_qframe is not None:
             frame_to_delete = self.plot_qframe
-            self.layout.removeWidget(self.plot_qframe)
+            self.main_layout.removeWidget(self.plot_qframe)
             frame_to_delete.deleteLater()
 
-        self.plot_qframe = PlotQFrame(self, self.experiment_controller, plot_status=experiment)
+        self.plot_qframe = PlotQFrame(self, self.experiment_controller, plot_status=PlotStatus.EXPERIMENT)
         self.plot_qframe.plot(experiment_vectors, extra_circles)
-        self.plot_qframe_transformed = PlotQFrame(self, self.experiment_controller, plot_status=transformed)
+        self.plot_qframe_transformed = PlotQFrame(self, self.experiment_controller, plot_status=PlotStatus.TRANSFORMED)
         self.plot_qframe_transformed.plot(vectors_transformed, extra_circles)
 
         self.add_transformation_splitter(experiment_vectors=experiment_vectors, transformed_vectors=vectors_transformed)
@@ -190,7 +190,7 @@ class View(QWidget):
         self.scroll_area = QScrollArea()
         self.scroll_area.setFixedWidth(230)
         self.scroll_area.setWidgetResizable(True)  # Allows frame/content to resize
-        self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.scroll_area.setWidget(self.controls_layout)
         self.control_panel.addWidget(self.scroll_area)
 
@@ -217,40 +217,40 @@ class View(QWidget):
 
         if self.plot_qframe_transformed is not None:
             frame_to_delete_transformed = self.plot_qframe_transformed
-            self.layout.removeWidget(frame_to_delete_transformed)
+            self.main_layout.removeWidget(frame_to_delete_transformed)
             frame_to_delete_transformed.deleteLater()
             self.plot_qframe_transformed = None
 
         frame_to_delete = self.plot_qframe  # Just being sure no mistaken identity. Probably being superstitious.
-        self.layout.removeWidget(frame_to_delete)
+        self.main_layout.removeWidget(frame_to_delete)
         frame_to_delete.deleteLater()
         self.plot_qframe = None
 
         if self.plot_tabs is not None:
             self.plot_tabs.remove()
-            self.layout.removeWidget(self.plot_tabs)
+            self.main_layout.removeWidget(self.plot_tabs)
             plot_tabs_to_delete = self.plot_tabs
             plot_tabs_to_delete.deleteLater()
             self.plot_tabs = None
 
         if self.splitter is not None:
             splitter_to_delete = self.splitter
-            self.layout.removeWidget(splitter_to_delete)
+            self.main_layout.removeWidget(splitter_to_delete)
             splitter_to_delete.deleteLater()
             self.splitter = None
 
         if set_up_blank_afterwards:
             # Put the blank plot in
             self.plot_qframe = PlotQFrame(self, self.experiment_controller)
-            # self.layout.addWidget(self.plot_qframe)
+            # self.main_layout.addWidget(self.plot_qframe)
             self.set_plot_tab_widget(self.plot_qframe)
 
     def add_transformation_splitter(self, experiment_vectors=None, transformed_vectors=None):
 
-        self.splitter = QSplitter(Qt.Horizontal)
+        self.splitter = QSplitter(Qt.Orientation.Horizontal)
         self.splitter.addWidget(self.plot_qframe)
         self.splitter.addWidget(self.plot_qframe_transformed)
-        # self.layout.addWidget(self.splitter)
+        # self.main_layout.addWidget(self.splitter)
         self.set_plot_tab_widget(self.splitter, experiment_vectors=experiment_vectors, transformed_vectors=transformed_vectors)
 
     def set_plot_tab_widget(
@@ -259,7 +259,7 @@ class View(QWidget):
         self.plot_tabs = PlotTabsWidget(
             self, plot_qframe_to_be_set_in_tab, experiment_vectors=experiment_vectors, transformed_vectors=transformed_vectors
         )
-        self.layout.addWidget(self.plot_tabs)
+        self.main_layout.addWidget(self.plot_tabs)
 
     def set_up_controls(self, vector_names, vector_set_xyz):
         self.controls_layout.clear_controls()

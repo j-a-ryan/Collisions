@@ -16,7 +16,7 @@ class MainWindow(QMainWindow):
         self.initial_pos = None
 
         qdarktheme.setup_theme()
-        self.setWindowFlags(Qt.FramelessWindowHint)
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         self.title_bar = CustomTitleBar(self, "Collisions-" + config.subtitle, 14, appstyle=app.style())
         self.app = app  # TODO: needed?
 

@@ -64,7 +64,7 @@ class VectorIssueCheck(AbstractTransformationPopup):
         self.transformation_controller = TransformationController(experiment_controller)
 
         layout = QVBoxLayout()
-        layout.setAlignment(Qt.AlignTop)
+        layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
         vectors_label = QLabel("Select V and Y")
         vectors_label_font = QLabel().font()
@@ -75,9 +75,9 @@ class VectorIssueCheck(AbstractTransformationPopup):
 
         combobox_grid_layout = QGridLayout()
         V_label = QLabel("V")
-        combobox_grid_layout.addWidget(V_label, 0, 0, alignment=(Qt.AlignCenter | Qt.AlignTop))
+        combobox_grid_layout.addWidget(V_label, 0, 0, alignment=(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignTop))
         Y_label = QLabel("Y")
-        combobox_grid_layout.addWidget(Y_label, 0, 1, alignment=(Qt.AlignCenter | Qt.AlignTop))
+        combobox_grid_layout.addWidget(Y_label, 0, 1, alignment=(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignTop))
         self.V_combo_box = self._set_up_combo_box()
         self.Y_combo_box = self._set_up_combo_box()
         self.default_combobox_stylesheet = self.Y_combo_box.styleSheet()
@@ -99,7 +99,7 @@ class VectorIssueCheck(AbstractTransformationPopup):
 
         layout.addWidget(self.results_text_area)
 
-        self.submit_cancel_button_box = QDialogButtonBox(QDialogButtonBox.Close)
+        self.submit_cancel_button_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Close)
         self.submit_cancel_button_box.rejected.connect(self.reject)
         layout.addWidget(self.submit_cancel_button_box, alignment=Qt.AlignmentFlag.AlignRight)
         self.setLayout(layout)
@@ -152,13 +152,13 @@ class VectorIssueCheck(AbstractTransformationPopup):
         )
 
         if results:
-            self.results_text_area.setAlignment(Qt.AlignLeft)
+            self.results_text_area.setAlignment(Qt.AlignmentFlag.AlignLeft)
             self.results_text_area.append("Problems found for " + transformation_type + ":")
             for line in results:
                 self.results_text_area.append("\u2022 " + line)
         else:
             self.results_text_area.append("No issues found.")
-            self.results_text_area.setAlignment(Qt.AlignCenter)
+            self.results_text_area.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
     def combo_box_changed(self):
         self.results_text_area.clear()

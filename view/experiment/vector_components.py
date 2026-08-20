@@ -17,7 +17,9 @@ class VectorMemberField(QLineEdit):
         self.default_style_string = None
         self.currently_valid = already_validated
         self.form_validation = form_validation
-        self.validator = QDoubleValidator(min_val, max_val, config.xyz_decimal_precision, notation=QDoubleValidator.StandardNotation)
+        self.validator = QDoubleValidator(
+            min_val, max_val, config.xyz_decimal_precision, notation=QDoubleValidator.Notation.StandardNotation
+        )
         self.setValidator(self.validator)
 
         self.textEdited.connect(self.new_text)  # Perhaps textEdited might be enough here.

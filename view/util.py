@@ -1,3 +1,7 @@
-blank = "BLANK"  # TODO: make this an enum and refactor
-experiment = "EXPERIMENT"
-transformed = "TRANSFORMED"
+from enum import StrEnum
+
+
+class PlotStatus(StrEnum):
+    BLANK = "BLANK"
+    EXPERIMENT = "EXPERIMENT"
+    TRANSFORMED = "TRANSFORMED"

@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Optional
 
 import numpy as np
 from scipy.optimize import fsolve
@@ -54,7 +54,7 @@ class TransformationEquationSystem:
 
         return np.array([r1, r2, r3])
 
-    def find_exp_2yT_numerical_3(self, initial_guess: Optional[np.ndarray] = None) -> Tuple[float, Optional[str]]:
+    def find_exp_2yT_numerical_3(self, initial_guess: Optional[np.ndarray] = None) -> tuple[float, Optional[str]]:
         """
         Numerically solve for exp(2yT).
         Returns (exp_2yT, warning_message)

@@ -1,8 +1,9 @@
-import sys
 import logging
 import platform
+import sys
 from datetime import datetime
 from pathlib import Path
+
 from PySide6 import __version__ as pyside_version
 
 LOG_DIR = Path.home() / ".collisions" / "logs"

@@ -12,13 +12,13 @@ class Particle:
         self._name = name
         self._four_vector = vector
 
-    @property
-    def id(self):
-        return self._id
+    # @property
+    # def id(self):
+    #     return self._id
 
-    @property
-    def type(self):
-        return self._type
+    # @property
+    # def type(self):
+    #     return self._type
 
     @property
     def four_vector(self):

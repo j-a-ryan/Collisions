@@ -149,7 +149,7 @@ class ConfigureTransformationPopup(AbstractTransformationPopup):
         self.transformation_config["third vector"] = None
 
         layout = QVBoxLayout()
-        layout.setAlignment(Qt.AlignTop)
+        layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
         vectors_label = QLabel("Vectors")
         vectors_label_font = QLabel().font()
@@ -160,7 +160,7 @@ class ConfigureTransformationPopup(AbstractTransformationPopup):
         self.pairing_text_base_case = "V=" + self.original_first_particle + "  Y=" + self.original_second_particle
         self.pairing_text_switched = "V=" + self.original_second_particle + "  Y=" + self.original_first_particle
         self.vector_pair_label = QLabel(self.pairing_text_base_case)
-        self.vector_pair_label.setFrameStyle(QFrame.Panel | QFrame.Sunken)
+        self.vector_pair_label.setFrameStyle(QFrame.Shape.Panel | QFrame.Shadow.Sunken)
         self.vector_pair_label.setLineWidth(1)
         label_top_center_font = QLabel().font()
         label_top_center_font.setPointSize(16)
@@ -182,14 +182,14 @@ class ConfigureTransformationPopup(AbstractTransformationPopup):
 
         # layout.addLayout(self.arg_type_checkboxes)
 
-        self.submit_cancel_button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.submit_cancel_button_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
         self.submit_cancel_button_box.accepted.connect(self.accept)
         self.submit_cancel_button_box.rejected.connect(self.reject)
         layout.addWidget(self.submit_cancel_button_box, alignment=Qt.AlignmentFlag.AlignRight)
         self.setLayout(layout)
 
     def update_submit_buttons_state(self, enabled):
-        self.submit_cancel_button_box.button(QDialogButtonBox.Ok).setEnabled(enabled)
+        self.submit_cancel_button_box.button(QDialogButtonBox.StandardButton.Ok).setEnabled(enabled)
 
     def get_combobox_names(self, candidate_particle_names):
         combobox_names = candidate_particle_names.copy()
@@ -259,7 +259,7 @@ class WaitingPopup(QDialog):
         self.setWindowTitle(title)
         self.setFixedSize(400, 150)
         layout = QVBoxLayout()
-        layout.setAlignment(Qt.AlignTop)
+        layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         label = QLabel(text)
         larger_font = QLabel().font()
         larger_font.setPointSize(12)

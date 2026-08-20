@@ -1,14 +1,14 @@
-from PySide6.QtWidgets import (
-    QGridLayout,
-    QMessageBox,
-    QVBoxLayout,
-    QHBoxLayout,
-    QFrame,
-    QPushButton,
-    QDialog,
-    QLabel,
-)
 from PySide6.QtGui import Qt
+from PySide6.QtWidgets import (
+    QDialog,
+    QFrame,
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QVBoxLayout,
+)
+
 import config
 from view.experiment.vectors import VectorsGrid
 from view.experiment.widgets import VectorIssueCheck
@@ -23,7 +23,7 @@ class ExperimentConfigurationForm(QDialog):
         self.view = parent
         self.experiment_controller = parent.experiment_controller
         self.vectors_grid_frame = QFrame()
-        self.vectors_grid_frame.setFrameShape(QFrame.StyledPanel)
+        self.vectors_grid_frame.setFrameShape(QFrame.Shape.StyledPanel)
         self.vectors_qvbox_layout = QVBoxLayout(self.vectors_grid_frame)
         self.vectors_qvbox_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 

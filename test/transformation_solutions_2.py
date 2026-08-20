@@ -1,7 +1,7 @@
-from typing import Optional, Tuple
+from typing import Optional
+
 import numpy as np
 from scipy.optimize import least_squares, minimize
-
 from util import calculate_m_2, minkowski_dot
 
 """
@@ -68,7 +68,7 @@ class TransformationEquationSystem:
             penalty = 1e8
         return np.sum(res**2) + penalty
 
-    def find_exp_2yT_numerical(self, initial_guess: Optional[np.ndarray] = None) -> Tuple[float, Optional[str]]:
+    def find_exp_2yT_numerical(self, initial_guess: Optional[np.ndarray] = None) -> tuple[float, Optional[str]]:
         """
         Robust solver for exp(2yT).
         Returns (exp_2yT, message)

@@ -55,11 +55,11 @@ class VectorsGrid:
         # Set up the grid layout and the Vectors backing object for it.
         # Load these header lables into grid layout, leaving the first column blank. It is
         # the vector index column and we don't need or want a header for it.
-        grid_layout.addWidget(t_label, 0, 1, alignment=(Qt.AlignCenter | Qt.AlignTop))
-        grid_layout.addWidget(x_label, 0, 2, alignment=(Qt.AlignCenter | Qt.AlignTop))
-        grid_layout.addWidget(y_label, 0, 3, alignment=(Qt.AlignCenter | Qt.AlignTop))
-        grid_layout.addWidget(z_label, 0, 4, alignment=(Qt.AlignCenter | Qt.AlignTop))
-        grid_layout.addWidget(pt_label, 0, 5, alignment=(Qt.AlignCenter | Qt.AlignTop))
+        grid_layout.addWidget(t_label, 0, 1, alignment=(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignTop))
+        grid_layout.addWidget(x_label, 0, 2, alignment=(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignTop))
+        grid_layout.addWidget(y_label, 0, 3, alignment=(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignTop))
+        grid_layout.addWidget(z_label, 0, 4, alignment=(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignTop))
+        grid_layout.addWidget(pt_label, 0, 5, alignment=(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignTop))
 
     """
     After user enters data and grid entries are all deemed valid, this method updates the backing
@@ -89,7 +89,7 @@ class VectorsGrid:
         x_field.setText(field_values[1])
         y_field.setText(field_values[2])
         z_field.setText(field_values[3])
-        index = particle_combo_box.findText(field_values[4], Qt.MatchFixedString)
+        index = particle_combo_box.findText(field_values[4], Qt.MatchFlag.MatchFixedString)
         # If the text is found (index is not -1), set the current index
         if index >= 0:  # Should not be necessary
             particle_combo_box.setCurrentIndex(index)
@@ -121,11 +121,11 @@ class VectorsGrid:
 
         if set_field_values:
             self.set_field_values(time_field, x_field, y_field, z_field, particle_combo_box, field_values)
-        self.grid_layout.addWidget(row_index_label, new_row_index, 0, alignment=Qt.AlignTop)
-        self.grid_layout.addWidget(time_field, new_row_index, 1, alignment=Qt.AlignTop)
-        self.grid_layout.addWidget(x_field, new_row_index, 2, alignment=Qt.AlignTop)
-        self.grid_layout.addWidget(y_field, new_row_index, 3, alignment=Qt.AlignTop)
-        self.grid_layout.addWidget(z_field, new_row_index, 4, alignment=Qt.AlignTop)
+        self.grid_layout.addWidget(row_index_label, new_row_index, 0, alignment=Qt.AlignmentFlag.AlignTop)
+        self.grid_layout.addWidget(time_field, new_row_index, 1, alignment=Qt.AlignmentFlag.AlignTop)
+        self.grid_layout.addWidget(x_field, new_row_index, 2, alignment=Qt.AlignmentFlag.AlignTop)
+        self.grid_layout.addWidget(y_field, new_row_index, 3, alignment=Qt.AlignmentFlag.AlignTop)
+        self.grid_layout.addWidget(z_field, new_row_index, 4, alignment=Qt.AlignmentFlag.AlignTop)
         self.grid_layout.addWidget(particle_combo_box, new_row_index, 5)
 
         delete_row_button = DeleteVectorRowButton(self.parent_form.style())  # Row's index = row count. The 0th row is the headers.
@@ -135,9 +135,9 @@ class VectorsGrid:
         else:
             delete_row_button.setEnabled(False)  # In effect, a spacer. Spacer and blank widget didn't work
             delete_row_button.setStyleSheet("border: none;")
-        delete_row_button.setFocusPolicy(Qt.NoFocus)
+        delete_row_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         delete_row_button.clicked.connect(lambda: self.delete_vector(delete_row_button))
-        self.grid_layout.addWidget(delete_row_button, new_row_index, 7, alignment=Qt.AlignTop)
+        self.grid_layout.addWidget(delete_row_button, new_row_index, 7, alignment=Qt.AlignmentFlag.AlignTop)
 
         self.vector_validation.add_fields(particle_combo_box, time_field, x_field, y_field, z_field)
         self.parent_form.set_buttons_enabled_state(False)

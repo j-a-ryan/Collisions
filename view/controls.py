@@ -14,7 +14,7 @@ from view.controls_view.slider import (
 class ControlsLayout(QFrame):
     def __init__(self, experiment_controller):
         super().__init__()
-        self.setFrameShape(QFrame.StyledPanel)  # Optional: sets a default styled panel look
+        self.setFrameShape(QFrame.Shape.StyledPanel)  # Optional: sets a default styled panel look
         self.setFixedWidth(220)
         # self.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
 
@@ -46,7 +46,7 @@ class ControlsLayout(QFrame):
 
     def add_boost_A_slider(self, initial_value):
         frame = QFrame()
-        frame.setFrameShape(QFrame.StyledPanel)
+        frame.setFrameShape(QFrame.Shape.StyledPanel)
         frame.setFixedWidth(200)
         frame.setContentsMargins(0, 0, 10, 0)
         frame.frame_layout = QVBoxLayout(frame)

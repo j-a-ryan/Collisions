@@ -15,7 +15,7 @@ class TransformationsLayout(QFrame):
         super().__init__()
 
         # Optional: sets a default styled panel look
-        self.setFrameShape(QFrame.StyledPanel)
+        self.setFrameShape(QFrame.Shape.StyledPanel)
         self.inner_layout = QVBoxLayout(self)
         # self.inner_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         heading = Heading("TRANSFORMATIONS", "Tahoma", False)
@@ -44,5 +44,5 @@ class TransformationsLayout(QFrame):
     def set_up_buttons(self, style):
         self.transformations_label = QLabel("-----Transform----")
         self.transformations_label.setStyleSheet(style)
-        self.transformations_label.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
+        self.transformations_label.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
         self.inner_layout.addWidget(self.transformations_label)

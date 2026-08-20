@@ -28,7 +28,7 @@ class CustomTitleBar(QWidget):
             img_label = QLabel()
             pixmap = QPixmap("resources/collisionicon3.png")
             img_label.setPixmap(pixmap)
-            img_label.setAlignment(Qt.AlignLeft)
+            img_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
             layout.addWidget(img_label)
 
         layout.addWidget(self.title_label)
@@ -78,7 +78,7 @@ class CustomTitleBar(QWidget):
                 }
                 """)
 
-            buttons_layout.addWidget(button, alignment=Qt.AlignRight)
+            buttons_layout.addWidget(button, alignment=Qt.AlignmentFlag.AlignRight)
         layout.addStretch()  # So the buttons go all the way to the right.
         layout.addLayout(buttons_layout)
 

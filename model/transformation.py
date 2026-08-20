@@ -109,6 +109,8 @@ def handle_transformation(
             transformed_vectors, boost_parameter_A_used, _ = transform(
                 vector_V, vector_Y, vector_Y, original_vectors, argument_type, boost_parameter_A=boost_parameter_A
             )
+        case _:
+            raise ValueError(f"Unknown argument_type: {argument_type!r}")
     return transformed_vectors, boost_parameter_A_used, failure_message
 
 
