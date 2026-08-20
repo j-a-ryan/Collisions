@@ -2,7 +2,6 @@ import numpy as np
 
 import config
 from model import qcd_matrix, util
-from model.particle import Particle
 from model.qcd_matrix import (
     LightConeRapidityMatrix,
     LightConeRapidityMatrixConfigurationData,
@@ -22,7 +21,7 @@ class Transformation:
 
 def solve_for_second_step_transformation_exp_2yT(vector_V, vector_Y, third_vector):
     equation_system = TransformationEquationSystem(vector_V, vector_Y, third_vector)
-    return equation_system.find_exp_2yT_numerical()
+    return equation_system.find_exp_2yT_numerical_3()
 
 
 def set_up_config_data(
@@ -163,6 +162,7 @@ def validate_vectors(
         if not ret_val_errors:
             if argument_type == util.V_MINUS_Y:
                 transformation_type = util.V_MINUS_Y
+                assert experiment is not None
 
                 # First we must make the V_PLUS_Y transformation; we now know that it won't cause exceptions.
                 original_vectors = experiment.get_original_four_vectors()
@@ -224,85 +224,3 @@ def check_for_errors(vector_V_to_use, vector_Y_to_use):
     if invalidity_message4:
         ret_val.append(invalidity_message4)
     return ret_val
-
-
-#  Transformation util below
-def galilean_coordinate_transform1(to_particle, from_particle):
-    from_vector = from_particle.vector
-    to_vector = to_particle.vector
-    transformed_vector = [
-        from_vector[0],
-        to_vector[1] - from_vector[1],
-        to_vector[2] - from_vector[2],
-        to_vector[3] - from_vector[3],
-    ]
-    from_particle_transformed = Particle(from_particle.id, from_particle.type, transformed_vector, False)
-    return from_particle_transformed
-
-
-def galilean_coordinate_transform2(to_particle, from_particle):
-    from_vector = from_particle.vector
-    to_vector = to_particle.vector
-    matrix = np.array(
-        [
-            [1, 0, 0, 0],
-            [0, 1 - from_vector[1] / to_vector[1], 0, 0],
-            [0, 0, 1 - from_vector[2] / to_vector[2], 0],
-            [0, 0, 0, 1 - from_vector[3] / to_vector[3]],
-        ]
-    )
-    transformed_vector = from_vector @ matrix
-    # transformed_vector = np.dot(from_vector, matrix)
-    from_particle_transformed = Particle(from_particle.id, from_particle.type, transformed_vector, False)
-    return from_particle_transformed
-
-
-# Galilean transformation matrix for arbitray position vectors.Purely for fun/exercise,
-# not use in app. Assumes t != 0 and t0 = 0.
-def galilean_coordinate_transformation_3(to_vector, from_vector):
-    matrix = np.array(
-        [
-            [1, 0, 0, 0],
-            [(from_vector[1] - to_vector[1]) / from_vector[0], 0, 0, 0],
-            [from_vector[2] - to_vector[2] / from_vector[0], 0, 0, 0],
-            [from_vector[3] - to_vector[3] / from_vector[0], 0, 0, 0],
-        ]
-    )
-    transformed_vector = matrix @ from_vector
-    # transformed_vector = np.dot(matrix, from_vector)
-    return transformed_vector
-
-
-def galilean_coordinate_transformation_4(to_vector, from_vector):
-    transformed_vector = [
-        from_vector[0],
-        from_vector[1] - to_vector[1],
-        from_vector[2] - to_vector[2],
-        from_vector[3] - to_vector[3],
-    ]
-    return transformed_vector
-
-
-def galilean_coordinate_transformation_3_vector(to_vector, from_vector):
-    transformed_vector = [
-        from_vector[0] - to_vector[0],
-        from_vector[1] - to_vector[1],
-        from_vector[2] - to_vector[2],
-    ]
-    return transformed_vector
-
-
-def configure_matrix(from_particle):
-    pass
-
-
-def calculate_gamma(vector):
-    return None
-
-
-def configure_lorentz_transformation_matrix(particle):
-    vector = particle.vector
-    gamma = calculate_gamma(vector)
-    # Calculate the velocities, betas
-    matrix = np.array([[gamma, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]])
-    return matrix

@@ -32,10 +32,14 @@ The subclass of MatrixConfigurationData here uses dotting for its pecular variab
 
 
 class LightConeRapidityMatrix(FourVectorTransformationMatrix):
-    def __init__(self, matrix_configuration_data: MatrixConfigurationData):
+    def __init__(self, matrix_configuration_data: "LightConeRapidityMatrixConfigurationData"):
         super().__init__(matrix_configuration_data)
 
-    def _set_member_values(self, matrix_configuration_data: MatrixConfigurationData):
+    # Narrows the base class's MatrixConfigurationData parameter to the specific config subclass this
+    # matrix is built for; each FourVectorTransformationMatrix subclass is always paired 1:1 with its
+    # own config data subclass by construction, so this technically-unsound override is intentional.
+    def _set_member_values(self, matrix_configuration_data: "LightConeRapidityMatrixConfigurationData"):  # type: ignore[override]
+        assert matrix_configuration_data.rest_frame_vector is not None
         delta = matrix_configuration_data.delta
         R_plus = matrix_configuration_data.R_plus
         R_minus = matrix_configuration_data.R_minus
@@ -94,13 +98,16 @@ class LightConeRapidityMatrixConfigurationData(MatrixConfigurationData):
         self.vector_posttreatment_function = convert_light_cone_coordinates_to_minkowski_form
 
         """
-        This is the boost value, a.k.a "A". It is set by fiat, for instance to 10, or calculated in the 
+        This is the boost value, a.k.a "A". It is set by fiat, for instance to 10, or calculated in the
         second step of the two-step transformation. The boost value, such that V+ = AV−.
         """
-        self.exp_2yT = None
+        self.exp_2yT: float | None = None
 
     def calculate_calculated_values(self):
         super().calculate_calculated_values()
+        assert self.rest_frame_vector is not None
+        assert self.vector_to_be_transformed is not None
+        assert self.exp_2yT is not None
         self.rest_frame_vector_xyz_magnitude = util.calculate_four_vector_xyz_magnitude(self.rest_frame_vector)
         self.rest_frame_vector_xz_magnitude = util.calculate_four_vector_xz_magnitude(self.rest_frame_vector)
 

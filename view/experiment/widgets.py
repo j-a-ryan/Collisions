@@ -132,7 +132,9 @@ class VectorIssueCheck(AbstractTransformationPopup):
         for name in self.names:
             box.addItem(name)
         box.setEditable(True)
-        box.lineEdit().setReadOnly(True)
+        line_edit = box.lineEdit()
+        assert line_edit is not None
+        line_edit.setReadOnly(True)
         box.setMinimumContentsLength(6)
         box.setCurrentIndex(-1)
         return box
@@ -201,7 +203,7 @@ def transformation_issue_popup(argument_type, failure_message=None, axis=None, v
             + "vector check to address this issue."
         )
     else:  # Assumes value and axis are not none.
-        axis_name = slider.VectorSlider.dict_0123_txyz[str(axis)]
+        axis_name = slider.SliderGroupFrame.dict_0123_txyz[str(axis)]
         msg.setInformativeText(
             f"Transformation type {argument_type} with {axis_name} = {value} leads to an error, " + "such as division by zero."
         )

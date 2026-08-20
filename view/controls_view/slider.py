@@ -143,6 +143,10 @@ class PostMediator:
         self.latest_value = None
         self.lock = threading.Lock()
 
+    def set_value(self, value):
+        with self.lock:
+            self.latest_value = value
+
     def post(self, value):
         self.handler.post_value(value)
 

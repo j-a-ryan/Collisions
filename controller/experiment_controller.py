@@ -51,6 +51,7 @@ class ExperimentController:
         return Experiment(experiment_vectors, names, experiment_metadata)
 
     def plot_current_experiment(self, extra_circles=None, initial_plot=False):
+        assert self.experiment is not None
         self.view.plot_experiment_vectors(self.experiment.get_collision(), extra_circles)
 
         if initial_plot:
@@ -66,6 +67,7 @@ class ExperimentController:
         Y_particle_name = V_Y_particle_names[1]
         vector_V = self.get_vector(V_particle_name).copy()  # These are numpy
         vector_Y = self.get_vector(Y_particle_name).copy()
+        assert self.experiment is not None
         names = self.experiment.get_particle_names()
         third_vector_name = None if len(V_Y_particle_names) < 3 else V_Y_particle_names[2]
         third_vector = None if not third_vector_name else self.get_vector(third_vector_name).copy()
@@ -75,6 +77,7 @@ class ExperimentController:
         return self.transformation_controller.transformation_exists(self.experiment)
 
     def get_current_transformation_arguments(self):
+        assert self.experiment is not None
         V_Y_particle_names = self.experiment.get_transformation_particle_pair_names()
         argument_type = self.experiment.get_transformation_type()  # TODO: Pick one or the other of these names
         boost_parameter_A = self.experiment.get_boost_parameter_A()
@@ -92,6 +95,7 @@ class ExperimentController:
         return results, transformation_type
 
     def plot_transformed_experiment_vectors(self, extra_circles):
+        assert self.experiment is not None
         self.view.plot_transformed_experiment_vectors(
             self.experiment.get_transformed_collision(), self.experiment.get_collision(), extra_circles
         )
@@ -129,13 +133,16 @@ class ExperimentController:
         self.experiment = None
 
     def clear_transformation(self):
+        assert self.experiment is not None
         self.experiment.clear_transformation()
 
     def get_vector(self, vector_name):
+        assert self.experiment is not None
         return self.experiment.get_original_four_vector(vector_name)
 
     def update_vector_component(self, vector_name, axis, new_value):
         self.get_vector(vector_name)[axis] = new_value
 
     def update_boost_parameter_A(self, new_value):
+        assert self.experiment is not None
         self.experiment.set_boost_parameter_A(new_value)

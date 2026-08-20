@@ -17,10 +17,10 @@ class VectorMemberField(QLineEdit):
         self.default_style_string = None
         self.currently_valid = already_validated
         self.form_validation = form_validation
-        self.validator = QDoubleValidator(
+        self._validator = QDoubleValidator(
             min_val, max_val, config.xyz_decimal_precision, notation=QDoubleValidator.Notation.StandardNotation
         )
-        self.setValidator(self.validator)
+        self.setValidator(self._validator)
 
         self.textEdited.connect(self.new_text)  # Perhaps textEdited might be enough here.
         self.latest_text = None  # TODO: Needed anymore?
@@ -38,6 +38,7 @@ class VectorMemberField(QLineEdit):
                 + "; } QLineEdit:focus { color: black; background-color: PaleTurquoise; }"
             )
         if self.hasAcceptableInput():
+            assert self.default_style_string is not None
             self.setStyleSheet(self.default_style_string)
             self.latest_text = text
             self.currently_valid = True

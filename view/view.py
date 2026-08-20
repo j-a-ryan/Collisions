@@ -195,6 +195,8 @@ class View(QWidget):
         self.control_panel.addWidget(self.scroll_area)
 
     def clear_controls_layout(self):
+        assert self.scroll_area is not None
+        assert self.controls_layout is not None
 
         self.control_panel.removeWidget(self.scroll_area)
         self.scroll_area.setParent(None)
@@ -208,9 +210,11 @@ class View(QWidget):
         self.set_up_control_panel()
 
     def reset_transformation_controls(self):
+        assert self.controls_layout is not None
         self.controls_layout.reset_transformation_controls()
 
     def set_controls_for_transformation_plot(self, boost_parameter_A_initial_value=None):
+        assert self.controls_layout is not None
         self.controls_layout.set_controls_for_transformation_plot(boost_parameter_A_initial_value)
 
     def clear_experiment_plot(self, set_up_blank_afterwards):
@@ -221,6 +225,7 @@ class View(QWidget):
             frame_to_delete_transformed.deleteLater()
             self.plot_qframe_transformed = None
 
+        assert self.plot_qframe is not None
         frame_to_delete = self.plot_qframe  # Just being sure no mistaken identity. Probably being superstitious.
         self.main_layout.removeWidget(frame_to_delete)
         frame_to_delete.deleteLater()
@@ -246,6 +251,8 @@ class View(QWidget):
             self.set_plot_tab_widget(self.plot_qframe)
 
     def add_transformation_splitter(self, experiment_vectors=None, transformed_vectors=None):
+        assert self.plot_qframe is not None
+        assert self.plot_qframe_transformed is not None
 
         self.splitter = QSplitter(Qt.Orientation.Horizontal)
         self.splitter.addWidget(self.plot_qframe)
@@ -262,6 +269,7 @@ class View(QWidget):
         self.main_layout.addWidget(self.plot_tabs)
 
     def set_up_controls(self, vector_names, vector_set_xyz):
+        assert self.controls_layout is not None
         self.controls_layout.clear_controls()
         self.controls_layout.add_boost_A_slider(1)
         self.controls_layout.add_txyz_sliders(vector_names, vector_set_xyz)

@@ -49,15 +49,15 @@ class ControlsLayout(QFrame):
         frame.setFrameShape(QFrame.Shape.StyledPanel)
         frame.setFixedWidth(200)
         frame.setContentsMargins(0, 0, 10, 0)
-        frame.frame_layout = QVBoxLayout(frame)
+        frame_layout = QVBoxLayout(frame)
         label_A = QLabel("Boost Parameter A:")
-        frame.frame_layout.addWidget(label_A, alignment=Qt.AlignmentFlag.AlignCenter)
+        frame_layout.addWidget(label_A, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.boost_parameter_A_slider = BoostParameterASlider(initial_value, 0, config.boost_A_max)
         handler = BoostParameterASliderUpdateHandler(self.controls_controller, initial_value, False)
         self.boost_parameter_A_slider.set_handler(handler)
         self.boost_parameter_A_slider.setEnabled(False)  # No transformation yet
-        frame.frame_layout.addWidget(self.boost_parameter_A_slider, alignment=Qt.AlignmentFlag.AlignCenter)
+        frame_layout.addWidget(self.boost_parameter_A_slider, alignment=Qt.AlignmentFlag.AlignCenter)
         self.controls_panel.addWidget(frame)
 
     def add_txyz_sliders(self, vector_names, vector_set_xyz):

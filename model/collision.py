@@ -10,7 +10,7 @@ class Collision:
 
     def __init__(self, vectors, names):  # Vector includes name element [t, x, y, z, name]
         self.particles = {}  # We keep the particles but...
-        self.vectors = np.array(vectors)
+        self.vectors: np.ndarray | None = np.array(vectors)
         self.names = names
         for i in range(
             len(vectors)
@@ -34,6 +34,7 @@ class Collision:
         return self.particles[name].four_vector
 
     def get_vectors_column(self, col_num, round_near_zeros_to_zero=True):  # Matplotlib needs the xs, the ys and the zs separately
+        assert self.vectors is not None
         arr = np.array(self.vectors[:, col_num])  # copy array
         if round_near_zeros_to_zero:
             arr[np.abs(arr) < self.tolerance] = 0
@@ -55,6 +56,7 @@ class Collision:
         plotting, the near-zeros (e.g. 1e-16) should be rounded to zero
         so that the 1e-16 doesn't show up at top of Matplotlib plot
         """
+        assert self.vectors is not None
         np_arr = self.vectors
         spatial_vectors_to_return = spatial_vectors = np_arr[:, 1:].tolist()
 

@@ -1,5 +1,5 @@
 from PySide6.QtGui import Qt
-from PySide6.QtWidgets import QGridLayout, QLabel, QLineEdit, QStyle
+from PySide6.QtWidgets import QComboBox, QGridLayout, QLabel, QLineEdit, QStyle
 
 import config
 from view.common.widgets import create_particle_names_combo_box
@@ -80,7 +80,7 @@ class VectorsGrid:
                     if widget:
                         if isinstance(widget, QLineEdit):
                             row.append(widget.text())
-                        else:  # assuming QComboBox for now
+                        elif isinstance(widget, QComboBox):
                             row.append(widget.currentText())
             self._backing_vectors.append(row)
 
@@ -149,7 +149,10 @@ class VectorsGrid:
             first_line_edit_in_new_row = self.grid_layout.itemAtPosition(
                 new_row_index, 1
             )  # Column 0 is index label; column 1 is presumably time field.
-            first_line_edit_in_new_row.widget().setFocus()
+            assert first_line_edit_in_new_row is not None
+            widget = first_line_edit_in_new_row.widget()
+            assert widget is not None
+            widget.setFocus()
 
     def add_vector_rows(self, vectors):
         for vector in vectors:
@@ -181,7 +184,9 @@ class VectorsGrid:
         # Get needed parameters
         num_grid_vectors_before_deletion = self.grid_row_count - 1
         index = self.grid_layout.indexOf(delete_row_button)
-        index_of_grid_row_to_delete, _, _, _ = self.grid_layout.getItemPosition(index)
+        # PySide6's stub types getItemPosition's return as plain "object" (a shiboken stub gap for
+        # this C++ output-tuple method); at runtime it's always a 4-tuple of ints.
+        index_of_grid_row_to_delete, _, _, _ = self.grid_layout.getItemPosition(index)  # type: ignore[misc]
 
         self.clear_grid()
 

@@ -21,9 +21,9 @@ class MatrixConfigurationData:
     """
 
     def __init__(self):
-        self.rest_frame_vector = None  # TODO: Nomenclature issue. This name works in at most the basic 2-vector system case
-        self.velocity_of_rest_frame = None
-        self.vector_to_be_transformed = None  # TODO: Nomenclature issue. This name works in at most the basic 2-vector system case
+        self.rest_frame_vector: np.ndarray | list | None = None  # TODO: Nomenclature issue. This name works in at most the basic 2-vector system case
+        self.velocity_of_rest_frame: np.ndarray | list | None = None
+        self.vector_to_be_transformed: np.ndarray | list | None = None  # TODO: Nomenclature issue. This name works in at most the basic 2-vector system case
         self.vector_pretreatment_function = lambda vector: vector
         self.vector_posttreatment_function = lambda vector: vector
 
@@ -139,6 +139,7 @@ class GalileanTransformationMatrix(FourVectorTransformationMatrix):
 
     def _set_member_values(self, matrix_configuration_data: MatrixConfigurationData):
         rest_frame_vector = matrix_configuration_data.rest_frame_vector
+        assert rest_frame_vector is not None
         self.m10 = -rest_frame_vector[1] / rest_frame_vector[0]
         self.m20 = -rest_frame_vector[2] / rest_frame_vector[0]
         self.m30 = -rest_frame_vector[3] / rest_frame_vector[0]

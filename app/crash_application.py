@@ -9,5 +9,7 @@ class ExceptionCatchingApplication(QApplication):
         try:
             return super().notify(receiver, event)
         except Exception:
-            sys.excepthook(*sys.exc_info())
+            exc_type, exc_value, exc_tb = sys.exc_info()
+            if exc_type is not None and exc_value is not None:
+                sys.excepthook(exc_type, exc_value, exc_tb)
             return False

@@ -105,7 +105,7 @@ class PlotVectorCanvas(FigureCanvas):
             self.ax.scatter(
                 xs,
                 ys,
-                zs,
+                zs,  # type: ignore[arg-type]  # mpl_toolkits' 3D scatter stub mistypes zs as a scalar int; a list works fine at runtime.
                 facecolors="none",
                 depthshade=False,
                 edgecolors=extra_circles_edgecolors,

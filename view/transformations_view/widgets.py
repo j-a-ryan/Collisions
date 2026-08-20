@@ -31,6 +31,9 @@ class AbstractTransformationPopup(QDialog):
     def argument_types_checkboxes_group_clicked(self):
         pass
 
+    def two_step_transformation_check(self):
+        pass
+
     def post_transformation_check(self):
         if config.step_2_uses_system_of_equations:
             if self.post_transformation_checkbox.isChecked():

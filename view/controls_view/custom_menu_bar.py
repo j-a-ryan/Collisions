@@ -93,7 +93,7 @@ class MenuButtonPanel(QHBoxLayout):
 
     def test_crash_log(self):
         a = None
-        j = 27 / a  # crash
+        j = 27 / a  # type: ignore[operator]  # deliberate crash, for testing the crash handler
         print(j)  # to silence linter
 
     def show_manual(self):

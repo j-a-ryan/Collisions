@@ -9,6 +9,7 @@ class VectorValidation:
         self.vectors_grid = vectors_grid
         self.fields = []
         self.name_combo_boxes = []
+        self.widgets_to_enable_disable = []
         box = QComboBox()
         self.default_combobox_stylesheet = box.styleSheet()
 

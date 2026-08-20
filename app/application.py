@@ -45,10 +45,6 @@ class MainWindow(QMainWindow):
         super().changeEvent(event)
         event.accept()
 
-    def window_state_changed(self, state):
-        self.normal_button.setVisible(state == Qt.WindowState.WindowMaximized)
-        self.max_button.setVisible(state != Qt.WindowState.WindowMaximized)
-
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
             self.initial_pos = event.position().toPoint()

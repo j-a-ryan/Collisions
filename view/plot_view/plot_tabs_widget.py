@@ -72,6 +72,8 @@ class PlotTabsWidget(QTabWidget):
 
     def remove(self):
         self.removeTab(1)
+        assert self.plot_2d_widget_all_three is not None
+        assert self.plot_widget_2d is not None
         plot_widget_2d_to_remove = self.plot_widget_2d
         self.plot_2d_widget_all_three.removeWidget(plot_widget_2d_to_remove)
         self.plot_2d_widget_all_three = None

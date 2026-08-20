@@ -144,8 +144,10 @@ class SecondStepTransformationEquationSystem:
 
         # Get the algebraic expressions for Xi1 and Xi2 directly from your equations
         equations = self.define_equations(Xi1, Xi2, qHT2)
-        xi1_expr = equations[0].lhs
-        xi2_expr = equations[1].lhs
+        # sympy's stubs can't express that solve()/Eq results carry .lhs; sympy's typing is
+        # inherently dynamic here.
+        xi1_expr = equations[0].lhs  # type: ignore[attr-defined]
+        xi2_expr = equations[1].lhs  # type: ignore[attr-defined]
 
         # Substitute them directly into equation 3
         eq3_substituted = equations[2].subs({Xi1: xi1_expr, Xi2: xi2_expr})

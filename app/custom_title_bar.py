@@ -12,7 +12,7 @@ from view.common.details import Heading
 
 
 class CustomTitleBar(QWidget):
-    def __init__(self, parent, title_text, font_size, include_icon=True, appstyle=None):
+    def __init__(self, parent, title_text, font_size, appstyle, include_icon=True):
         super().__init__(parent)
         self.initial_pos = None
 

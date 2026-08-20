@@ -38,7 +38,7 @@ class Experiment:
         return self.collision.get_four_vector(name)
 
     def get_original_spatial_vectors(self):
-        return self.collision.get_vectors_columns()
+        return self.collision.get_vectors_spatial_columns()
 
     def get_vectors_spatial_columns(self):
         return self.collision.get_vectors_spatial_columns()
@@ -83,13 +83,15 @@ class Experiment:
         self.transformed_collision = Collision(transformed_vectors, names)
 
     def get_transformed_four_vector(self, name):
+        assert self.transformed_collision is not None
         return self.transformed_collision.get_four_vector(name)
 
     def get_transformed_collision(self):
         return self.transformed_collision
 
     def get_transformed_spatial_vectors(self):
-        return self.transformed_collision.get_vectors_columns()
+        assert self.transformed_collision is not None
+        return self.transformed_collision.get_vectors_spatial_columns()
 
     def get_particle_names(self):
         return self.collision.get_vectors_name_column()
