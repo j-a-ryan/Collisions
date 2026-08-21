@@ -52,6 +52,7 @@ class MenuButtonPanel(QHBoxLayout):
         self.addLayout(experiment_buttons_layout)
 
         crash_button = QPushButton("Do not click this")
+        crash_button.setToolTip("Okay, you can click it. But just once.")
         crash_button.clicked.connect(self.test_crash_log)
         crash_button_layout = QHBoxLayout()
         crash_button_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)

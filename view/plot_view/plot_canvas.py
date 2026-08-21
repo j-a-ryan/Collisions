@@ -4,7 +4,6 @@ from matplotlib.figure import Figure
 from PySide6.QtWidgets import QDialog, QLabel
 
 import config
-from model import util
 from view.experiment import widgets
 from view.transformations_view.widgets import (
     BackgroundCalculations,
@@ -192,7 +191,7 @@ class PlotVectorCanvas(FigureCanvas):
                         ]
                         V_plus_Y = popup.transformation_config["V+YConfig"]
                         V_minus_Y = popup.transformation_config["ApplyPostTransformationV'-Y'"]
-                        argument_type = util.get_config_argument(V_plus_Y, V_minus_Y)
+                        argument_type = self.experiment_controller.get_config_argument(V_plus_Y, V_minus_Y)
                         V_Y_particle_names = self.particles_names_picked.copy()
                         results, _ = self.experiment_controller.pre_check_transformation(V_Y_particle_names, argument_type)
 
@@ -203,7 +202,10 @@ class PlotVectorCanvas(FigureCanvas):
                         else:
                             self.experiment_controller.plot_current_experiment(extra_circles=transformation_vector_pair_indices)
                             failure_message = None
-                            if argument_type == util.V_MINUS_Y and config.step_2_uses_system_of_equations:
+                            if (
+                                self.experiment_controller.is_v_minus_y_argument_type(argument_type)
+                                and config.step_2_uses_system_of_equations
+                            ):
                                 background_transformation = BackgroundCalculations(
                                     self.experiment_controller, transformation_vector_pair_indices, V_Y_particle_names, argument_type
                                 )

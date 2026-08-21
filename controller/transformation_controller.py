@@ -1,10 +1,16 @@
-from model import transformation
+from model import transformation, util
 
 
 class TransformationController:
 
     def __init__(self, experiment_controller):
         self.experiment_controller = experiment_controller
+
+    def get_config_argument(self, V_plus_Y, V_minus_Y):
+        return util.get_config_argument(V_plus_Y, V_minus_Y)
+
+    def is_v_minus_y_argument_type(self, argument_type):
+        return argument_type == util.V_MINUS_Y
 
     def handle_transformation(
         self,

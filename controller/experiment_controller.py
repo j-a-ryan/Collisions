@@ -79,6 +79,12 @@ class ExperimentController:
     def transformation_exists(self):
         return self.transformation_controller.transformation_exists(self.experiment)
 
+    def get_config_argument(self, V_plus_Y, V_minus_Y):
+        return self.transformation_controller.get_config_argument(V_plus_Y, V_minus_Y)
+
+    def is_v_minus_y_argument_type(self, argument_type):
+        return self.transformation_controller.is_v_minus_y_argument_type(argument_type)
+
     def get_current_transformation_arguments(self):
         assert self.experiment is not None
         V_Y_particle_names = self.experiment.get_transformation_particle_pair_names()

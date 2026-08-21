@@ -13,7 +13,6 @@ from PySide6.QtWidgets import (
 
 import config
 from controller.transformation_controller import TransformationController
-from model import util
 from view.controls_view import slider
 from view.transformations_view.widgets import AbstractTransformationPopup
 
@@ -148,7 +147,7 @@ class VectorIssueCheck(AbstractTransformationPopup):
         vector_Y = self.experiment.get_original_four_vector(Y_particle_name)
         V_plus_Y = self.V_plus_Y_argument_type_checkbox.isChecked()
         V_minus_Y = self.post_transformation_checkbox.isChecked()
-        argument_type = util.get_config_argument(V_plus_Y, V_minus_Y)
+        argument_type = self.transformation_controller.get_config_argument(V_plus_Y, V_minus_Y)
         results, transformation_type = self.transformation_controller.validate_vectors(
             vector_V, vector_Y, argument_type, V_particle_name, Y_particle_name, self.experiment, self.names
         )
