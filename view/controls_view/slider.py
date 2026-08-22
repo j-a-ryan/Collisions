@@ -194,7 +194,7 @@ class SliderGroupFrame(QFrame):
         self.inner_layout.addWidget(heading, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.sliders_grid = QGridLayout()
-        sliders_coordination = TimeM2SlidersCoordinator()
+        sliders_coordination = TimeM2SlidersCoordinator(controller)
 
         # Add the m2 slider
         slider_label = QLabel(config.gui_m2)
@@ -227,8 +227,9 @@ class SliderGroupFrame(QFrame):
 
 class TimeM2SlidersCoordinator:
 
-    def __init__(self):  # Construct the object using vector initial values.
+    def __init__(self, controller):  # Construct the object using vector initial values.
 
+        self.controller = controller
         self.sliders = {}
         self._user_sliding_now = False  # Like a thread lock, but there is only one thread.
 
@@ -244,37 +245,22 @@ class TimeM2SlidersCoordinator:
         self._user_sliding_now = sliding_now
 
     def calculate_initial_m2(self, vector):
-        return self.calculate_m2(vector[0], vector[1], vector[2], vector[3])
-
-    def calculate_m2(self, t, x, y, z):
-        # Square each value from the vector
-        t2 = t**2
-        x2 = x**2
-        y2 = y**2
-        z2 = z**2
-        m2 = t2 - x2 - y2 - z2  # Calculate m2 as a difference.
-        return m2
+        return self.controller.calculate_m2(vector[0], vector[1], vector[2], vector[3])
 
     def update_m2(self):
         t = self.sliders[config.gui_t].getValue()
         x = self.sliders[config.gui_x].getValue()
         y = self.sliders[config.gui_y].getValue()
         z = self.sliders[config.gui_z].getValue()
-        m2 = self.calculate_m2(t, x, y, z)
+        m2 = self.controller.calculate_m2(t, x, y, z)
         self.sliders[config.gui_m2].setValue(m2)
-
-    def calculate_t(self, m2, x, y, z):
-        t2 = m2 + x**2 + y**2 + z**2
-        # print(f"{m2} {x**2} {y**2} {z**2}   {t2}")
-        t = math.sqrt(t2)
-        return t
 
     def update_t(self):
         m2 = self.sliders[config.gui_m2].getValue()
         x = self.sliders[config.gui_x].getValue()
         y = self.sliders[config.gui_y].getValue()
         z = self.sliders[config.gui_z].getValue()
-        t = self.calculate_t(m2, x, y, z)
+        t = self.controller.calculate_t(m2, x, y, z)
         self.sliders[config.gui_t].setValue(t)
 
     def submit_user_selected_value(self, axis_name, value):

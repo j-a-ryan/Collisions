@@ -1,3 +1,5 @@
+from model import util
+
 """
 Unfortunately but accurately named, ControlsController
 serves the GUI's controls widgets, the widgets that
@@ -41,6 +43,12 @@ class ControlsController:
         # Get vector and member from exp controller. Update value. The reference should stick.
         self.experiment_controller.update_vector_component(vector_name, axis, new_value)  # TODO: Make exp ctrler do the update
         return self.update_graphs_for_controls_adjustment()
+
+    def calculate_m2(self, t, x, y, z):
+        return util.calculate_m_2((t, x, y, z))
+
+    def calculate_t(self, m2, x, y, z):
+        return util.calculate_t_from_m_2_and_xyz(m2, x, y, z)
 
     def set_up_controls(self, view, experiment):
         vectors_xyz = experiment.get_original_four_vectors()  # np array

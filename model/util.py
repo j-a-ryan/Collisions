@@ -64,3 +64,7 @@ def calculate_m_2(vector):  # return minkowski_dot(vector, vector)
 
 def minkowski_dot(v1, v2):
     return v1[0] * v2[0] - v1[1] * v2[1] - v1[2] * v2[2] - v1[3] * v2[3]
+
+
+def calculate_t_from_m_2_and_xyz(m_2, x, y, z):
+    return math.sqrt(m_2 + x**2 + y**2 + z**2)
