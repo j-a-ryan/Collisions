@@ -139,13 +139,8 @@ class View(QWidget):
                     writer.writerows(data)
             except FileNotFoundError:
                 print("Problem writing to file path, FileNotFoundError.")
-            except Exception as e:
+            except (OSError, csv.Error) as e:
                 print(f"An error occurred: {e}")
-
-            with open(file_path, "w", newline="") as f:
-                writer = csv.writer(f)
-                writer.writerow(header)
-                writer.writerows(data)
 
     def pre_treat_csv_data(self, data):
         if data[0] == config.vector_fields:  # Should be true; from CSV file with header
@@ -162,7 +157,7 @@ class View(QWidget):
                         data.append(row)
             except FileNotFoundError:
                 print("The file was not found.")
-            except Exception as e:
+            except (OSError, UnicodeError, csv.Error) as e:
                 print(f"An error occurred: {e}")
 
             num_columns = len(data[0]) if data else 0

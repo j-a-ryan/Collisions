@@ -31,7 +31,7 @@ def safe_print(text):
     try:
         if sys.stderr is not None:
             print(text, file=sys.stderr)
-    except Exception:
+    except Exception:  # noqa: BLE001 -- last-resort logging helper; must never itself raise.
         pass
 
 
@@ -76,8 +76,8 @@ def excepthook(exc_type, exc_value, exc_tb):
                 "You probably ran across a bug in the code. After you\n"
                 "close the application you can relaunch it and use it.",
             )
-    except Exception:
-        pass  # don't let the error handler itself crash
+    except Exception:  # noqa: BLE001 -- don't let the error handler itself crash
+        pass
 
     sys.__excepthook__(exc_type, exc_value, exc_tb)
 

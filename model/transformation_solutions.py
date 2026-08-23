@@ -107,7 +107,7 @@ class SecondStepTransformationEquationSystem:
         boost_default_set_message = None
         try:
             qHT2_solns = fsolve(residual, initial_guess)
-        except Exception as error:
+        except (ValueError, TypeError) as error:
             boost_default_set_message = f"Exception solving system of equations {error}"
 
         if qHT2_solns:
@@ -218,7 +218,7 @@ class SecondStepTransformationEquationSystem:
 
             if sol.converged:
                 qHT2_soln = sol.root
-        except Exception:
+        except (ValueError, TypeError):
             pass  # Fall through to next strategies
 
         # Fallback 1: Try with a different bracket / initial guess
@@ -227,7 +227,7 @@ class SecondStepTransformationEquationSystem:
                 sol = root_scalar(residual, x0=self.Q2, method="secant", maxiter=50)
                 if sol.converged:
                     qHT2_soln = sol.root
-            except Exception:
+            except (ValueError, TypeError):
                 pass
 
         # Fallback 2: fsolve (original) as last resort
@@ -239,7 +239,7 @@ class SecondStepTransformationEquationSystem:
                 candidate = qHT2_solns[0]
                 if np.isfinite(candidate) and abs(residual(candidate)) < 1e-6:
                     qHT2_soln = candidate
-            except Exception:
+            except (ValueError, TypeError):
                 pass
 
         # ------------------------------------------------------------------
