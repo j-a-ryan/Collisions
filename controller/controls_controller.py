@@ -50,6 +50,9 @@ class ControlsController:
     def calculate_t(self, m2, x, y, z):
         return util.calculate_t_from_m_2_and_xyz(m2, x, y, z)
 
+    def calculate_m2_slider_limits(self, x, y, z):
+        return util.calculate_m2_slider_limits(x, y, z)
+
     def set_up_controls(self, view, experiment):
         vectors_xyz = experiment.get_original_four_vectors()  # np array
         names = experiment.get_particle_names()

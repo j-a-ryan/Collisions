@@ -1,4 +1,3 @@
-import math
 import threading
 import time
 from abc import ABC, abstractmethod
@@ -280,11 +279,7 @@ class TimeM2SlidersCoordinator:
         )
 
     def calculate_and_set_m2_slider_limits(self, x, y, z):
-        x2 = x**2
-        y2 = y**2
-        z2 = z**2
-        m2_min = math.ceil(-(x2 + y2 + z2))  # Using ceil because rounding errors were causing t2 < 0 issue at calculate_t t = math.sqrt(t2)
-        m2_max = config.t_max**2 + m2_min  # This is t_max^2 -(x^2 + y^2 + z^2)
+        m2_min, m2_max = self.controller.calculate_m2_slider_limits(x, y, z)
         self.sliders[config.gui_m2].setRange(m2_min, m2_max)
         # print(f"RESET M2 range {m2_min} {m2_max}, current m2: {self.sliders[config.gui_m2].getValue()} now")
 

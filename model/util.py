@@ -68,3 +68,10 @@ def minkowski_dot(v1, v2):
 
 def calculate_t_from_m_2_and_xyz(m_2, x, y, z):
     return math.sqrt(m_2 + x**2 + y**2 + z**2)
+
+
+def calculate_m2_slider_limits(x, y, z):
+    # ceil avoids rounding error pushing t2 < 0 in calculate_t_from_m_2_and_xyz's sqrt.
+    m2_min = math.ceil(-(x**2 + y**2 + z**2))
+    m2_max = config.t_max**2 + m2_min
+    return m2_min, m2_max
