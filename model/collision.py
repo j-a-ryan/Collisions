@@ -24,12 +24,6 @@ class Collision:
         self.particles.clear()
         self.vectors = None
 
-    def get_vectors(self):
-        return self.vectors
-
-    def get_four_vectors(self):
-        return self.vectors
-
     def get_four_vector(self, name):
         return self.particles[name].four_vector
 
@@ -46,9 +40,6 @@ class Collision:
         xyz["y"] = self.get_vectors_column(2)
         xyz["z"] = self.get_vectors_column(3)
         return xyz
-
-    def get_vectors_name_column(self):
-        return self.names
 
     def get_spatial_vectors_xyz(self, round_near_zeros_to_zero=True):
         """
@@ -67,12 +58,3 @@ class Collision:
             spatial_vectors_to_return = np_arr
 
         return spatial_vectors_to_return
-
-    def get_particles(self):
-        return self.particles
-
-    def get(self, name):
-        return self.particles[name]
-
-    def num_particles(self):
-        return len(self.particles)

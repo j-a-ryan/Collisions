@@ -27,7 +27,7 @@ class PlotVectorCanvas2D(FigureCanvas):
 
         vectors = collision.get_spatial_vectors_xyz()
         indices_to_plot = self.PLOT_2D_TYPES_VECTOR_INDICES[plot_2d_type]
-        particle_names = collision.get_vectors_name_column()
+        particle_names = collision.names
 
         xs = vectors[:, indices_to_plot[0]]
         ys = vectors[:, indices_to_plot[1]]

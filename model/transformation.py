@@ -74,7 +74,7 @@ def handle_transformation(
     boost_parameter_A=None,
 ):
 
-    original_vectors = experiment.get_original_four_vectors()
+    original_vectors = experiment.original_four_vectors
     failure_message = None
     match argument_type:
         case util.V:
@@ -165,7 +165,7 @@ def validate_vectors(
                 assert experiment is not None
 
                 # First we must make the V_PLUS_Y transformation; we now know that it won't cause exceptions.
-                original_vectors = experiment.get_original_four_vectors()
+                original_vectors = experiment.original_four_vectors
                 # Yes, pass in vector_V, not vector_V_to_use. We will redundantly re-add V and Y. No big deal.
                 transformed_vectors, _, _ = transform(vector_V, vector_Y, vector_Y, original_vectors, util.V_PLUS_Y)
                 experiment.set_transformation([V_particle_name, Y_particle_name], argument_type, transformed_vectors, particle_names)

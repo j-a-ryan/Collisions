@@ -54,6 +54,6 @@ class ControlsController:
         return util.calculate_m2_slider_limits(x, y, z)
 
     def set_up_controls(self, view, experiment):
-        vectors_xyz = experiment.get_original_four_vectors()  # np array
-        names = experiment.get_particle_names()
+        vectors_xyz = experiment.original_four_vectors  # np array
+        names = experiment.particle_names
         view.set_up_controls(names, vectors_xyz)

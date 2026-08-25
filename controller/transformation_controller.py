@@ -49,7 +49,7 @@ class TransformationController:
         )
 
     def transformation_exists(self, experiment):
-        return experiment.has_transformation()
+        return experiment.has_transformation
 
     # """
     # Assumes transformation exists. Call transformation_exists() first.

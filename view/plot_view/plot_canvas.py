@@ -50,7 +50,7 @@ class PlotVectorCanvas(FigureCanvas):
         vectors = collision.get_spatial_vectors_xyz()
         vectors_columns = collision.get_vectors_spatial_columns()
         self.vectors_columns = vectors_columns
-        self.particle_names = collision.get_vectors_name_column()
+        self.particle_names = collision.names
         edgecolors = [config.graph_circles_color] * len(vectors)
         # facecolorscolors = ['lightcyan', 'tomato', 'aquamarine'] # TODO: add more
 
