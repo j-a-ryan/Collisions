@@ -55,6 +55,8 @@ def set_up_config_data(
                     matrix_configuration_data.exp_2yT = exp_2yT_found
                 else:  # Use default value
                     matrix_configuration_data.exp_2yT = config.exp_2yT
+        case _:
+            raise ValueError(f"Unknown argument_type: {argument_type!r}")
 
     matrix_configuration_data.vector_to_be_transformed = vector_Y
     matrix_configuration_data.convert_incoming_vector_to_lcc = convert_incoming_vector_to_lcc
