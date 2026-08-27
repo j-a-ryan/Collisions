@@ -93,7 +93,7 @@ class TestLightConeRapidityMatrix(unittest.TestCase):
         correctly_transformed_vector_V_lcc = [math.sqrt(82), math.sqrt(20.5), 0, 0]
         matrix = LightConeRapidityMatrix(matrix_configuration_data)
         transformed_vector_V_lcc = matrix.transform(vector_V)
-        print("It's" + str(type(transformed_vector_V_lcc)))
+        print("transformed_vector_V_lcc: " + str(type(transformed_vector_V_lcc)))
         npt.assert_allclose(np.array(transformed_vector_V_lcc), np.array(correctly_transformed_vector_V_lcc), atol=1e-07)
 
         # Test the reuse of the config data object here, with its being reset to

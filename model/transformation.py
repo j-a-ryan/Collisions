@@ -47,8 +47,6 @@ def set_up_config_data(
             matrix_configuration_data.rest_frame_vector = util.subtract_vectors(vector_V, vector_Y_for_calculated_V)
             if boost_parameter_A is None:
                 if third_vector is not None:  # Otherwise, leave exp_2yT at config default value. Not configured to use system of equations.
-                    # Set exp_2yT.
-                    matrix_configuration_data.exp_2yT = None  # We need this to be none as a signal of failure.
                     exp_2yT_found, boost_default_set_message = solve_for_second_step_transformation_exp_2yT(
                         matrix_configuration_data.rest_frame_vector, vector_Y, third_vector
                     )
@@ -117,22 +115,18 @@ def handle_transformation(
 
 def transform(vector_V, vector_Y_for_calculated_V, vector_Y, vectors, argument_type, third_vector=None, boost_parameter_A=None):
 
-    transformed_vectors = None
     matrix_configuration_data, failure_message = set_up_config_data(
         vector_V, vector_Y_for_calculated_V, vector_Y, argument_type, third_vector=third_vector, boost_parameter_A=boost_parameter_A
     )
+    matrix = LightConeRapidityMatrix(matrix_configuration_data)
 
-    if matrix_configuration_data.exp_2yT is not None:
-        matrix = LightConeRapidityMatrix(matrix_configuration_data)
+    transformed_vectors_temp = []
+    for i in range(len(vectors)):
+        vec_copy = vectors[i].copy()  # Just to be sure no changes are made to original.
+        transformed_vec = matrix.transform(vec_copy)
+        transformed_vectors_temp.append(transformed_vec.tolist())
 
-        transformed_vectors_temp = []
-
-        for i in range(len(vectors)):
-            vec_copy = vectors[i].copy()  # Just to be sure no changes are made to original.
-            transformed_vec = matrix.transform(vec_copy)
-            transformed_vectors_temp.append(transformed_vec.tolist())
-
-        transformed_vectors = np.array(transformed_vectors_temp)
+    transformed_vectors = np.array(transformed_vectors_temp)
 
     return transformed_vectors, matrix_configuration_data.exp_2yT, failure_message
 
