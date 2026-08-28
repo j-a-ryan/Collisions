@@ -2,14 +2,7 @@ import numpy as np
 from scipy.optimize import fsolve
 
 import config
-
-
-def calculate_m_2(vector):  # return minkowski_dot(vector, vector)
-    return minkowski_dot(vector, vector)
-
-
-def minkowski_dot(vector_1, vector_2):
-    return vector_1[0] * vector_2[0] - vector_1[1] * vector_2[1] - vector_1[2] * vector_2[2] - vector_1[3] * vector_2[3]
+from model.util import calculate_m_2, minkowski_dot
 
 
 class TransformationEquationSystem:
