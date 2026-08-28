@@ -1,4 +1,5 @@
-# Collisions
+# Collisions <img width="70" height="70" alt="collisionicon" src="https://github.com/user-attachments/assets/cfee5fc4-4dfa-42e1-8771-9c8369b2abf4" />
+
 
 You can <a href="https://github.com/j-a-ryan/Collisions/releases">download the application, launch it, and try it</a>. Once it's running, you can click on Help to get a quick start about how to use it. The software is introduced below, after some salient notes and a note on current status.
 
