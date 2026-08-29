@@ -100,9 +100,7 @@ class ExperimentController:
 
     def plot_transformed_experiment_vectors(self, extra_circles):
         assert self.experiment is not None
-        self.view.plot_transformed_experiment_vectors(
-            self.experiment.transformed_collision, self.experiment.collision, extra_circles
-        )
+        self.view.plot_transformed_experiment_vectors(self.experiment.transformed_collision, self.experiment.collision, extra_circles)
 
     def plot_transformation(  # TODO: Refactor into preparation method and plot method
         self, extra_circles, V_Y_particle_names, argument_type, boost_parameter_A=None

@@ -147,32 +147,27 @@ class View(QWidget):
             del data[0]  # Get rid of header row
 
     def load_experiment(self):
-        data = []
         file_path, _ = QFileDialog.getOpenFileName(self, "Open CSV File", "", "CSV Files (*.csv);;All Files (*)")
-        if file_path:
-            try:
-                with open(file_path, mode="r") as file:
-                    reader = csv.reader(file)
-                    for row in reader:
-                        data.append(row)
-            except FileNotFoundError:
-                print("The file was not found.")
-            except (OSError, UnicodeError, csv.Error) as e:
-                print(f"An error occurred: {e}")
+        if not file_path:
+            return
 
-            num_columns = len(data[0]) if data else 0
-            if num_columns == len(config.vector_fields):  # Sanity check
-                self.pre_treat_csv_data(data)
-                self.show_experiment_configuration_form(True, data)
-            else:
-                QMessageBox.warning(
-                    None,
-                    "Warning",
-                    "The file is not usable because it does not have "
-                    + str(len(config.vector_fields))
-                    + " columns: "
-                    + str(config.vector_fields),
-                )
+        try:
+            with open(file_path, newline="") as file:
+                data = list(csv.reader(file))
+        except (OSError, UnicodeError, csv.Error) as e:
+            QMessageBox.warning(self, "Open failed", f"Could not read {file_path}:\n{e}")
+            return
+
+        num_columns = len(data[0]) if data else 0
+        if num_columns == len(config.vector_fields):  # Sanity check
+            self.pre_treat_csv_data(data)
+            self.show_experiment_configuration_form(True, data)
+        else:
+            QMessageBox.warning(
+                self,
+                "Warning",
+                f"The file is not usable because it does not have " f"{len(config.vector_fields)} columns: {config.vector_fields}",
+            )
 
     def delete_experiment(self):
         if self.experiment_configuration_form is not None:
