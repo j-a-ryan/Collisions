@@ -6,7 +6,6 @@ from model.qcd_matrix import (
     LightConeRapidityMatrix,
     LightConeRapidityMatrixConfigurationData,
 )
-from model.transformations import TransformationEquationSystem
 
 
 class Transformation:
@@ -19,17 +18,11 @@ class Transformation:
         pass
 
 
-def solve_for_second_step_transformation_exp_2yT(vector_V, vector_Y, third_vector):
-    equation_system = TransformationEquationSystem(vector_V, vector_Y, third_vector)
-    return equation_system.find_exp_2yT_numerical_3(None)
-
-
 def set_up_config_data(
     vector_V,
     vector_Y_for_calculated_V,
     vector_Y,
     argument_type,
-    third_vector=None,
     boost_parameter_A=None,
     return_vector_in_minkowski_form=True,
     convert_incoming_vector_to_lcc=True,
@@ -45,14 +38,6 @@ def set_up_config_data(
             matrix_configuration_data.rest_frame_vector = util.add_vectors(vector_V, vector_Y)
         case util.V_MINUS_Y:
             matrix_configuration_data.rest_frame_vector = util.subtract_vectors(vector_V, vector_Y_for_calculated_V)
-            if boost_parameter_A is None:
-                if third_vector is not None:  # Otherwise, leave exp_2yT at config default value. Not configured to use system of equations.
-                    exp_2yT_found, boost_default_set_message = solve_for_second_step_transformation_exp_2yT(
-                        matrix_configuration_data.rest_frame_vector, vector_Y, third_vector
-                    )
-                    matrix_configuration_data.exp_2yT = exp_2yT_found
-                else:  # Use default value
-                    matrix_configuration_data.exp_2yT = config.exp_2yT
         case _:
             raise ValueError(f"Unknown argument_type: {argument_type!r}")
 
@@ -70,7 +55,6 @@ def handle_transformation(
     particle_names,
     experiment,
     argument_type,
-    third_vector=None,
     boost_parameter_A=None,
 ):
 
@@ -101,7 +85,6 @@ def handle_transformation(
                 vector_Y,
                 initial_transformed_vectors,
                 argument_type,
-                third_vector=third_vector,
                 boost_parameter_A=boost_parameter_A,
             )
         case util.V_PLUS_Y:
@@ -113,10 +96,10 @@ def handle_transformation(
     return transformed_vectors, boost_parameter_A_used, failure_message
 
 
-def transform(vector_V, vector_Y_for_calculated_V, vector_Y, vectors, argument_type, third_vector=None, boost_parameter_A=None):
+def transform(vector_V, vector_Y_for_calculated_V, vector_Y, vectors, argument_type, boost_parameter_A=None):
 
     matrix_configuration_data, failure_message = set_up_config_data(
-        vector_V, vector_Y_for_calculated_V, vector_Y, argument_type, third_vector=third_vector, boost_parameter_A=boost_parameter_A
+        vector_V, vector_Y_for_calculated_V, vector_Y, argument_type, boost_parameter_A=boost_parameter_A
     )
     matrix = LightConeRapidityMatrix(matrix_configuration_data)
 
@@ -139,7 +122,6 @@ def validate_vectors(
     Y_particle_name=None,
     experiment=None,
     particle_names=None,
-    third_vector=None,  # No way to pre-check V - Y with third vector known at the moment
 ):
 
     vector_V_to_use = None

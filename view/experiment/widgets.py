@@ -86,7 +86,7 @@ class VectorIssueCheck(AbstractTransformationPopup):
 
         layout.addSpacing(25)
 
-        self.create_argument_type_checkboxes(layout, self.names)  # or self.experiment.particle_names
+        self.create_argument_type_checkboxes(layout)  # or self.experiment.particle_names
 
         self.check_button = QPushButton("Run Check")
         self.check_button.setEnabled(False)
@@ -103,27 +103,8 @@ class VectorIssueCheck(AbstractTransformationPopup):
         layout.addWidget(self.submit_cancel_button_box, alignment=Qt.AlignmentFlag.AlignRight)
         self.setLayout(layout)
 
-    def get_combobox_names(self, candidate_particle_names):
-        return []
-
     def argument_types_checkboxes_group_clicked(self):
         self.results_text_area.clear()
-
-    def update_third_vector_combobox(self, V_name, Y_name):
-        if self.post_transformation_checkbox.isChecked():
-            self.particle_names_combo_box.clear()
-            candidate_particle_names = self.experiment.particle_names.copy()
-            if V_name in candidate_particle_names:
-                candidate_particle_names.remove(V_name)
-            if Y_name in candidate_particle_names:
-                candidate_particle_names.remove(Y_name)
-
-            for name in candidate_particle_names:
-                self.particle_names_combo_box.addItem(name)
-            if len(candidate_particle_names) > 1:
-                self.particle_names_combo_box.setCurrentIndex(-1)
-            self.particle_names_combo_box.setVisible(True)
-            self.particle_names_combo_box.setEnabled(True)
 
     def _set_up_combo_box(self):
         box = QComboBox()
@@ -165,7 +146,6 @@ class VectorIssueCheck(AbstractTransformationPopup):
         self.results_text_area.clear()
         V_text = self.V_combo_box.currentText()
         Y_text = self.Y_combo_box.currentText()
-        self.update_third_vector_combobox(V_text, Y_text)
         valid_selection_pair = False
         if V_text and Y_text:
             if V_text != Y_text:

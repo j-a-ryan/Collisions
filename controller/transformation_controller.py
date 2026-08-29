@@ -9,9 +9,6 @@ class TransformationController:
     def get_config_argument(self, V_plus_Y, V_minus_Y):
         return util.get_config_argument(V_plus_Y, V_minus_Y)
 
-    def is_v_minus_y_argument_type(self, argument_type):
-        return argument_type == util.V_MINUS_Y
-
     def handle_transformation(
         self,
         vector_V,
@@ -21,11 +18,10 @@ class TransformationController:
         particle_names,
         experiment,
         argument_type,
-        third_vector=None,
         boost_parameter_A=None,
     ):
         transformed_vectors, boost_parameter_A_used, failure_message = transformation.handle_transformation(
-            vector_V, vector_Y, V_particle_name, Y_particle_name, particle_names, experiment, argument_type, third_vector, boost_parameter_A
+            vector_V, vector_Y, V_particle_name, Y_particle_name, particle_names, experiment, argument_type, boost_parameter_A
         )
         if not failure_message:
             experiment.set_transformation(
@@ -42,7 +38,6 @@ class TransformationController:
         Y_particle_name=None,
         experiment=None,
         particle_names=None,
-        third_vector=None,  # TODO: Decide whether this needs to go or will be used.
     ):
         return transformation.validate_vectors(
             vector_V, vector_Y, argument_type, V_particle_name, Y_particle_name, experiment, particle_names

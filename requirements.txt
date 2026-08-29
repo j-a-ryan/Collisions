@@ -8,5 +8,3 @@ pyside6_essentials==6.11.0
 # runs fine (pure-Python wheel). If installing on 3.14, use:
 #   pip install --ignore-requires-python -r requirements.txt
 pyqtdarktheme2==2.1.2
-sympy==1.14.0
-scipy==1.18.0

@@ -5,11 +5,7 @@ from PySide6.QtWidgets import QDialog, QLabel
 
 import config
 from view.experiment import widgets
-from view.transformations_view.widgets import (
-    BackgroundCalculations,
-    ConfigureTransformationPopup,
-    WaitingPopup,
-)
+from view.transformations_view.widgets import ConfigureTransformationPopup
 from view.util import PlotStatus
 
 
@@ -187,7 +183,6 @@ class PlotVectorCanvas(FigureCanvas):
                         self.particles_names_picked = [
                             popup.transformation_config["V"],
                             popup.transformation_config["Y"],
-                            popup.transformation_config["third_vector"],
                         ]
                         V_plus_Y = popup.transformation_config["V+YConfig"]
                         V_minus_Y = popup.transformation_config["ApplyPostTransformationV'-Y'"]
@@ -201,22 +196,9 @@ class PlotVectorCanvas(FigureCanvas):
                             self.view.show_experiment_configuration_form(False)
                         else:
                             self.experiment_controller.plot_current_experiment(extra_circles=transformation_vector_pair_indices)
-                            failure_message = None
-                            if (
-                                self.experiment_controller.is_v_minus_y_argument_type(argument_type)
-                                and config.step_2_uses_system_of_equations
-                            ):
-                                background_transformation = BackgroundCalculations(
-                                    self.experiment_controller, transformation_vector_pair_indices, V_Y_particle_names, argument_type
-                                )
-                                dlg = WaitingPopup(self, background_calculations=background_transformation)
-                                if dlg.exec() == QDialog.DialogCode.Accepted:
-                                    failure_message = background_transformation.failure_message
-                                    self.experiment_controller.plot_transformed_experiment_vectors(transformation_vector_pair_indices)
-                            else:
-                                failure_message = self.experiment_controller.create_initial_transformation(
-                                    transformation_vector_pair_indices, V_Y_particle_names, argument_type
-                                )
+                            failure_message = self.experiment_controller.create_initial_transformation(
+                                transformation_vector_pair_indices, V_Y_particle_names, argument_type
+                            )
                             self.particles_names_picked.clear()
                             if failure_message:
                                 msg = widgets.transformation_issue_popup(argument_type, failure_message=failure_message)
