@@ -196,13 +196,10 @@ class PlotVectorCanvas(FigureCanvas):
                             self.view.show_experiment_configuration_form(False)
                         else:
                             self.experiment_controller.plot_current_experiment(extra_circles=transformation_vector_pair_indices)
-                            failure_message = self.experiment_controller.create_initial_transformation(
+                            self.experiment_controller.create_initial_transformation(
                                 transformation_vector_pair_indices, V_Y_particle_names, argument_type
                             )
                             self.particles_names_picked.clear()
-                            if failure_message:
-                                msg = widgets.transformation_issue_popup(argument_type, failure_message=failure_message)
-                                msg.exec()
                     else:
                         self.particle_indices_picked.clear()
                         self.experiment_controller.plot_current_experiment()

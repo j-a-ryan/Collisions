@@ -106,19 +106,17 @@ class ExperimentController:
         self, extra_circles, V_Y_particle_names, argument_type, boost_parameter_A=None
     ):
         V_particle_name, Y_particle_name, vector_V, vector_Y, names = self.unpack_vector_arguments(V_Y_particle_names)
-        boost_parameter_A_used, failure_message = self.transformation_controller.handle_transformation(
+        boost_parameter_A_used = self.transformation_controller.handle_transformation(
             vector_V, vector_Y, V_particle_name, Y_particle_name, names, self.experiment, argument_type, boost_parameter_A
         )
-        if not failure_message:
-            self.plot_transformed_experiment_vectors(extra_circles)
-        return boost_parameter_A_used, failure_message
+        self.plot_transformed_experiment_vectors(extra_circles)
+        return boost_parameter_A_used
 
     def create_initial_transformation(self, extra_circles, V_Y_particle_names, argument_type, boost_parameter_A=None):
-        boost_parameter_A_used, failure_message = self.plot_transformation(
+        boost_parameter_A_used = self.plot_transformation(
             extra_circles, V_Y_particle_names, argument_type, boost_parameter_A
         )
         self.view.set_controls_for_transformation_plot(boost_parameter_A_initial_value=boost_parameter_A_used)
-        return failure_message
 
     def redo_transformation(self):  # TODO needs updated for 2nd step?
         V_Y_particle_names, argument_type, extra_circles, boost_parameter_A = self.get_current_transformation_arguments()

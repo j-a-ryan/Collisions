@@ -165,17 +165,13 @@ class VectorIssueCheck(AbstractTransformationPopup):
             self.post_transformation_checkbox.setEnabled(False)
 
 
-def transformation_issue_popup(argument_type, failure_message=None, axis=None, value=None):
+def transformation_issue_popup(argument_type, axis=None, value=None):
     msg = QMessageBox()
     msg.setWindowTitle("Transformation Problem")
     msg.setIcon(QMessageBox.Icon.Warning)
     msg.setText("Transformation error")
 
-    if failure_message:
-        msg.setInformativeText(
-            f"Transformation of type {argument_type} on this vector set " + "lead to\nhe following error:\n\n" + failure_message
-        )
-    elif not axis and not value:
+    if not axis and not value:
         msg.setInformativeText(
             f"Transformation of type {argument_type} on this vector set "
             + "will leads to an error, such as division by zero. You can run the "
