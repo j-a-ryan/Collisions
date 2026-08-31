@@ -142,9 +142,25 @@ class View(QWidget):
             except (OSError, csv.Error) as e:
                 print(f"An error occurred: {e}")
 
-    def pre_treat_csv_data(self, data):
-        if data[0] == config.vector_fields:  # Should be true; from CSV file with header
-            del data[0]  # Get rid of header row
+    @staticmethod
+    def check_csv_rows(rows):
+        """Return a human-readable problem string, or None if ``rows`` is a
+        usable experiment CSV: a header row exactly matching
+        ``config.vector_fields`` followed by at least one data row of the
+        same width."""
+        expected = list(config.vector_fields)  # copy: guards against config using a tuple
+        width = len(expected)
+        if not rows:
+            return "The file is empty."
+        if rows[0] != expected:
+            return f"The file's header row must be exactly {expected}."
+        data_rows = rows[1:]
+        if not data_rows:
+            return "The file has a header row but no vector data."
+        for line_number, row in enumerate(data_rows, start=2):
+            if len(row) != width:
+                return f"Line {line_number} has {len(row)} column(s); expected {width}: {expected}."
+        return None
 
     def load_experiment(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Open CSV File", "", "CSV Files (*.csv);;All Files (*)")
@@ -153,21 +169,17 @@ class View(QWidget):
 
         try:
             with open(file_path, newline="") as file:
-                data = list(csv.reader(file))
+                rows = list(csv.reader(file))
         except (OSError, UnicodeError, csv.Error) as e:
             QMessageBox.warning(self, "Open failed", f"Could not read {file_path}:\n{e}")
             return
 
-        num_columns = len(data[0]) if data else 0
-        if num_columns == len(config.vector_fields):  # Sanity check
-            self.pre_treat_csv_data(data)
-            self.show_experiment_configuration_form(True, data)
-        else:
-            QMessageBox.warning(
-                self,
-                "Warning",
-                f"The file is not usable because it does not have " f"{len(config.vector_fields)} columns: {config.vector_fields}",
-            )
+        problem = self.check_csv_rows(rows)
+        if problem is not None:
+            QMessageBox.warning(self, "Warning", problem)
+            return
+
+        self.show_experiment_configuration_form(True, rows[1:])  # rows[1:] strips the header
 
     def delete_experiment(self):
         if self.experiment_configuration_form is not None:
