@@ -1,4 +1,5 @@
 import csv
+import logging
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
@@ -137,10 +138,9 @@ class View(QWidget):
                     writer = csv.writer(f)
                     writer.writerow(header)
                     writer.writerows(data)
-            except FileNotFoundError:
-                print("Problem writing to file path, FileNotFoundError.")
             except (OSError, csv.Error) as e:
-                print(f"An error occurred: {e}")
+                logging.exception("Failed to save experiment to %s", file_path)
+                QMessageBox.warning(self, "Save failed", f"Could not save to {file_path}:\n{e}")
 
     @staticmethod
     def check_csv_rows(rows):
