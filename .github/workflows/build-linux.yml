@@ -20,7 +20,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-24.04    # x86_64
+          - os: ubuntu-22.04    # x86_64 — built on glibc 2.35 for wider distro compatibility
             arch: x86_64
     runs-on: ${{ matrix.os }}
 
