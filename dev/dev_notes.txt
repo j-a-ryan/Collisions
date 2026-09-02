@@ -1,0 +1,17 @@
+git status
+
+# Stage all changes
+git add . or git add -A
+
+
+# Stage tracked files' changes only
+git add -u
+
+# commit staged changes
+git commit -m "<message>"
+
+# Push commited changes to the main repo
+git push
+
+
+We need a Transformation(s) class (es).

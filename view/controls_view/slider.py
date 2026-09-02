@@ -1,5 +1,3 @@
-import threading
-import time
 from abc import ABC, abstractmethod
 
 from pyqt_advanced_slider import Slider
@@ -12,40 +10,16 @@ from view.common.details import Heading
 
 
 class SliderUpdateHandler(ABC):
-    def __init__(self, initial_value, use_threading=False):
-        super().__init__()
-        self.post_mediator = None
-        self.latest_value = initial_value
-        self.use_threading = use_threading
-        if use_threading:
-            self.lock = threading.Lock()
-
     @abstractmethod
     def post_value(self, value) -> bool:
         pass
 
     def handle_slide_event(self, value):
-        self.previous_value = self.latest_value  # If we want to revert after issue with value, we can go back to previous.
-        self.latest_value = value
-        problem = False
-        if self.use_threading:
-            with self.lock:
-                if self.post_mediator is None:
-                    self.post_mediator = PostMediator(self)
-                self.post_mediator.set_value(value)
-                self.post_mediator.post_threaded()
-        else:
-            problem = self.post_value(value)  # TODO: use this boolean?
-        return problem
-
-    def signal_post_stream_end(self):
-        del self.post_mediator
-        self.post_mediator = None
+        return self.post_value(value)  # TODO: use this boolean? (e.g. revert the slider on a bad value)
 
 
 class BoostParameterASliderUpdateHandler(SliderUpdateHandler):
-    def __init__(self, controller: ControlsController, initial_value, use_threading=False):
-        super().__init__(initial_value, use_threading)
+    def __init__(self, controller: ControlsController):
         self.controller = controller
 
     def post_value(self, value):
@@ -55,8 +29,7 @@ class BoostParameterASliderUpdateHandler(SliderUpdateHandler):
 
 class SliderCoordinationUpdateHandler(SliderUpdateHandler):  # m2 slider uses this one
 
-    def __init__(self, slider_value_name, initial_value, sliders_coordination, use_threading=False):
-        super().__init__(initial_value, use_threading)
+    def __init__(self, slider_value_name, sliders_coordination):
         self.slider_value_name = slider_value_name
         self.sliders_coordination = sliders_coordination
 
@@ -73,8 +46,8 @@ class SliderCoordinationUpdateHandler(SliderUpdateHandler):  # m2 slider uses th
 
 class FourVectorSliderUpdateHandler(SliderCoordinationUpdateHandler):  # t, x, y, z sliders use this one
 
-    def __init__(self, axis_name, initial_value, sliders_coordination, use_threading=False):
-        super().__init__(axis_name, initial_value, sliders_coordination, use_threading)
+    def __init__(self, axis_name, sliders_coordination):
+        super().__init__(axis_name, sliders_coordination)
 
     def prepare_to_use_controller(self, controller, vector_name, axis_num):  # The m2 slider does not need this. Only the others do.
         self.controller = controller
@@ -135,46 +108,6 @@ class BoostParameterASlider(CollisionsSlider):
         self.setValue(initial_value)
 
 
-class PostMediator:
-    def __init__(self, handler):
-        self.wait_limit = 5  # Wait five seconds, then give up on further updates
-        self.handler = handler
-        self.latest_value = None
-        self.lock = threading.Lock()
-
-    def set_value(self, value):
-        with self.lock:
-            self.latest_value = value
-
-    def post(self, value):
-        self.handler.post_value(value)
-
-    def post_threaded(self):
-        elapsed = 0
-        current = True
-        while current:
-
-            # Sleep for 200ms (0.2 seconds)
-            time.sleep(1)
-
-            # If updates, post the latest to the controller
-            with self.lock:
-                if self.latest_value is not None:
-                    self.post(self.latest_value)
-                    self.latest_value = None
-                else:
-                    # Else check timeout. If timed out, exit loop.
-                    elapsed += 0.2
-                    if elapsed > self.wait_limit:
-                        current = False
-                        self.handler.signal_post_stream_end()
-
-    def start_thread(self):
-        thread = threading.Thread(target=self.post_threaded, args=(10,))
-        thread.start()
-        thread.join()
-
-
 class SliderGroupFrame(QFrame):
 
     dict_txyz_0123 = config.lookup_gui_txyz_0123
@@ -211,7 +144,7 @@ class SliderGroupFrame(QFrame):
             rownum = i + 2
             self.sliders_grid.addWidget(axis_label, rownum, 0, alignment=(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop))
             axis_num = SliderGroupFrame.dict_txyz_0123[axis_name]
-            handler = FourVectorSliderUpdateHandler(axis_name, initial_value, sliders_coordination)
+            handler = FourVectorSliderUpdateHandler(axis_name, sliders_coordination)
             handler.prepare_to_use_controller(controller, vector_name, axis_num)
             min_val = 0 if axis_name == config.gui_t else config.xyz_min
             max_val = config.t_max if axis_name == config.gui_t else config.xyz_max
@@ -285,7 +218,7 @@ class TimeM2SlidersCoordinator:
 
     def create_m2_slider(self, initial_vector, sliders_coordination):
         initial_value = self.calculate_initial_m2(initial_vector)
-        handler = SliderCoordinationUpdateHandler(config.gui_m2, initial_value, sliders_coordination)
+        handler = SliderCoordinationUpdateHandler(config.gui_m2, sliders_coordination)
         slider_m2 = VectorSlider(initial_value, initial_value - 10, initial_value + 10)  # temp limits reset in the next line of code.
         self.add_slider(config.gui_m2, slider_m2)
         self.initialize_m2_slider_limits(initial_vector)

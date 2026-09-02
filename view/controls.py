@@ -54,7 +54,7 @@ class ControlsLayout(QFrame):
         frame_layout.addWidget(label_A, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.boost_parameter_A_slider = BoostParameterASlider(initial_value, 0, config.boost_A_max)
-        handler = BoostParameterASliderUpdateHandler(self.controls_controller, initial_value, False)
+        handler = BoostParameterASliderUpdateHandler(self.controls_controller)
         self.boost_parameter_A_slider.set_handler(handler)
         self.boost_parameter_A_slider.setEnabled(False)  # No transformation yet
         frame_layout.addWidget(self.boost_parameter_A_slider, alignment=Qt.AlignmentFlag.AlignCenter)

@@ -8,16 +8,6 @@ from model.qcd_matrix import (
 )
 
 
-class Transformation:
-    """
-    Encapsulates the abstraction notion of a transformation: the parameters and processes that are
-    comprised it.
-    """
-
-    def __init__(self):
-        pass
-
-
 def set_up_config_data(
     vector_V,
     vector_Y_for_calculated_V,

@@ -1,11 +1,21 @@
 Build
 
 To build Windows version:
-.venv\Scripts\python.exe -m PyInstaller --name="collisions-v0.3.0-alpha-windows-intel-x86_64.exe" --add-data "resources;resources" --exclude-module=PyQt5 --onefile --windowed main.py
-Rename the result to suit. The exclude is needed now, probably because
-SymPy makes reference to PyQt5 in sympy.plotting. GitHub's build action for
-MacOS is able to see that it needs to exclude PyQt5.
+.venv\Scripts\python.exe -m PyInstaller --name="collisions-v0.3.0-alpha-windows-intel-x86_64.exe" --add-data "resources;resources" --onefile --windowed main.py
+Rename the result to suit.
+Previously this command also passed --exclude-module=PyQt5, needed because
+sympy.plotting referenced PyQt5. SymPy was removed from the project on
+2026-08-29, and PyQt5 is not installed, so the exclude is no longer needed.
+If a future PyInstaller run pulls PyQt5 in transitively and errors, add
+--exclude-module=PyQt5 back.
 
 MacOS:
-Use build-macos.yml, which currently lives only in GitHub Actions. No exclude for
-PyQt5 needed. GitHub Actions sees that it needs to exclude.
+Use build-macos.yml, which currently lives in GitHub Actions and is also in .github\workflows (not
+sure if that's kept up to date.)
+
+Note on dev/ :
+The dev/ folder (REFACTOR.md, BACKLOG.md, dev_notes.txt) needs no build
+exclusion. PyInstaller only bundles main.py's import graph plus whatever
+--add-data names explicitly (here just resources/), so loose files in the
+repo are never included in the executable. The macOS workflow uploads only
+dist/. Nothing to exclude.
