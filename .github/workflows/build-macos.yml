@@ -1,19 +1,19 @@
 name: Build macOS Executable
 
-# on:
-#   push:
-#     branches: [ main ]          # or whatever your default branch is
-#   workflow_dispatch:            # lets you trigger manually from GitHub UI
 on:
-  workflow_dispatch: # manual execution from the UI
+  workflow_dispatch:
     inputs:
-      logLevel:
-        description: 'Log level'
+      release_tag:
+        description: 'GitHub Release tag to upload the builds to'
         required: true
-        default: 'warning'
+        type: string
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+# Allow the workflow to upload assets to an existing Release.
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -22,8 +22,9 @@ jobs:
         include:
           - os: macos-15-intel    # Intel
             arch: x86_64
-          - os: macos-14    # Apple Silicon
+          - os: macos-14         # Apple Silicon
             arch: arm64
+
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -38,25 +39,24 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          # pyqtdarktheme2's metadata declares Requires-Python <3.14, though it installs
-          # and runs fine on 3.14 (pure-Python wheel) — see requirements.txt comment.
+          # pyqtdarktheme2's metadata declares Requires-Python <3.14,
+          # though it installs and runs fine on 3.14 (pure-Python wheel).
           if [ -f requirements.txt ]; then pip install --ignore-requires-python -r requirements.txt; fi
           pip install pyinstaller
 
       - name: Build with PyInstaller
         run: |
-          # Choose ONE of these options:
-
-          # Option 1: Simple one-file executable (recommended for most apps)
           pyinstaller --onefile --windowed --add-data "resources:resources" main.py
-          # pyinstaller --onefile --windowed main.py
-          # (remove --windowed if it's a console app)
 
-          # Option 2: Use your existing .spec file (best for complex apps)
-          # pyinstaller myapp.spec
+      - name: Rename build for release
+        run: |
+          mv dist/main "dist/collisions-macos-${{ matrix.arch }}"
 
-      - name: Upload macOS build
-        uses: actions/upload-artifact@v4.6.0
-        with:
-          name: collisions-${{ github.ref_name }}-${{ matrix.os }}-${{ matrix.arch }}
-          path: dist/
+      - name: Upload to GitHub Release
+        run: |
+          gh release upload \
+            "${{ inputs.release_tag }}" \
+            "dist/collisions-macos-${{ matrix.arch }}" \
+            --clobber
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
