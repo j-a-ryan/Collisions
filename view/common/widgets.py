@@ -13,16 +13,19 @@ class ParticleNamesComboBox(QComboBox):
         line_edit.setReadOnly(True)
         self.setMinimumContentsLength(6)
         self.setCurrentIndex(-1)
-        if self.count() > 1:
+
+    def update_names(self, names, clear_all_existing=False):
+        if clear_all_existing:
+            self.clear()
+        # else: TODO if needed. Get the currently selected one
+        # and ensure it is selected after the update.
+        #     selected_index = self.currentIndex()
+        #     selected_name = self.currentText()
+
+        self.addItems(names)
+        if clear_all_existing:
             self.setCurrentIndex(-1)
 
-    def update_names(self, names, names_already_selected=None):
-        if names_already_selected is None:
-            names_already_selected = []
-        names_to_show = [x for x in names if x not in names_already_selected]
-        for name in names_to_show:
-            self.addItem(name)
 
-
-def create_particle_names_combo_box(names=None):
+def create_particle_names_combo_box():
     return ParticleNamesComboBox(config.particle_names)
