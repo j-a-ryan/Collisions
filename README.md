@@ -46,8 +46,5 @@ Uses <a href="https://github.com/niklashenning/pyqt-advanced-slider">PyQt Advanc
 
 Uses <a href="https://github.com/5yutan5/PyQtDarkTheme">PyQtDarkTheme</a>
 
-## Current Status: alpha
-August, 2026: Finishing up the last few alpha releases. The first beta version will be released in September.
-
 ## License
 This software is licensed under the MIT license.
