@@ -1,7 +1,7 @@
 Build
 
 To build Windows version:
-.venv\Scripts\python.exe -m PyInstaller --name="collisions-v0.3.0-alpha-windows-intel-x86_64.exe" --add-data "resources;resources" --onefile --windowed main.py
+.venv\Scripts\python.exe -m PyInstaller --name="collisions-v1.1.1-beta-windows-intel-x86_64.exe" --add-data "resources;resources" --onefile --windowed main.py
 Rename the result to suit.
 Previously this command also passed --exclude-module=PyQt5, needed because
 sympy.plotting referenced PyQt5. SymPy was removed from the project on

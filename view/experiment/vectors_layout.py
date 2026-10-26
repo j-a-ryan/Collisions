@@ -6,6 +6,7 @@ from PySide6.QtWidgets import (
     QGridLayout,
     QHBoxLayout,
     QLabel,
+    QMessageBox,
     QPushButton,
     QRadioButton,
     QVBoxLayout,
@@ -14,6 +15,7 @@ from PySide6.QtWidgets import (
 import config
 from view.common.widgets import create_particle_names_combo_box
 from view.experiment.vectors import VectorsGrid
+from view.widgets import show_confirmation_popup
 
 
 class VectorsFramedLayout(QFrame):
@@ -129,6 +131,15 @@ class VectorsFramedLayout(QFrame):
             dependant = self.vectors_grid.create_linearly_dependent_vector(
                 new_vector_name, name1, name2, 1, coeff2
             )
+            if float(dependant[0]) < 0:
+                reply = show_confirmation_popup(
+                    self,
+                    "Negative Time Value",
+                    f"The vector's time value will be {float(dependant[0])} < 0. Proceed?",
+                    QMessageBox.Icon.Warning,
+                )
+                if reply == QMessageBox.StandardButton.No:
+                    return
             self.vectors_grid.add_vector_row(False, dependant)
             self.vectors_grid.refresh_grid()
 
