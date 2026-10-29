@@ -7,17 +7,12 @@ You can <a href="https://github.com/j-a-ryan/Collisions/releases">download the a
 
 Many thanks to physicists Ted Rogers and Kazuki Makino for working with me on this.
 
-<b>Physicists</b> desiring an app for visualizing particle accelerator experiments, please download <a href="https://github.com/j-a-ryan/Collisions/releases">the latest version</a> and play with it. Click on the Help button to read the manaul. After getting the hang of what it does, if you would like a similar application be built, please tell me about your ideas at j dot a dot ryan at protonmail. I am a former software developer headed to the physics graduate program at ODU in the fall of 2026. I have just been given an at odu.edu address: jryan017. Use either.
-
-## Current status, August 20, 2026:
-Alpha release 0.4.1 is available. I'm cleaning up the code (refactoring for closer MVC adherence, making more Pythonic, etc.) Beta 1.0.0 will be released in a few weeks.
-
-Collisions v0.4.1-alpha has logging of unhandled exceptions to a local file. To test this click the "Do not click this" button. This button will be removed after beta is well underway.
+<b>Physicists</b> desiring an app for visualizing particle accelerator experiments, please download <a href="https://github.com/j-a-ryan/Collisions/releases">the latest version</a> and play with it. Click on the Help button to read the manual. After getting the hang of what it does, if you would like a similar application to be built, please tell me about your ideas at j dot a dot ryan at protonmail.
+## Current status, October 26, 2026:
+Beta release v1.1.2-beta is available. Collisions is set to log unhandled exceptions to a local file. To test this click the "Do not click this" button. This button will be removed after a while.
 
 ## Introduction
 An application in Python (PyQt-PySide6, Matplotlib) for particle accelerator physicists and theoretical physicists working in particle physics, QCD, or nuclear physics. The purpose of the application is to allow physicists to see, rather than having to imagine, the vectors of particle just after particle collisions both in (a.) the laboratory (collider) reference frame and in (b.) a frame obtained by transformation of the vector set with a transformation matrix stipulated by the physicist. The application allows the physicist to enter a set of four-vectors, see them graphed, and vary the vectors on the fly by using sliders, so as to show the results of "what-if" scenarios of interest.
-
-The application is currently available. It is called Collisions-QCD/TMD, and it is in <a href="https://github.com/j-a-ryan/Collisions/releases/tag/v0.4.1-alpha">pre-release version v0.4.1-alpha</a> for Windows and MacOS. More updates will be coming in June. I plan to release a beta version in early summer.
 
 ## GUI
 Below you see a set of vectors in the laboratory (particle collider) reference frame representing the paths of particles emerging from a collision at the origin (left) and their transformation into a different frame (right). One of the six possible 2D representations of these graphs is seen as a popup. Sliders at the left under "CONTROLS" allow the user to vary the vectors and observe the effects on both the 3D graph on the left and the transformation on the right simultaneously. Other controls will eventually be implemented. The application represents the tips of the vectors with circles containing the names of the particles, rather than arrowheads. This may change.
@@ -50,9 +45,6 @@ I gratefully use these third-party libraries. I hope I am adhering to their lice
 Uses <a href="https://github.com/niklashenning/pyqt-advanced-slider">PyQt Advanced Slider</a>
 
 Uses <a href="https://github.com/5yutan5/PyQtDarkTheme">PyQtDarkTheme</a>
-
-## Current Status: alpha
-August, 2026: Finishing up the last few alpha releases. The first beta version will be released in September.
 
 ## License
 This software is licensed under the MIT license.
